@@ -1,0 +1,6 @@
+{
+  "name": "SankalpVani",
+  "description": "A high-fidelity administrative portal for SankalpVani Temple, managing devotee registries, seva transactions, priest schedules, and prasadam logistics.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,97 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #8f4e00;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #ff9933;
+  --color-on-primary-container: #693800;
+  
+  --color-secondary: #735c00;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #fed65b;
+  --color-on-secondary-container: #745c00;
+
+  --color-tertiary: #b22b1d;
+  --color-on-tertiary: #ffffff;
+  --color-tertiary-container: #ff9585;
+  --color-on-tertiary-container: #8c0c05;
+
+  --color-background: #fafaeb;
+  --color-on-background: #1b1c14;
+
+  --color-surface: #fafaeb;
+  --color-on-surface: #1b1c14;
+  --color-surface-variant: #e3e3d5;
+  --color-on-surface-variant: #554336;
+
+  --color-surface-dim: #dbdbcd;
+  --color-surface-bright: #fafaeb;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f4f5e6;
+  --color-surface-container: #efefe0;
+  --color-surface-container-high: #e9e9db;
+  --color-surface-container-highest: #e3e3d5;
+
+  --color-outline: #887364;
+  --color-outline-variant: #dbc2b0;
+  --color-surface-tint: #8f4e00;
+
+  --color-error: #ba1a1a;
+  --color-on-error: #ffffff;
+  --color-error-container: #ffdad6;
+  --color-on-error-container: #93000a;
+
+  --color-primary-fixed: #ffdcc2;
+  --color-primary-fixed-dim: #ffb77a;
+  --color-on-primary-fixed: #2e1500;
+  --color-on-primary-fixed-variant: #6d3a00;
+
+  --color-secondary-fixed: #ffe088;
+  --color-secondary-fixed-dim: #e9c349;
+  --color-on-secondary-fixed: #241a00;
+  --color-on-secondary-fixed-variant: #574500;
+
+  --color-tertiary-fixed: #ffdad4;
+  --color-tertiary-fixed-dim: #ffb4a8;
+  --color-on-tertiary-fixed: #410000;
+  --color-on-tertiary-fixed-variant: #8f0f07;
+
+  --font-sans: "Manrope", sans-serif;
+  --font-serif: "Libre Caslon Text", serif;
+}
+
+@layer utilities {
+  .sacred-glow {
+    box-shadow: 0 10px 40px -10px rgba(143, 78, 0, 0.08), 0 4px 6px -4px rgba(143, 78, 0, 0.04);
+  }
+
+  .bg-pattern {
+    background-image: radial-gradient(#ff9933 1px, transparent 1px);
+    background-size: 20px 20px;
+    opacity: 0.05;
+  }
+
+  .bg-sacred-pattern {
+    background-image: radial-gradient(#dbc2b0 1px, transparent 1px);
+    background-size: 24px 24px;
+    opacity: 0.15;
+  }
+
+  .divider-gold {
+    border-color: rgba(212, 175, 55, 0.2);
+  }
+
+  /* Custom input float animations */
+  .float-input-container {
+    position: relative;
+  }
+
+  /* Scrollbar removal */
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
