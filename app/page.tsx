@@ -1,20 +1,20 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { 
-  Menu, 
-  Bell, 
-  User, 
-  Clock, 
-  Settings as SettingsIcon, 
-  LogOut, 
-  ChevronDown, 
-  Check, 
-  X, 
-  Key, 
-  Phone, 
-  Shield, 
-  Camera, 
+import {
+  Menu,
+  Bell,
+  User,
+  Clock,
+  Settings as SettingsIcon,
+  LogOut,
+  ChevronDown,
+  Check,
+  X,
+  Key,
+  Phone,
+  Shield,
+  Camera,
   CheckCircle,
   AlertCircle,
   ShieldAlert,
@@ -27,6 +27,12 @@ import RequirePermission, { LockedViewFallback } from '../components/RequirePerm
 import LoginScreen from '../components/LoginScreen';
 import Sidebar from '../components/Sidebar';
 import DashboardPortal from '../components/DashboardPortal';
+import TrustDashboardPortfolio from '../components/TrustDashboardPortfolio';
+import DesignationsGovernance from '../components/DesignationsGovernance';
+import RolesGovernance from '../components/RolesGovernance';
+import TrusteesGovernance from '../components/TrusteesGovernance';
+import CommitteesGovernance from '../components/CommitteesGovernance';
+import MembersGovernance from '../components/MembersGovernance';
 import MastersHub from '../components/MastersHub';
 import PriestMaster from '../components/PriestMaster';
 import SevaMaster from '../components/SevaMaster';
@@ -48,7 +54,7 @@ interface NavigationState {
 }
 
 function AdminPortalContent() {
-  const { session, isLoggedIn, isMounted, login, logout, updateSession, resetToSuperAdmin } = useAuth();
+  const { session, isLoggedIn, isMounted, login, logout, updateSession, resetToSuperAdmin, activeScope, activeTrustId } = useAuth();
 
   const [navigationState, setNavigationState] = useState<NavigationState>(() => {
     if (typeof window !== 'undefined') {
@@ -81,7 +87,7 @@ function AdminPortalContent() {
   const [formPhone, setFormPhone] = useState('');
   const [formRole, setFormRole] = useState('');
   const [formAvatar, setFormAvatar] = useState('');
-  
+
   // Password Change States
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -99,15 +105,15 @@ function AdminPortalContent() {
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
-      const options: Intl.DateTimeFormatOptions = { 
-        weekday: 'short', 
-        year: 'numeric', 
-        month: 'short', 
-        day: '2-digit', 
-        hour: '2-digit', 
-        minute: '2-digit', 
+      const options: Intl.DateTimeFormatOptions = {
+        weekday: 'short',
+        year: 'numeric',
+        month: 'short',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
         second: '2-digit',
-        hour12: true 
+        hour12: true
       };
       setCurrentTime(now.toLocaleString('en-IN', options));
     };
@@ -149,7 +155,16 @@ function AdminPortalContent() {
   // Get human-friendly tab names
   const getPageHeaderTitle = () => {
     switch (activeTab) {
-      case 'dashboard': return 'Temple-1 Administrative Dashboard';
+      case 'dashboard':
+        return activeScope === 'TRUST'
+          ? 'Trust Administrative Dashboard & Portfolio'
+          : 'Temple-1 Administrative Dashboard';
+      case 'designations': return 'Designations & Titles Management';
+      case 'roles': return 'Dynamic Roles & Access Control';
+      case 'trustees': return 'Trustees & Board of Management';
+      case 'committees': return 'Committees & Sub-Committees Management';
+      case 'members': return 'Members, Staff & Committee Appointees';
+      case 'add_temple': return 'New Temple Registration';
       case 'masters_hub': return 'Structural Masters Hub';
       case 'org_chart': return 'Devasthanam Organization Chart & Matrix Reporting';
       case 'archaka_master': return 'Acharyas & Archakas Registry';
@@ -157,7 +172,7 @@ function AdminPortalContent() {
       case 'temple_info': return 'Temple Profile & Core Timings';
       case 'temple_facilities': return 'Facilities & Guest Amenities';
       case 'scheduling': return 'Priest Rostering & Shift Scheduling';
-      case 'transactions': return 'Financial Ledger & Darshan Receipts';
+      case 'transactions': return 'Seva Ledger & Darshan Receipts';
       case 'prasadam': return 'Remote Prasadam Dispatch & Logistics';
       case 'system_overview': return 'System Performance & Security Logs';
       case 'calendar': return 'Devotee Bookings Calendar';
@@ -174,11 +189,11 @@ function AdminPortalContent() {
   return (
     <div className="min-h-screen bg-background flex font-sans antialiased text-on-surface">
       {/* Dynamic RBAC Global Navigation Sidebar */}
-      <Sidebar 
-        activeTab={activeTab} 
-        setActiveTab={(tab) => handleNavigate(tab)} 
-        currentUser={displayEmail} 
-        onLogout={logout} 
+      <Sidebar
+        activeTab={activeTab}
+        setActiveTab={(tab) => handleNavigate(tab)}
+        currentUser={displayEmail}
+        onLogout={logout}
         mobileOpen={mobileMenuOpen}
         setMobileOpen={setMobileMenuOpen}
         adminName={displayName}
@@ -188,32 +203,128 @@ function AdminPortalContent() {
       {/* Main Administrative Workplace Area */}
       <div className="flex-1 flex flex-col min-w-0 md:pl-64">
         {/* Top Header Bar with Persistent Scoped Access Switcher */}
-        <Header 
-          title={getPageHeaderTitle()} 
-          onNavigate={handleNavigate} 
-          onOpenMobileMenu={() => setMobileMenuOpen(true)} 
+        <Header
+          title={getPageHeaderTitle()}
+          onNavigate={handleNavigate}
+          onOpenMobileMenu={() => setMobileMenuOpen(true)}
         />
 
         {/* Core Screen Display Switcher with Granular RBAC View-Level Guards */}
         <main className="flex-1 p-4 md:p-8 max-w-7xl w-full mx-auto">
           {activeTab === 'dashboard' && (
-            <RequirePermission 
+            <RequirePermission
               permission="DASHBOARD_VIEW"
               fallback={<LockedViewFallback requiredPermission="DASHBOARD_VIEW" title="Executive Dashboard Restricted" />}
             >
-              <DashboardPortal onNavigate={handleNavigate} />
+              {activeScope === 'TRUST' ? (
+                <TrustDashboardPortfolio
+                  trustId={activeTrustId || 'trust_sringeri'}
+                  onNavigate={handleNavigate}
+                />
+              ) : (
+                <DashboardPortal onNavigate={handleNavigate} />
+              )}
+            </RequirePermission>
+          )}
+
+          {activeTab === 'designations' && (
+            <RequirePermission
+              permission={['MANAGE_STAFF', 'MANAGE_ORG_CHART', 'VIEW_ORG_CHART', 'SUPER_ADMIN', 'DASHBOARD_VIEW']}
+              mode="any"
+              fallback={<LockedViewFallback requiredPermission="MANAGE_STAFF" title="Designations & Governance Restricted" />}
+            >
+              <DesignationsGovernance
+                trustId={activeTrustId || 'trust_sringeri'}
+                onBack={() => handleNavigate('dashboard')}
+              />
+            </RequirePermission>
+          )}
+
+          {activeTab === 'roles' && (
+            <RequirePermission
+              permission={['MANAGE_STAFF', 'MANAGE_ORG_CHART', 'VIEW_ORG_CHART', 'SUPER_ADMIN', 'DASHBOARD_VIEW']}
+              mode="any"
+              fallback={<LockedViewFallback requiredPermission="MANAGE_STAFF" title="Dynamic Roles & RBAC Restricted" />}
+            >
+              <RolesGovernance
+                trustId={activeTrustId || 'trust_sringeri'}
+                onBack={() => handleNavigate('dashboard')}
+                onNavigate={handleNavigate}
+              />
+            </RequirePermission>
+          )}
+
+          {activeTab === 'trustees' && (
+            <RequirePermission
+              permission={['MANAGE_STAFF', 'MANAGE_ORG_CHART', 'VIEW_ORG_CHART', 'SUPER_ADMIN', 'DASHBOARD_VIEW']}
+              mode="any"
+              fallback={<LockedViewFallback requiredPermission="MANAGE_STAFF" title="Trustees & Board Management Restricted" />}
+            >
+              <TrusteesGovernance
+                trustId={activeTrustId || 'trust_sringeri'}
+                onBack={() => handleNavigate('dashboard')}
+                onNavigate={handleNavigate}
+              />
+            </RequirePermission>
+          )}
+
+          {activeTab === 'committees' && (
+            <RequirePermission
+              permission={['MANAGE_STAFF', 'MANAGE_ORG_CHART', 'VIEW_ORG_CHART', 'SUPER_ADMIN', 'DASHBOARD_VIEW']}
+              mode="any"
+              fallback={<LockedViewFallback requiredPermission="MANAGE_STAFF" title="Committees Governance Restricted" />}
+            >
+              <CommitteesGovernance
+                trustId={activeTrustId || 'trust_sringeri'}
+                onBack={() => handleNavigate('dashboard')}
+                onNavigate={handleNavigate}
+              />
+            </RequirePermission>
+          )}
+
+          {activeTab === 'members' && (
+            <RequirePermission
+              permission={['MANAGE_STAFF', 'MANAGE_ORG_CHART', 'VIEW_ORG_CHART', 'SUPER_ADMIN', 'DASHBOARD_VIEW']}
+              mode="any"
+              fallback={<LockedViewFallback requiredPermission="MANAGE_STAFF" title="Members Directory Restricted" />}
+            >
+              <MembersGovernance
+                trustId={activeTrustId || 'trust_sringeri'}
+                onBack={() => handleNavigate('dashboard')}
+                onNavigate={handleNavigate}
+              />
+            </RequirePermission>
+          )}
+
+          {activeTab === 'add_temple' && (
+            <RequirePermission
+              permission={['MANAGE_TEMPLE_INFO', 'MANAGE_SEVAS', 'MANAGE_FACILITIES', 'MANAGE_PRIESTS', 'MANAGE_ROSTER', 'VIEW_SEVAS', 'VIEW_PRIESTS', 'SUPER_ADMIN', 'DASHBOARD_VIEW']}
+              mode="any"
+              fallback={<LockedViewFallback requiredPermission="MANAGE_TEMPLE_INFO" title="Add Temple Restricted" />}
+            >
+              <MastersHub
+                activeSubTab="temple_info"
+                onNavigate={(tab) => {
+                  if (tab === 'dashboard') handleNavigate('dashboard');
+                  else handleNavigate(tab);
+                }}
+                isCreationMode={true}
+                trustId={activeTrustId || 'trust_sringeri'}
+                onSaveSuccess={() => handleNavigate('dashboard')}
+                onBack={() => handleNavigate('dashboard')}
+              />
             </RequirePermission>
           )}
 
           {['masters_hub', 'temple_info', 'seva_master', 'temple_facilities', 'archaka_master', 'scheduling'].includes(activeTab) && (
-            <RequirePermission 
+            <RequirePermission
               permission={['MANAGE_TEMPLE_INFO', 'MANAGE_SEVAS', 'MANAGE_FACILITIES', 'MANAGE_PRIESTS', 'MANAGE_ROSTER', 'MANAGE_ORG_CHART', 'VIEW_SEVAS', 'VIEW_PRIESTS']}
               mode="any"
               fallback={<LockedViewFallback requiredPermission="MANAGE_TEMPLE_INFO" title="Devasthanam Masters Hub Restricted" />}
             >
-              <MastersHub 
-                activeSubTab={activeTab === 'masters_hub' ? 'temple_info' : activeTab} 
-                onNavigate={handleNavigate} 
+              <MastersHub
+                activeSubTab={activeTab === 'masters_hub' ? 'temple_info' : activeTab}
+                onNavigate={handleNavigate}
               />
             </RequirePermission>
           )}
@@ -229,7 +340,7 @@ function AdminPortalContent() {
           )} */}
 
           {activeTab === 'transactions' && (
-            <RequirePermission 
+            <RequirePermission
               permission="VIEW_FINANCE"
               fallback={<LockedViewFallback requiredPermission="VIEW_FINANCE" title="Financial Ledger Restricted" />}
             >
@@ -238,7 +349,7 @@ function AdminPortalContent() {
           )}
 
           {activeTab === 'prasadam' && (
-            <RequirePermission 
+            <RequirePermission
               permission="PROCESS_LOGISTICS"
               fallback={<LockedViewFallback requiredPermission="PROCESS_LOGISTICS" title="Holy Prasadam Logistics Restricted" />}
             >
@@ -247,7 +358,7 @@ function AdminPortalContent() {
           )}
 
           {activeTab === 'system_overview' && (
-            <RequirePermission 
+            <RequirePermission
               permission="VIEW_REPORTS"
               fallback={<LockedViewFallback requiredPermission="VIEW_REPORTS" title="System Reports Restricted" />}
             >
@@ -256,7 +367,7 @@ function AdminPortalContent() {
           )}
 
           {activeTab === 'calendar' && (
-            <RequirePermission 
+            <RequirePermission
               permission={['VIEW_BOOKINGS', 'REGISTER_BOOKINGS']}
               mode="any"
               fallback={<LockedViewFallback requiredPermission="VIEW_BOOKINGS" title="Devotee Bookings Calendar Restricted" />}
@@ -266,7 +377,7 @@ function AdminPortalContent() {
           )}
 
           {activeTab === 'settings' && (
-            <RequirePermission 
+            <RequirePermission
               permission="MANAGE_SETTINGS"
               fallback={<LockedViewFallback requiredPermission="MANAGE_SETTINGS" title="System Configuration Restricted" />}
             >
@@ -312,7 +423,7 @@ function AdminPortalContent() {
               {/* Form Body */}
               <form onSubmit={(e) => {
                 e.preventDefault();
-                
+
                 // Password validation logic
                 if (newPassword || confirmPassword || currentPassword) {
                   if (!currentPassword) {
@@ -341,7 +452,7 @@ function AdminPortalContent() {
                 setToastMessage('Administrative credentials and profile updated successfully!');
                 setTimeout(() => setToastMessage(null), 3500);
               }} className="flex-1 overflow-y-auto p-6 space-y-6">
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Left Column: Basic Details */}
                   <div className="space-y-4">
@@ -416,7 +527,7 @@ function AdminPortalContent() {
                       <h4 className="font-serif text-sm font-bold text-primary border-b border-outline-variant/30 pb-1.5 uppercase tracking-wider flex items-center gap-1.5">
                         <Camera size={14} /> Profile Icon
                       </h4>
-                      
+
                       <div className="grid grid-cols-4 gap-3">
                         {[
                           'https://lh3.googleusercontent.com/aida-public/AB6AXuCvn8h5qEhb1tDXNVQmH_C-7Bf3AF9LFkxb3WKWAvVYmxKc-TcXh1fjMMz-WjPg9zbdjB7Yrhy9eiYGkJBLgHovr8GAsE2ft4v7PT9xcRcGGi3JzCKWBozxxFHni9LfCSubIqySEm5J4TesuWgBjdcdegth7w_Lsgvd39ZpYyq-IgCKk-0lzzWXTvduEcTeXKyNURY3AzLe-YP0InifLRv0R4KmiNUF_JDCpbPVweyINkAPtpA7Rfnc7ZfS2hPyvRu8cJGasIwQyYQ',
@@ -428,11 +539,10 @@ function AdminPortalContent() {
                             key={idx}
                             type="button"
                             onClick={() => setFormAvatar(avatarUrl)}
-                            className={`relative rounded-xl overflow-hidden aspect-square border-2 transition-all cursor-pointer ${
-                              formAvatar === avatarUrl 
-                                ? 'border-primary ring-2 ring-primary/20 scale-95 shadow-md' 
+                            className={`relative rounded-xl overflow-hidden aspect-square border-2 transition-all cursor-pointer ${formAvatar === avatarUrl
+                                ? 'border-primary ring-2 ring-primary/20 scale-95 shadow-md'
                                 : 'border-outline-variant hover:border-primary/50'
-                            }`}
+                              }`}
                           >
                             <img src={avatarUrl} alt={`Preset ${idx + 1}`} className="w-full h-full object-cover" />
                             {formAvatar === avatarUrl && (

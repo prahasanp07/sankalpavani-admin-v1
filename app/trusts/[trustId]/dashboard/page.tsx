@@ -30,6 +30,8 @@ import {
   BookOpen,
   FolderTree
 } from 'lucide-react';
+import GovernanceMastersModal from '@/components/governance/GovernanceMastersModal';
+import { MasterType } from '@/lib/types/masters';
 
 interface TempleItem {
   id: string;
@@ -64,7 +66,8 @@ export default function TrustDashboardPage() {
 
   // Category Master & Navigation States
   const [categoryDropdownOpen, setCategoryDropdownOpen] = useState(false);
-  const [selectedCategoryMaster, setSelectedCategoryMaster] = useState<string | null>(null);
+  const [isMastersModalOpen, setIsMastersModalOpen] = useState(false);
+  const [mastersInitialTab, setMastersInitialTab] = useState<MasterType>('TRUSTEE_CATEGORY');
   const [toastNotification, setToastNotification] = useState<string | null>(null);
 
   const showToast = (msg: string) => {
@@ -72,22 +75,6 @@ export default function TrustDashboardPage() {
     setTimeout(() => setToastNotification(null), 3500);
   };
 
-  // Add Temple Modal State
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [modalError, setModalError] = useState<string | null>(null);
-  const [formData, setFormData] = useState({
-    name: '',
-    code: '',
-    deity: '',
-    tagline: '',
-    description: '',
-    hotline: '',
-    email: '',
-    city: '',
-    state: '',
-    status: 'ACTIVE' as 'ACTIVE' | 'MAINTENANCE' | 'SUSPENDED'
-  });
 
   const fetchTemples = async () => {
     setIsLoading(true);
@@ -174,61 +161,6 @@ export default function TrustDashboardPage() {
     }
   }, [trustId]);
 
-  const handleCreateTemple = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setModalError(null);
-
-    try {
-      const payload = {
-        name: formData.name,
-        code: formData.code,
-        deity: formData.deity,
-        tagline: formData.tagline,
-        description: formData.description,
-        addressJson: {
-          city: formData.city,
-          state: formData.state
-        },
-        contactJson: {
-          hotline: formData.hotline,
-          email: formData.email
-        },
-        status: formData.status
-      };
-
-      const res = await fetch(`/api/v1/trusts/${trustId}/temples`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-
-      const json = await res.json();
-      if (!res.ok) {
-        throw new Error(json.error?.message || 'Failed to create temple');
-      }
-
-      // Reset & Refresh
-      setFormData({
-        name: '',
-        code: '',
-        deity: '',
-        tagline: '',
-        description: '',
-        hotline: '',
-        email: '',
-        city: '',
-        state: '',
-        status: 'ACTIVE'
-      });
-      setIsAddModalOpen(false);
-      await fetchTemples();
-    } catch (err: any) {
-      setModalError(err.message || 'An error occurred while creating the temple');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   const filteredTemples = temples.filter(t => {
     const matchesSearch =
@@ -294,7 +226,7 @@ export default function TrustDashboardPage() {
               className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-surface-container hover:bg-surface-container-high border border-primary/30 text-primary font-sans text-xs font-bold transition-all cursor-pointer shadow-xs"
             >
               <ShieldCheck size={14} />
-              <span>Dynamic RBAC & Roles</span>
+              <span>Dynamic RBAC & Roles <span className="italic font-normal text-[10px] text-on-surface-variant">(Optional)</span></span>
             </button>
 
             {/* 3. Category (New implementation - Placeholder) */}
@@ -318,8 +250,8 @@ export default function TrustDashboardPage() {
                   <button
                     onClick={() => {
                       setCategoryDropdownOpen(false);
-                      setSelectedCategoryMaster('Trust Categories (Master)');
-                      showToast('Opening Trust Categories master configuration...');
+                      setMastersInitialTab('TRUSTEE_CATEGORY');
+                      setIsMastersModalOpen(true);
                     }}
                     className="w-full text-left px-2.5 py-2 rounded-xl text-xs font-sans font-semibold text-on-surface hover:bg-surface-container flex items-center gap-2 cursor-pointer transition-colors"
                   >
@@ -329,8 +261,8 @@ export default function TrustDashboardPage() {
                   <button
                     onClick={() => {
                       setCategoryDropdownOpen(false);
-                      setSelectedCategoryMaster('Membership Type (Master)');
-                      showToast('Opening Membership Type master configuration...');
+                      setMastersInitialTab('MEMBERSHIP_TYPE');
+                      setIsMastersModalOpen(true);
                     }}
                     className="w-full text-left px-2.5 py-2 rounded-xl text-xs font-sans font-semibold text-on-surface hover:bg-surface-container flex items-center gap-2 cursor-pointer transition-colors"
                   >
@@ -340,8 +272,8 @@ export default function TrustDashboardPage() {
                   <button
                     onClick={() => {
                       setCategoryDropdownOpen(false);
-                      setSelectedCategoryMaster('Committee Category (Master)');
-                      showToast('Opening Committee Category master configuration...');
+                      setMastersInitialTab('COMMITTEE_CATEGORY');
+                      setIsMastersModalOpen(true);
                     }}
                     className="w-full text-left px-2.5 py-2 rounded-xl text-xs font-sans font-semibold text-on-surface hover:bg-surface-container flex items-center gap-2 cursor-pointer transition-colors"
                   >
@@ -354,7 +286,7 @@ export default function TrustDashboardPage() {
 
             {/* 4. Add New Temple */}
             <button
-              onClick={() => setIsAddModalOpen(true)}
+              onClick={() => router.push(`/trusts/${trustId}/temples/new`)}
               className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-primary hover:bg-primary/90 text-on-primary font-sans text-xs font-bold shadow-sacred transition-all cursor-pointer"
             >
               <Plus size={14} />
@@ -419,7 +351,7 @@ export default function TrustDashboardPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="p-5 rounded-2xl bg-surface-container/60 border border-outline-variant/30 shadow-xs flex items-center justify-between">
             <div>
-              <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">Child Temples</p>
+              <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">Temples</p>
               <h3 className="font-serif text-2xl font-bold text-on-surface mt-1">{temples.length} Registered</h3>
               <p className="text-[10px] text-emerald-700 font-bold mt-0.5">{activeCount} Active / Operational</p>
             </div>
@@ -493,8 +425,8 @@ export default function TrustDashboardPage() {
                     key={st}
                     onClick={() => setStatusFilter(st)}
                     className={`px-2.5 py-1 rounded-lg transition-colors cursor-pointer ${statusFilter === st
-                        ? 'bg-primary text-on-primary shadow-xs'
-                        : 'text-on-surface-variant hover:text-on-surface'
+                      ? 'bg-primary text-on-primary shadow-xs'
+                      : 'text-on-surface-variant hover:text-on-surface'
                       }`}
                   >
                     {st === 'ALL' ? 'All' : st}
@@ -515,7 +447,7 @@ export default function TrustDashboardPage() {
                   : 'No temples have been created under this Trust yet. Click "+ Add New Temple" to initialize your first temple.'}
               </p>
               <button
-                onClick={() => setIsAddModalOpen(true)}
+                onClick={() => router.push(`/trusts/${trustId}/temples/new`)}
                 className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-on-primary font-sans text-xs font-bold shadow-sacred cursor-pointer"
               >
                 <Plus size={14} />
@@ -536,10 +468,10 @@ export default function TrustDashboardPage() {
                         {temple.code}
                       </span>
                       <span className={`text-[10px] font-bold flex items-center gap-1 px-2 py-0.5 rounded ${temple.status === 'ACTIVE'
-                          ? 'text-emerald-700 bg-emerald-500/10'
-                          : temple.status === 'MAINTENANCE'
-                            ? 'text-amber-700 bg-amber-500/10'
-                            : 'text-error bg-error/10'
+                        ? 'text-emerald-700 bg-emerald-500/10'
+                        : temple.status === 'MAINTENANCE'
+                          ? 'text-amber-700 bg-amber-500/10'
+                          : 'text-error bg-error/10'
                         }`}>
                         <Check size={12} /> {temple.status}
                       </span>
@@ -594,234 +526,13 @@ export default function TrustDashboardPage() {
         </div>
       </div>
 
-      {/* CREATE TEMPLE MODAL DIALOG */}
-      {isAddModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-surface rounded-3xl border border-primary/30 max-w-xl w-full p-6 md:p-8 shadow-sacred animate-[fadeIn_0.2s_ease-out]">
-            <div className="flex items-center justify-between pb-4 border-b divider-gold">
-              <div className="flex items-center gap-2.5">
-                <div className="p-2 rounded-xl bg-primary/10 text-primary">
-                  <Landmark size={20} />
-                </div>
-                <div>
-                  <h3 className="font-serif text-lg font-bold text-primary">Add New Temple</h3>
-                  <p className="text-xs text-on-surface-variant">Create a dynamically managed temple under {trustName}</p>
-                </div>
-              </div>
-              <button
-                onClick={() => setIsAddModalOpen(false)}
-                className="p-1.5 rounded-lg hover:bg-surface-container text-on-surface-variant hover:text-on-surface cursor-pointer"
-              >
-                <X size={18} />
-              </button>
-            </div>
-
-            {modalError && (
-              <div className="my-4 p-3 rounded-xl bg-error/10 border border-error/30 text-error text-xs flex items-center gap-2">
-                <AlertCircle size={16} />
-                <span>{modalError}</span>
-              </div>
-            )}
-
-            <form onSubmit={handleCreateTemple} className="space-y-4 mt-4 text-xs font-sans">
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div className="sm:col-span-2 space-y-1">
-                  <label className="font-bold text-on-surface">Temple Name *</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="e.g. Sri Vidyashankara Temple"
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full p-2.5 rounded-xl bg-surface-container-low border border-outline-variant/40 text-on-surface focus:outline-none focus:border-primary"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <label className="font-bold text-on-surface">Code (Unique) *</label>
-                  <input
-                    type="text"
-                    required
-                    maxLength={10}
-                    placeholder="e.g. SVT-01"
-                    value={formData.code}
-                    onChange={(e) => setFormData({ ...formData, code: e.target.value })}
-                    className="w-full p-2.5 rounded-xl bg-surface-container-low border border-outline-variant/40 text-on-surface uppercase font-mono focus:outline-none focus:border-primary"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div className="space-y-1">
-                  <label className="font-bold text-on-surface">Primary Deity / Sanctum</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. Lord Vidyashankara (Shiva)"
-                    value={formData.deity}
-                    onChange={(e) => setFormData({ ...formData, deity: e.target.value })}
-                    className="w-full p-2.5 rounded-xl bg-surface-container-low border border-outline-variant/40 text-on-surface focus:outline-none focus:border-primary"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <label className="font-bold text-on-surface">Initial Status</label>
-                  <select
-                    value={formData.status}
-                    onChange={(e) => setFormData({ ...formData, status: e.target.value as any })}
-                    className="w-full p-2.5 rounded-xl bg-surface-container-low border border-outline-variant/40 text-on-surface focus:outline-none focus:border-primary"
-                  >
-                    <option value="ACTIVE">ACTIVE (Operational)</option>
-                    <option value="MAINTENANCE">MAINTENANCE</option>
-                    <option value="SUSPENDED">SUSPENDED</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="space-y-1">
-                <label className="font-bold text-on-surface">Tagline / Brief Subtitle</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Ancient 14th-Century Astronomical Temple & Sacred Samadhi"
-                  value={formData.tagline}
-                  onChange={(e) => setFormData({ ...formData, tagline: e.target.value })}
-                  className="w-full p-2.5 rounded-xl bg-surface-container-low border border-outline-variant/40 text-on-surface focus:outline-none focus:border-primary"
-                />
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div className="space-y-1">
-                  <label className="font-bold text-on-surface">Hotline / Contact Phone</label>
-                  <input
-                    type="text"
-                    placeholder="+91 82652 50123"
-                    value={formData.hotline}
-                    onChange={(e) => setFormData({ ...formData, hotline: e.target.value })}
-                    className="w-full p-2.5 rounded-xl bg-surface-container-low border border-outline-variant/40 text-on-surface focus:outline-none focus:border-primary"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <label className="font-bold text-on-surface">Official Email</label>
-                  <input
-                    type="email"
-                    placeholder="office@temple.org"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full p-2.5 rounded-xl bg-surface-container-low border border-outline-variant/40 text-on-surface focus:outline-none focus:border-primary"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div className="space-y-1">
-                  <label className="font-bold text-on-surface">City / Kshetram</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. Sringeri"
-                    value={formData.city}
-                    onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                    className="w-full p-2.5 rounded-xl bg-surface-container-low border border-outline-variant/40 text-on-surface focus:outline-none focus:border-primary"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <label className="font-bold text-on-surface">State</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. Karnataka"
-                    value={formData.state}
-                    onChange={(e) => setFormData({ ...formData, state: e.target.value })}
-                    className="w-full p-2.5 rounded-xl bg-surface-container-low border border-outline-variant/40 text-on-surface focus:outline-none focus:border-primary"
-                  />
-                </div>
-              </div>
-
-              <div className="flex items-center justify-end gap-3 pt-4 border-t border-outline-variant/30">
-                <button
-                  type="button"
-                  onClick={() => setIsAddModalOpen(false)}
-                  className="px-4 py-2.5 rounded-xl border border-outline-variant/40 text-on-surface font-bold hover:bg-surface-container cursor-pointer"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-on-primary font-bold shadow-sacred hover:bg-primary/90 disabled:opacity-50 cursor-pointer"
-                >
-                  {isSubmitting ? (
-                    <span>Creating Temple...</span>
-                  ) : (
-                    <>
-                      <Plus size={16} />
-                      <span>Save & Create Temple</span>
-                    </>
-                  )}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Category Master Placeholder Modal */}
-      {selectedCategoryMaster && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="max-w-md w-full bg-surface-container-lowest rounded-3xl border border-outline-variant/40 p-6 shadow-2xl space-y-4 animate-[scaleUp_0.2s_ease-out]">
-            <div className="flex items-center justify-between pb-3 border-b divider-gold">
-              <div className="flex items-center gap-2 text-primary font-bold">
-                <Tag size={18} />
-                <h3 className="font-serif text-lg">{selectedCategoryMaster}</h3>
-              </div>
-              <button
-                onClick={() => setSelectedCategoryMaster(null)}
-                className="p-1 rounded-full text-on-surface-variant hover:text-on-surface hover:bg-surface-container cursor-pointer"
-              >
-                <X size={18} />
-              </button>
-            </div>
-
-            <p className="text-xs text-on-surface-variant leading-relaxed">
-              This master defines standard classification taxonomies for <strong className="text-on-surface">{selectedCategoryMaster}</strong> across the trust hierarchy.
-            </p>
-
-            <div className="bg-surface-container-low rounded-2xl p-4 border border-outline-variant/30 space-y-2 text-xs">
-              <div className="flex items-center justify-between text-[11px] font-mono text-on-surface-variant font-semibold">
-                <span>Preset Taxonomy Records</span>
-                <span className="text-primary font-bold">Master Table</span>
-              </div>
-              {selectedCategoryMaster.includes('Trust Categories') && (
-                <ul className="space-y-1 text-on-surface pt-1">
-                  <li className="flex items-center gap-2">🔹 Religious & Spiritual Peetham</li>
-                  <li className="flex items-center gap-2">🔹 Charitable & Annadanam Endowment</li>
-                  <li className="flex items-center gap-2">🔹 Heritage & Architectural Devasthanam</li>
-                </ul>
-              )}
-              {selectedCategoryMaster.includes('Membership Type') && (
-                <ul className="space-y-1 text-on-surface pt-1">
-                  <li className="flex items-center gap-2">🔹 Apex Governance Head</li>
-                  <li className="flex items-center gap-2">🔹 General Body Voting Member</li>
-                  <li className="flex items-center gap-2">🔹 Nominated Advisory Member</li>
-                  <li className="flex items-center gap-2">🔹 Life Patron / Mahadatha</li>
-                </ul>
-              )}
-              {selectedCategoryMaster.includes('Committee Category') && (
-                <ul className="space-y-1 text-on-surface pt-1">
-                  <li className="flex items-center gap-2">🔹 Statutory Audit & Accounts Committee</li>
-                  <li className="flex items-center gap-2">🔹 Festival & Brahmotsavam Planning Wing</li>
-                  <li className="flex items-center gap-2">🔹 Agama & Sanctum Advisory Committee</li>
-                  <li className="flex items-center gap-2">🔹 Works & Infrastructure Committee</li>
-                </ul>
-              )}
-            </div>
-
-            <div className="pt-2 flex justify-end">
-              <button
-                onClick={() => setSelectedCategoryMaster(null)}
-                className="px-5 py-2.5 rounded-xl bg-primary text-on-primary font-sans text-xs font-bold shadow-sacred hover:bg-primary/90 cursor-pointer"
-              >
-                Done
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Governance Masters Modal */}
+      <GovernanceMastersModal
+        isOpen={isMastersModalOpen}
+        onClose={() => setIsMastersModalOpen(false)}
+        trustId={trustId}
+        initialTab={mastersInitialTab}
+      />
 
       {/* Floating Toast Alert */}
       {toastNotification && (

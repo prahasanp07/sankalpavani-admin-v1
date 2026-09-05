@@ -15,7 +15,15 @@ import {
   CheckCircle,
   Tag,
   CreditCard,
-  Printer
+  Printer,
+  CheckCircle2,
+  QrCode,
+  Smartphone,
+  Building,
+  ShieldCheck,
+  Sparkles,
+  RefreshCw,
+  ArrowRight
 } from 'lucide-react';
 import RequirePermission from './RequirePermission';
 
@@ -176,10 +184,10 @@ export default function CalendarView() {
       amount: DEFAULT_SEVAS[0].price,
       bookingDate: todayStr,
       timeSlot: '09:00 AM',
-      paymentStatus: 'Paid' as Booking['paymentStatus'],
+      paymentStatus: 'Pending' as Booking['paymentStatus'],
       persons: 1,
       age: '',
-      gender: 'Male',
+      gender: '',
       paymentMode: 'Cash' as Booking['paymentMode'],
       assignedArchakaId: '',
       pilgrims: [] as Pilgrim[]
@@ -188,6 +196,64 @@ export default function CalendarView() {
 
   const [archakas, setArchakas] = useState<Archaka[]>([]);
   const [conflictWarning, setConflictWarning] = useState<string | null>(null);
+
+  // Payment Gateway / UPI QR Modal State
+  const [paymentModalOpen, setPaymentModalOpen] = useState(false);
+  const [paymentGatewayType, setPaymentGatewayType] = useState<'UPI' | 'Card' | 'Net Banking'>('UPI');
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+  const [selectedBank, setSelectedBank] = useState('HDFC Bank');
+  const [cardHolderName, setCardHolderName] = useState('');
+  const [cardNumber, setCardNumber] = useState('4532 8901 2345 8821');
+  const [cardExpiry, setCardExpiry] = useState('08/28');
+  const [cardCvv, setCardCvv] = useState('882');
+
+  const openPaymentGateway = (mode: 'UPI' | 'Card' | 'Net Banking') => {
+    setPaymentGatewayType(mode);
+    setPaymentModalOpen(true);
+  };
+
+  const simulatePaymentSuccess = () => {
+    setIsProcessingPayment(true);
+    setTimeout(() => {
+      setIsProcessingPayment(false);
+      setPaymentModalOpen(false);
+      setNewBookingForm(prev => ({
+        ...prev,
+        paymentStatus: 'Paid',
+        paymentMode: paymentGatewayType
+      }));
+      triggerToast('Thank you payment is successful Seva is booked');
+    }, 1000);
+  };
+
+  const openAddBookingModal = (customDate?: string) => {
+    const todayStr = formatDateString(new Date());
+    const targetDate = customDate 
+      ? (customDate < todayStr ? todayStr : customDate) 
+      : (selectedDateStr < todayStr ? todayStr : selectedDateStr);
+
+    if (customDate && customDate < todayStr) {
+      triggerToast("Cannot register bookings for past dates. Defaulting to today.");
+    }
+
+    setNewBookingForm({
+      devoteeName: '',
+      gotra: gotramsList[0],
+      nakshetra: nakshatramsList[0],
+      sevaName: sevas[0]?.name || DEFAULT_SEVAS[0].name,
+      amount: calculateBookingCost(sevas[0]?.name || DEFAULT_SEVAS[0].name, 1),
+      bookingDate: targetDate,
+      timeSlot: '09:00 AM',
+      paymentStatus: 'Pending',
+      persons: 1,
+      age: '',
+      gender: '',
+      paymentMode: 'Cash',
+      assignedArchakaId: '',
+      pilgrims: []
+    });
+    setShowAddModal(true);
+  };
 
   // Helper to determine the booking slot availability status of a given date (dateStr: YYYY-MM-DD)
   const getDayAvailabilityStatus = (dateStr: string) => {
@@ -645,7 +711,7 @@ export default function CalendarView() {
       amount: sevas[0]?.price || 0,
       bookingDate: selectedDateStr,
       timeSlot: '09:00 AM',
-      paymentStatus: 'Paid',
+      paymentStatus: 'Pending',
       persons: 1,
       age: '',
       gender: 'Male',
@@ -783,19 +849,7 @@ export default function CalendarView() {
             lockedMessage="Booking Locked"
           >
             <button
-              onClick={() => {
-                const todayStr = formatDateString(new Date());
-                if (selectedDateStr < todayStr) {
-                  triggerToast("Cannot register bookings for past dates. Defaulting to today.");
-                  setSelectedDateStr(todayStr);
-                }
-                const targetDate = selectedDateStr < todayStr ? todayStr : selectedDateStr;
-                setNewBookingForm(prev => ({
-                  ...prev,
-                  bookingDate: targetDate
-                }));
-                setShowAddModal(true);
-              }}
+              onClick={() => openAddBookingModal()}
               className="flex items-center gap-1.5 bg-primary hover:bg-on-primary-container text-on-primary font-bold px-4 py-2.5 rounded-xl text-xs shadow-sm hover:shadow-md transition-all cursor-pointer w-full sm:w-auto justify-center"
             >
               <Plus size={14} />
@@ -860,11 +914,7 @@ export default function CalendarView() {
                           return;
                         }
                         setSelectedDateStr(cell.dateStr);
-                        setNewBookingForm(prev => ({
-                          ...prev,
-                          bookingDate: cell.dateStr
-                        }));
-                        setShowAddModal(true);
+                        openAddBookingModal(cell.dateStr);
                       }}
                       className={`min-h-[55px] sm:min-h-[62px] md:min-h-[72px] lg:min-h-[80px] p-1.5 rounded-xl border flex flex-col justify-between transition-all select-none cursor-pointer border-t-4 ${availability.color === 'red'
                         ? 'border-t-red-500'
@@ -1029,10 +1079,12 @@ export default function CalendarView() {
             {/* Header selection info */}
             <div className="border-b divider-gold pb-3 flex justify-between items-center">
               <div>
-                <h3 className="font-serif text-lg font-bold text-primary">Agenda Overview</h3>
-                <p className="font-sans text-xs text-on-surface-variant font-medium mt-0.5">
-                  Selected date: <span className="font-mono font-bold text-primary">{selectedDateStr}</span>
-                </p>
+                <h3 className="font-serif text-base font-bold text-primary flex items-center gap-2">
+                  <span>Seva Overview -</span>
+                  <span className="font-mono text-sm font-semibold text-on-surface-variant">
+                    {selectedDateStr || formatDateString(new Date())}
+                  </span>
+                </h3>
               </div>
               <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-primary-container/20 border border-primary/20 text-xs font-bold text-primary">
                 {activeDayBookings.length}
@@ -1045,13 +1097,7 @@ export default function CalendarView() {
                 <span>No bookings scheduled for this date.</span>
                 {selectedDateStr >= formatDateString(new Date()) ? (
                   <button
-                    onClick={() => {
-                      setNewBookingForm(prev => ({
-                        ...prev,
-                        bookingDate: selectedDateStr
-                      }));
-                      setShowAddModal(true);
-                    }}
+                    onClick={() => openAddBookingModal(selectedDateStr)}
                     className="text-primary hover:text-on-primary-container text-xs font-bold flex items-center gap-1 cursor-pointer"
                   >
                     <Plus size={12} /> Add Booking
@@ -1145,19 +1191,7 @@ export default function CalendarView() {
                 className="w-full justify-center py-2.5"
               >
                 <button
-                  onClick={() => {
-                    const todayStr = formatDateString(new Date());
-                    if (selectedDateStr < todayStr) {
-                      triggerToast("Cannot register bookings for past dates. Defaulting to today.");
-                      setSelectedDateStr(todayStr);
-                    }
-                    const targetDate = selectedDateStr < todayStr ? todayStr : selectedDateStr;
-                    setNewBookingForm(prev => ({
-                      ...prev,
-                      bookingDate: targetDate
-                    }));
-                    setShowAddModal(true);
-                  }}
+                  onClick={() => openAddBookingModal(selectedDateStr)}
                   className="w-full border border-primary/30 hover:border-primary bg-primary/5 hover:bg-primary/10 text-primary py-2.5 rounded-xl font-bold text-xs shadow-sm transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                 >
                   <Plus size={14} />
@@ -1215,26 +1249,27 @@ export default function CalendarView() {
                   </div>
                 </div>
 
-                {/* Age */}
+                {/* Age (Optional) */}
                 <div className="flex flex-col gap-1">
-                  <label className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Age</label>
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Age (Optional)</label>
                   <input
                     type="number"
                     value={newBookingForm.age}
                     onChange={(e) => setNewBookingForm({ ...newBookingForm, age: e.target.value })}
-                    placeholder="Age"
+                    placeholder="Age (Optional)"
                     className="w-full px-3 py-2.5 bg-surface-container-low border border-outline rounded-xl text-xs focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
                   />
                 </div>
 
-                {/* Gender */}
+                {/* Gender (Optional) */}
                 <div className="flex flex-col gap-1">
-                  <label className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Gender</label>
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Gender (Optional)</label>
                   <select
                     value={newBookingForm.gender}
                     onChange={(e) => setNewBookingForm({ ...newBookingForm, gender: e.target.value })}
                     className="w-full px-3 py-2.5 bg-surface-container-low border border-outline rounded-xl text-xs focus:outline-none appearance-none cursor-pointer text-on-surface font-semibold text-on-surface-variant"
                   >
+                    <option value="">Select Gender (Optional)...</option>
                     <option value="Male">Male</option>
                     <option value="Female">Female</option>
                     <option value="Other">Other</option>
@@ -1472,58 +1507,89 @@ export default function CalendarView() {
                   )}
                 </div>
 
-                {/* Status Selection */}
-                <div className="flex flex-col gap-1">
-                  <label className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Payment Gateway Status</label>
-                  <div className="relative">
-                    <CreditCard size={13} className="absolute left-3 top-3.5 text-primary" />
-                    <select
-                      value={newBookingForm.paymentStatus}
-                      onChange={(e) => setNewBookingForm({ ...newBookingForm, paymentStatus: e.target.value as Booking['paymentStatus'] })}
-                      className="w-full pl-9 pr-4 py-2.5 bg-surface-container-low border border-outline rounded-xl text-xs focus:outline-none appearance-none cursor-pointer font-bold text-on-surface-variant"
-                    >
-                      <option value="Paid">Paid</option>
-                      <option value="Pending">Pending</option>
-                      <option value="Refunded">Refunded</option>
-                    </select>
+                {/* Mode of Payment & Pay button */}
+                <div className="flex flex-col gap-1.5 sm:col-span-2 bg-surface-container-low/40 p-3.5 rounded-2xl border border-outline-variant/30">
+                  <div className="flex items-center justify-between">
+                    <label className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant flex items-center gap-1">
+                      <CreditCard size={12} className="text-primary" />
+                      <span>Mode of Payment</span>
+                    </label>
+                    {newBookingForm.paymentStatus === 'Paid' && (
+                      <span className="text-[10px] text-green-600 font-bold flex items-center gap-1">
+                        <CheckCircle2 size={12} /> Payment Completed
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-12 gap-2.5 items-center">
+                    <div className="sm:col-span-6 relative">
+                      <span className="material-symbols-outlined absolute left-3 top-2.5 text-primary text-[16px]">payments</span>
+                      <select
+                        value={newBookingForm.paymentMode || 'Cash'}
+                        onChange={(e) => {
+                          const mode = e.target.value as Booking['paymentMode'];
+                          setNewBookingForm({ ...newBookingForm, paymentMode: mode });
+                        }}
+                        className="w-full pl-9 pr-4 py-2.5 bg-surface-container border border-outline rounded-xl text-xs focus:outline-none appearance-none cursor-pointer font-bold text-on-surface"
+                      >
+                        <option value="Cash">Cash (Counter Collection)</option>
+                        <option value="UPI">UPI (QR Code / Dynamic VPA)</option>
+                        <option value="Card">Card (Credit / Debit Card)</option>
+                        <option value="Net Banking">Net Banking</option>
+                      </select>
+                    </div>
+
+                    <div className="sm:col-span-6">
+                      {newBookingForm.paymentMode === 'UPI' ? (
+                        <button
+                          type="button"
+                          onClick={() => openPaymentGateway('UPI')}
+                          className="w-full py-2.5 px-3 bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-md cursor-pointer active:scale-95"
+                        >
+                          <QrCode size={14} />
+                          <span>Pay via UPI (Generate QR)</span>
+                        </button>
+                      ) : newBookingForm.paymentMode === 'Card' || newBookingForm.paymentMode === 'Net Banking' ? (
+                        <button
+                          type="button"
+                          onClick={() => openPaymentGateway(newBookingForm.paymentMode as any)}
+                          className="w-full py-2.5 px-3 bg-gradient-to-r from-primary to-primary-container text-on-primary rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-md cursor-pointer active:scale-95"
+                        >
+                          <CreditCard size={14} />
+                          <span>Pay ₹{newBookingForm.amount} (Payment Gateway)</span>
+                        </button>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setNewBookingForm(prev => ({ ...prev, paymentStatus: 'Paid' }));
+                            triggerToast('Cash payment received & marked as Paid');
+                          }}
+                          className="w-full py-2.5 px-3 bg-surface-container-high hover:bg-surface-container-highest border border-outline-variant/40 text-on-surface rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-xs cursor-pointer active:scale-95"
+                        >
+                          <Check size={14} className="text-green-600" />
+                          <span>Mark Cash as Paid</span>
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
 
-                {/* Mode of Payment */}
-                <div className="flex flex-col gap-1">
-                  <label className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Mode of Payment</label>
-                  <div className="relative">
-                    <span className="material-symbols-outlined absolute left-3 top-2.5 text-primary text-[16px]">payments</span>
-                    <select
-                      value={newBookingForm.paymentMode || 'Cash'}
-                      onChange={(e) => setNewBookingForm({ ...newBookingForm, paymentMode: e.target.value as Booking['paymentMode'] })}
-                      className="w-full pl-9 pr-4 py-2.5 bg-surface-container-low border border-outline rounded-xl text-xs focus:outline-none appearance-none cursor-pointer font-bold text-on-surface-variant"
-                    >
-                      <option value="Cash">Cash</option>
-                      <option value="UPI">UPI</option>
-                      <option value="Card">Card</option>
-                      <option value="Net Banking">Net Banking</option>
-                    </select>
+                {/* Payment Gateway Status - Appears only when payment is successful */}
+                {newBookingForm.paymentStatus === 'Paid' && (
+                  <div className="flex flex-col gap-1 sm:col-span-2 animate-[fadeIn_0.3s_ease-out]">
+                    <label className="text-[10px] font-bold uppercase tracking-wider text-green-700">Payment Gateway Status</label>
+                    <div className="p-3.5 bg-green-500/15 border border-green-500/30 rounded-2xl flex items-center justify-between gap-2.5 text-green-800 text-xs font-bold shadow-xs">
+                      <div className="flex items-center gap-2">
+                        <CheckCircle2 size={18} className="text-green-600 shrink-0 animate-bounce" />
+                        <span>Thank you payment is successful Seva is booked</span>
+                      </div>
+                      <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-green-600 text-white font-bold tracking-wide">
+                        PAID
+                      </span>
+                    </div>
                   </div>
-                </div>
-
-                {/* Assign Archaka (Optional) */}
-                <div className="flex flex-col gap-1 sm:col-span-2">
-                  <label className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Assign Archaka (Optional)</label>
-                  <div className="relative">
-                    <User size={13} className="absolute left-3 top-3.5 text-primary" />
-                    <select
-                      value={newBookingForm.assignedArchakaId || ''}
-                      onChange={(e) => setNewBookingForm({ ...newBookingForm, assignedArchakaId: e.target.value })}
-                      className="w-full pl-9 pr-4 py-2.5 bg-surface-container-low border border-outline rounded-xl text-xs focus:outline-none appearance-none cursor-pointer font-bold text-on-surface-variant"
-                    >
-                      <option value="">-- Unassigned --</option>
-                      {archakas.map(a => (
-                        <option key={a.id} value={a.id}>{a.name} ({a.role})</option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
+                )}
 
                 {/* Conflict warning banner */}
                 {conflictWarning && (
@@ -1725,6 +1791,257 @@ export default function CalendarView() {
               </div>
             </div>
 
+          </div>
+        </div>
+      )}
+
+      {/* MODAL: Payment Gateway & UPI QR Code Simulation (MVP) */}
+      {paymentModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/65 backdrop-blur-md animate-[fadeIn_0.2s_ease-out] p-4">
+          <div className="absolute inset-0" onClick={() => !isProcessingPayment && setPaymentModalOpen(false)} />
+
+          <div className="bg-surface-container-lowest w-full max-w-md rounded-3xl shadow-2xl border border-primary/30 overflow-hidden flex flex-col relative z-10 animate-[scaleIn_0.2s_ease-out]">
+            {/* Header */}
+            <div className="px-6 py-4 border-b divider-gold flex justify-between items-center bg-surface-container-low shrink-0">
+              <div className="flex items-center gap-2.5">
+                <div className="p-2 rounded-xl bg-primary/10 text-primary">
+                  {paymentGatewayType === 'UPI' ? <QrCode size={18} /> : <CreditCard size={18} />}
+                </div>
+                <div>
+                  <h3 className="font-serif text-base font-bold text-primary">
+                    {paymentGatewayType === 'UPI' ? 'UPI Payment Gateway' : paymentGatewayType === 'Card' ? 'Debit / Credit Card Gateway' : 'Net Banking Portal'}
+                  </h3>
+                  <p className="text-[10px] text-on-surface-variant font-medium">
+                    256-Bit SSL Encrypted Sacred Payment Gateway
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                disabled={isProcessingPayment}
+                onClick={() => setPaymentModalOpen(false)}
+                className="p-1 hover:bg-outline-variant/15 text-on-surface-variant hover:text-on-surface rounded-lg transition-colors cursor-pointer disabled:opacity-50"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* Content Body */}
+            <div className="p-6 space-y-4 text-xs font-sans">
+              {/* Summary Pill */}
+              <div className="p-3.5 bg-primary/5 rounded-2xl border border-primary/15 flex items-center justify-between">
+                <div>
+                  <span className="text-[10px] uppercase font-bold text-on-surface-variant tracking-wider block">Devotee Seva Total</span>
+                  <span className="font-serif text-sm font-bold text-primary">{newBookingForm.sevaName}</span>
+                  <span className="text-[11px] text-on-surface-variant block mt-0.5">Devotee: {newBookingForm.devoteeName || 'Primary Devotee'}</span>
+                </div>
+                <div className="text-right">
+                  <span className="text-[10px] uppercase font-bold text-on-surface-variant tracking-wider block">Payable</span>
+                  <span className="font-mono text-xl font-bold text-primary">₹{newBookingForm.amount}</span>
+                </div>
+              </div>
+
+              {/* Mode Tabs */}
+              <div className="grid grid-cols-3 gap-1.5 p-1 bg-surface-container rounded-xl">
+                <button
+                  type="button"
+                  onClick={() => setPaymentGatewayType('UPI')}
+                  className={`py-1.5 text-center text-xs font-bold rounded-lg transition-all cursor-pointer ${
+                    paymentGatewayType === 'UPI'
+                      ? 'bg-primary text-on-primary shadow-xs'
+                      : 'text-on-surface-variant hover:text-on-surface'
+                  }`}
+                >
+                  UPI QR
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPaymentGatewayType('Card')}
+                  className={`py-1.5 text-center text-xs font-bold rounded-lg transition-all cursor-pointer ${
+                    paymentGatewayType === 'Card'
+                      ? 'bg-primary text-on-primary shadow-xs'
+                      : 'text-on-surface-variant hover:text-on-surface'
+                  }`}
+                >
+                  Card
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPaymentGatewayType('Net Banking')}
+                  className={`py-1.5 text-center text-xs font-bold rounded-lg transition-all cursor-pointer ${
+                    paymentGatewayType === 'Net Banking'
+                      ? 'bg-primary text-on-primary shadow-xs'
+                      : 'text-on-surface-variant hover:text-on-surface'
+                  }`}
+                >
+                  NetBanking
+                </button>
+              </div>
+
+              {/* UPI QR Code View */}
+              {paymentGatewayType === 'UPI' && (
+                <div className="flex flex-col items-center justify-center p-4 bg-surface-container-low rounded-2xl border border-outline-variant/30 space-y-3">
+                  <div className="p-3 bg-white rounded-2xl border-2 border-primary/20 shadow-md flex flex-col items-center">
+                    {/* SVG QR Code Simulation */}
+                    <div className="w-40 h-40 bg-white p-2 rounded-xl flex items-center justify-center relative">
+                      <svg viewBox="0 0 100 100" className="w-full h-full text-zinc-900 fill-current">
+                        {/* QR Corners */}
+                        <rect x="5" y="5" width="25" height="25" rx="3" fill="#1e1e1e" />
+                        <rect x="8" y="8" width="19" height="19" rx="2" fill="#ffffff" />
+                        <rect x="11" y="11" width="13" height="13" fill="#1e1e1e" />
+
+                        <rect x="70" y="5" width="25" height="25" rx="3" fill="#1e1e1e" />
+                        <rect x="73" y="8" width="19" height="19" rx="2" fill="#ffffff" />
+                        <rect x="76" y="11" width="13" height="13" fill="#1e1e1e" />
+
+                        <rect x="5" y="70" width="25" height="25" rx="3" fill="#1e1e1e" />
+                        <rect x="8" y="73" width="19" height="19" rx="2" fill="#ffffff" />
+                        <rect x="11" y="76" width="13" height="13" fill="#1e1e1e" />
+
+                        {/* QR Patterns */}
+                        <rect x="36" y="8" width="8" height="8" fill="#1e1e1e" />
+                        <rect x="50" y="8" width="8" height="8" fill="#1e1e1e" />
+                        <rect x="36" y="22" width="8" height="8" fill="#1e1e1e" />
+                        <rect x="50" y="22" width="8" height="8" fill="#1e1e1e" />
+
+                        <rect x="8" y="36" width="8" height="8" fill="#1e1e1e" />
+                        <rect x="22" y="36" width="8" height="8" fill="#1e1e1e" />
+                        <rect x="8" y="50" width="8" height="8" fill="#1e1e1e" />
+                        <rect x="22" y="50" width="8" height="8" fill="#1e1e1e" />
+
+                        <rect x="36" y="36" width="28" height="28" rx="4" fill="#8F4E00" />
+                        <rect x="42" y="42" width="16" height="16" rx="2" fill="#ffffff" />
+                        <circle cx="50" cy="50" r="5" fill="#8F4E00" />
+
+                        <rect x="70" y="36" width="8" height="8" fill="#1e1e1e" />
+                        <rect x="84" y="36" width="8" height="8" fill="#1e1e1e" />
+                        <rect x="70" y="50" width="8" height="8" fill="#1e1e1e" />
+                        <rect x="84" y="50" width="8" height="8" fill="#1e1e1e" />
+
+                        <rect x="36" y="70" width="8" height="8" fill="#1e1e1e" />
+                        <rect x="50" y="70" width="8" height="8" fill="#1e1e1e" />
+                        <rect x="36" y="84" width="8" height="8" fill="#1e1e1e" />
+                        <rect x="50" y="84" width="8" height="8" fill="#1e1e1e" />
+
+                        <rect x="70" y="70" width="8" height="8" fill="#1e1e1e" />
+                        <rect x="84" y="70" width="8" height="8" fill="#1e1e1e" />
+                        <rect x="70" y="84" width="8" height="8" fill="#1e1e1e" />
+                        <rect x="84" y="84" width="8" height="8" fill="#1e1e1e" />
+                      </svg>
+                    </div>
+                    <span className="text-[10px] font-mono font-bold text-zinc-700 mt-1">sringeri.math@icici</span>
+                  </div>
+
+                  <p className="text-[11px] text-center text-on-surface-variant">
+                    Scan with <strong className="text-on-surface">GPay, PhonePe, Paytm, BHIM</strong> to complete seva payment.
+                  </p>
+                </div>
+              )}
+
+              {/* Card Gateway View */}
+              {paymentGatewayType === 'Card' && (
+                <div className="space-y-3 bg-surface-container-low p-4 rounded-2xl border border-outline-variant/30">
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold text-on-surface-variant uppercase">Card Number</label>
+                    <div className="relative">
+                      <CreditCard size={14} className="absolute left-3 top-3 text-primary" />
+                      <input
+                        type="text"
+                        value={cardNumber}
+                        onChange={(e) => setCardNumber(e.target.value)}
+                        placeholder="•••• •••• •••• ••••"
+                        className="w-full pl-9 pr-3 py-2 bg-surface border border-outline rounded-xl font-mono text-xs text-on-surface focus:outline-none focus:border-primary"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-bold text-on-surface-variant uppercase">Valid Thru</label>
+                      <input
+                        type="text"
+                        value={cardExpiry}
+                        onChange={(e) => setCardExpiry(e.target.value)}
+                        placeholder="MM/YY"
+                        className="w-full px-3 py-2 bg-surface border border-outline rounded-xl font-mono text-xs text-on-surface focus:outline-none focus:border-primary"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-bold text-on-surface-variant uppercase">CVV</label>
+                      <input
+                        type="password"
+                        maxLength={4}
+                        value={cardCvv}
+                        onChange={(e) => setCardCvv(e.target.value)}
+                        placeholder="•••"
+                        className="w-full px-3 py-2 bg-surface border border-outline rounded-xl font-mono text-xs text-on-surface focus:outline-none focus:border-primary"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-1.5 text-[10px] text-green-700 font-medium">
+                    <ShieldCheck size={14} className="text-green-600" />
+                    <span>Protected by 3D-Secure 2.0 OTP verification</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Net Banking View */}
+              {paymentGatewayType === 'Net Banking' && (
+                <div className="space-y-3 bg-surface-container-low p-4 rounded-2xl border border-outline-variant/30">
+                  <label className="text-[10px] font-bold text-on-surface-variant uppercase block">Select Popular Bank</label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {['HDFC Bank', 'State Bank of India', 'ICICI Bank', 'Axis Bank', 'Canara Bank', 'Kotak Mahindra'].map((b) => (
+                      <button
+                        key={b}
+                        type="button"
+                        onClick={() => setSelectedBank(b)}
+                        className={`p-2 rounded-xl text-xs font-bold border text-left flex items-center gap-2 transition-all cursor-pointer ${
+                          selectedBank === b
+                            ? 'bg-primary-container/20 border-primary text-primary shadow-xs'
+                            : 'bg-surface border-outline-variant/40 text-on-surface hover:bg-surface-container'
+                        }`}
+                      >
+                        <Building size={13} className="shrink-0" />
+                        <span className="truncate">{b}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Simulation Action Button */}
+              <div className="pt-2">
+                <button
+                  type="button"
+                  disabled={isProcessingPayment}
+                  onClick={simulatePaymentSuccess}
+                  className="w-full py-3 px-4 bg-gradient-to-r from-primary to-primary-container hover:from-primary/90 hover:to-primary-container/90 text-on-primary rounded-2xl text-xs font-bold shadow-sacred transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 active:scale-95"
+                >
+                  {isProcessingPayment ? (
+                    <>
+                      <RefreshCw size={14} className="animate-spin" />
+                      <span>Authenticating & Processing Payment...</span>
+                    </>
+                  ) : paymentGatewayType === 'UPI' ? (
+                    <>
+                      <Smartphone size={14} />
+                      <span>Simulate Devotee UPI App Approval</span>
+                    </>
+                  ) : paymentGatewayType === 'Card' ? (
+                    <>
+                      <ShieldCheck size={14} />
+                      <span>Authorize ₹{newBookingForm.amount} via Card</span>
+                    </>
+                  ) : (
+                    <>
+                      <Building size={14} />
+                      <span>Proceed to {selectedBank} & Authorize</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}

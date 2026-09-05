@@ -9,16 +9,7 @@ const CreateCommitteeSchema = z.object({
   scopeType: z.enum(['TRUST', 'TEMPLE']).default('TRUST'),
   scopeId: z.string().optional(),
   parentId: z.string().nullable().optional(),
-  category: z.enum([
-    'STANDING',
-    'AD_HOC',
-    'ADVISORY',
-    'RENOVATION',
-    'FESTIVAL',
-    'FINANCE',
-    'LEGAL',
-    'CUSTOM'
-  ]).default('STANDING'),
+  category: z.string().optional().default('STANDING'),
   mandate: z.string().optional(),
   formationDate: z.string().optional(),
   dissolutionDate: z.string().nullable().optional(),

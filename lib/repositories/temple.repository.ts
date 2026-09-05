@@ -27,20 +27,24 @@ export interface CreateTempleInput {
     phone?: string;
     [key: string]: any;
   };
-  status?: 'ACTIVE' | 'SUSPENDED' | 'MAINTENANCE';
+  status?: 'ACTIVE' | 'OPERATIONAL' | 'SUSPENDED' | 'MAINTENANCE';
 }
 
 export interface UpdateTempleInput {
   name?: string;
   code?: string;
+  deity?: string;
   addressJson?: Record<string, any>;
   locationJson?: Record<string, any>;
   contactJson?: Record<string, any>;
-  status?: 'ACTIVE' | 'SUSPENDED' | 'MAINTENANCE';
+  status?: 'ACTIVE' | 'OPERATIONAL' | 'SUSPENDED' | 'MAINTENANCE';
 }
 
 export interface UpdateTempleInfoInput {
   name?: string;
+  code?: string;
+  deity?: string;
+  status?: 'ACTIVE' | 'OPERATIONAL' | 'SUSPENDED' | 'MAINTENANCE';
   tagline?: string;
   description?: string;
   hotline?: string;
@@ -407,9 +411,21 @@ export class TempleRepository {
     });
 
     // Update Temple Core Table
-    if (input.name) {
+    const templeUpdates: any = { updatedAt: new Date() };
+    if (input.name) templeUpdates.name = input.name.trim();
+    if (input.code) templeUpdates.code = input.code.trim().toUpperCase();
+    if (input.status) templeUpdates.status = input.status;
+    if (input.deity !== undefined) {
+      const existingTemple = await db.query.temples.findFirst({
+        where: and(eq(temples.id, templeId), eq(temples.trustId, ctx.trustId))
+      });
+      const contactJson = (existingTemple?.contactJson as Record<string, any>) || {};
+      templeUpdates.contactJson = { ...contactJson, deity: input.deity };
+    }
+
+    if (Object.keys(templeUpdates).length > 1) {
       await db.update(temples)
-        .set({ name: input.name, updatedAt: new Date() })
+        .set(templeUpdates)
         .where(and(eq(temples.id, templeId), eq(temples.trustId, ctx.trustId)));
     }
 

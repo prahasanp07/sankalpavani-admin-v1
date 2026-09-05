@@ -128,7 +128,7 @@ export default function DashboardPortal({ onNavigate }: DashboardPortalProps) {
         try {
           setShipments(JSON.parse(cached));
           return;
-        } catch (e) {}
+        } catch (e) { }
       }
       setShipments(DEFAULT_SHIPMENTS);
     }
@@ -310,58 +310,132 @@ export default function DashboardPortal({ onNavigate }: DashboardPortalProps) {
       }
     };
 
-    // Group bookings by day of week and sum up collections
+    // Group bookings by day of week and calculate Sevas vs Donations
     const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+    // Check if there are cached donation records in localStorage
+    let storedDonations: any[] = [];
+    if (typeof window !== 'undefined') {
+      try {
+        const cachedDonations = localStorage.getItem('sankalpvani_donations');
+        if (cachedDonations) {
+          storedDonations = JSON.parse(cachedDonations);
+        }
+      } catch (e) { }
+    }
+
+    // Baseline mock donations if none recorded
+    const defaultDailyDonations: Record<string, number> = {
+      'Mon': 8500,
+      'Tue': 11200,
+      'Wed': 9800,
+      'Thu': 14000,
+      'Fri': 18500,
+      'Sat': 22000,
+      'Sun': 26500
+    };
+
+    const defaultDailySevas: Record<string, number> = {
+      'Mon': 12000,
+      'Tue': 15500,
+      'Wed': 14500,
+      'Thu': 19000,
+      'Fri': 24500,
+      'Sat': 18000,
+      'Sun': 21000
+    };
+
     const baseCollections = daysOfWeek.map(day => {
-      const amount = bookings
+      const calculatedSevaAmount = bookings
         .filter(b => b.paymentStatus === 'Paid' && getDayOfWeek(b.bookingDate) === day)
         .reduce((sum, b) => sum + b.amount, 0);
-      return { day, amount };
-    });
 
-    const maxAmount = Math.max(...baseCollections.map(c => c.amount));
-    const trendsList = baseCollections.map(c => {
-      const pct = maxAmount > 0 ? Math.round((c.amount / maxAmount) * 100) : 0;
+      const calculatedDonationAmount = Array.isArray(storedDonations) && storedDonations.length > 0
+        ? storedDonations
+          .filter((d: any) => getDayOfWeek(d.date || d.donationDate || d.created_at) === day)
+          .reduce((sum: number, d: any) => sum + (Number(d.amount) || 0), 0)
+        : 0;
+
       return {
-        day: c.day,
-        amount: c.amount,
-        height: `${Math.max(15, pct)}%`
+        day,
+        sevaAmount: calculatedSevaAmount,
+        donationAmount: calculatedDonationAmount
       };
     });
 
     const hasCollections = bookings.some(b => b.paymentStatus === 'Paid' && b.amount > 0);
-    const finalTrends = hasCollections ? trendsList : [
-      { day: "Mon", amount: 12000, height: "40%" },
-      { day: "Tue", amount: 15500, height: "55%" },
-      { day: "Wed", amount: 14500, height: "45%" },
-      { day: "Thu", amount: 19000, height: "70%" },
-      { day: "Fri", amount: 24500, height: "85%" },
-      { day: "Sat", amount: 18000, height: "60%" },
-      { day: "Sun", amount: 21000, height: "75%" }
-    ];
+
+    const finalTrends = daysOfWeek.map(day => {
+      const found = baseCollections.find(c => c.day === day);
+      const sevaAmt = hasCollections && (found?.sevaAmount ?? 0) > 0
+        ? (found?.sevaAmount ?? 0)
+        : (defaultDailySevas[day] || 10000);
+      const donationAmt = (found?.donationAmount ?? 0) > 0
+        ? (found?.donationAmount ?? 0)
+        : (defaultDailyDonations[day] || 8000);
+
+      return {
+        day,
+        sevaAmount: sevaAmt,
+        donationAmount: donationAmt
+      };
+    });
 
     const chart = new Chart(barCanvasRef.current, {
       type: 'bar',
       data: {
         labels: finalTrends.map(t => t.day),
-        datasets: [{
-          label: 'Collections (₹)',
-          data: finalTrends.map(t => t.amount),
-          backgroundColor: '#8f4e00',
-          borderRadius: 8,
-          borderWidth: 0,
-          hoverBackgroundColor: '#a85f05'
-        }]
+        datasets: [
+          {
+            label: 'Sevas',
+            data: finalTrends.map(t => t.sevaAmount),
+            backgroundColor: '#8f4e00',
+            hoverBackgroundColor: '#a85f05',
+            borderRadius: 6,
+            borderWidth: 0,
+            categoryPercentage: 0.75,
+            barPercentage: 0.85
+          },
+          {
+            label: 'Donations',
+            data: finalTrends.map(t => t.donationAmount),
+            backgroundColor: '#059669',
+            hoverBackgroundColor: '#047857',
+            borderRadius: 6,
+            borderWidth: 0,
+            categoryPercentage: 0.75,
+            barPercentage: 0.85
+          }
+        ]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        interaction: {
+          mode: 'index',
+          intersect: false
+        },
         plugins: {
           legend: {
             display: false
           },
           tooltip: {
+            backgroundColor: 'rgba(26, 26, 26, 0.95)',
+            titleFont: {
+              family: 'Outfit, sans-serif',
+              size: 12,
+              weight: 'bold'
+            },
+            bodyFont: {
+              family: 'Outfit, sans-serif',
+              size: 11
+            },
+            padding: 10,
+            cornerRadius: 8,
             callbacks: {
+              title: function (items) {
+                return items[0]?.label ? `${items[0].label} Revenue Breakdown` : '';
+              },
               label: function (context) {
                 let label = context.dataset.label || '';
                 if (label) {
@@ -371,6 +445,10 @@ export default function DashboardPortal({ onNavigate }: DashboardPortalProps) {
                   label += new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(context.parsed.y);
                 }
                 return label;
+              },
+              footer: function (items) {
+                const total = items.reduce((sum, item) => sum + (item.parsed.y || 0), 0);
+                return 'Day Total: ' + new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(total);
               }
             }
           }
@@ -394,6 +472,10 @@ export default function DashboardPortal({ onNavigate }: DashboardPortalProps) {
               color: 'rgba(0, 0, 0, 0.05)'
             },
             ticks: {
+              callback: function (val) {
+                const num = Number(val);
+                return '₹' + (num >= 1000 ? (num / 1000) + 'k' : num);
+              },
               font: {
                 family: 'Outfit, sans-serif',
                 size: 11,
@@ -465,10 +547,10 @@ export default function DashboardPortal({ onNavigate }: DashboardPortalProps) {
     ];
     const shortName = b.sevaName === 'Maha Abhisheka' ? 'Abhisheka'
       : b.sevaName === 'Archana Pooja' ? 'Archana'
-      : b.sevaName === 'Annadanam Seva' ? 'Annadanam'
-      : b.sevaName === 'Vahan Pooja' ? 'Vahan Puja'
-      : b.sevaName === 'Chandi Homa' ? 'Chandi Homa'
-      : b.sevaName.split(' ')[0];
+        : b.sevaName === 'Annadanam Seva' ? 'Annadanam'
+          : b.sevaName === 'Vahan Pooja' ? 'Vahan Puja'
+            : b.sevaName === 'Chandi Homa' ? 'Chandi Homa'
+              : b.sevaName.split(' ')[0];
 
     return {
       name: b.devoteeName,
@@ -601,181 +683,215 @@ export default function DashboardPortal({ onNavigate }: DashboardPortalProps) {
         </div>
       </div>
 
-      {/* Stats Cards Bento Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {/* Card 1 */}
-        <div
-          id="stat-card-today-devotees"
-          onClick={() => setShowDevoteeModal(true)}
-          className="bg-surface-container-lowest rounded-xl shadow-sacred border-t-4 border-primary p-6 hover:-translate-y-1 transition-all duration-300 border border-outline-variant/20 cursor-pointer hover:shadow-md hover:bg-surface-container-low active:scale-[0.98] flex flex-col justify-between"
-        >
-          <div>
-            <div className="flex justify-between items-start mb-2">
-              <div>
-                <p className="font-label-sm text-xs font-bold text-on-surface-variant uppercase tracking-wider">TODAY&apos;S SEVAS</p>
-                <h3 className="font-display-lg text-on-surface mt-1 font-bold flex items-baseline gap-1">
-                  <span className="text-3xl font-extrabold">{kpiValues.sevas}</span>
-                  <span className="text-xs font-semibold text-on-surface-variant/80">/ 355</span>
-                </h3>
-              </div>
-              <div className="w-10 h-10 rounded-full bg-primary-container/20 flex items-center justify-center text-primary shrink-0">
-                <Users size={18} />
-              </div>
-            </div>
-
-            {/* Top 3 Sevas status and capacity */}
-            <div className="space-y-2 mt-4 pt-3.5 border-t border-outline-variant/10">
-              {sevasStatus.slice(0, 3).map((s, idx) => {
-                const getSevaShortName = (n: string) => {
-                  if (n === 'Maha Abhisheka') return 'Abhisheka';
-                  if (n === 'Archana Pooja') return 'Archana';
-                  if (n === 'Annadanam Seva') return 'Annadanam';
-                  if (n === 'Vahan Pooja') return 'Vahan Puja';
-                  if (n === 'Chandi Homa') return 'Chandi Homa';
-                  return n.split(' ')[0];
-                };
-                return (
-                  <div key={idx} className="flex justify-between items-center text-[10px] sm:text-xs font-sans">
-                    <span className="font-semibold text-on-surface-variant truncate pr-2" title={s.name}>
-                      {getSevaShortName(s.name)}
-                    </span>
-                    <div className="flex items-center gap-2 shrink-0">
-                      <span className="font-bold font-mono text-on-surface text-[10px]">
-                        {s.count}/{s.capacity}
-                      </span>
-                      <span className={`px-2 py-[1px] rounded-full text-[8px] font-bold border ${s.colorClass}`}>
-                        {s.label === 'House Full' ? 'Full' : s.label === 'Almost Full' ? 'Near' : 'Avail'}
-                      </span>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Trend Indicator Row */}
-          <div className="flex items-center gap-1.5 text-green-600 font-bold bg-green-50 border border-green-200 px-3 py-1.5 rounded-xl w-fit text-[11px] mt-4 shadow-xs">
-            <span className="material-symbols-outlined text-[14px] font-extrabold">trending_up</span>
-            <span>+12% vs yesterday</span>
-          </div>
-        </div>
-
-        {/* Card 2 */}
-        <div
-          onClick={() => setShowRecentBookingsModal(true)}
-          className="bg-surface-container-lowest rounded-xl shadow-sacred border-t-4 border-secondary p-6 hover:-translate-y-1 transition-all duration-300 border border-outline-variant/20 cursor-pointer hover:shadow-md hover:bg-surface-container-low active:scale-[0.98]"
-        >
-          <div className="flex justify-between items-start mb-4">
-            <div>
-              <p className="font-label-sm text-xs text-on-surface-variant uppercase tracking-wider mb-1 font-semibold">Recent Bookings</p>
-              <h3 className="font-display-lg text-3xl text-on-surface mt-1 font-bold">{kpiValues.bookings}</h3>
-            </div>
-            <div className="w-10 h-10 rounded-full bg-secondary-container/30 flex items-center justify-center text-secondary">
-              <span className="material-symbols-outlined">event_available</span>
-            </div>
-          </div>
-          <div className="flex items-center text-sm text-on-surface-variant">
-            <span className="material-symbols-outlined text-[16px] mr-1">schedule</span>
-            <span>Last 4 hours</span>
-            <span className="text-on-surface-variant/70 ml-2">• Click to view list</span>
-          </div>
-        </div>
-
-        {/* Card 3 */}
-        <div className="bg-surface-container-lowest rounded-xl shadow-sacred border-t-4 border-tertiary p-6 hover:-translate-y-1 transition-all duration-300 border border-outline-variant/20 flex flex-col justify-between">
-          <div>
-            <div className="flex justify-between items-start mb-2">
-              <div>
-                <p className="font-label-sm text-xs font-bold text-on-surface-variant uppercase tracking-wider">PRASADAM DISPATCH</p>
-                <h3 className="font-display-lg text-on-surface mt-1 font-bold flex items-baseline gap-1">
-                  <span className="text-3xl font-extrabold">{shippedCount}</span>
-                  <span className="text-xs font-semibold text-on-surface-variant/80">/ {totalPackages}</span>
-                </h3>
-              </div>
-              <div className="w-10 h-10 rounded-full bg-tertiary-container/30 flex items-center justify-center text-tertiary shrink-0">
-                <span className="material-symbols-outlined text-[18px]">local_shipping</span>
-              </div>
-            </div>
-
-            {/* Top 3 Sevas dispatch status */}
-            <div className="space-y-2 mt-4 pt-3.5 border-t border-outline-variant/10">
-              {dispatchStatusList.map((s, idx) => {
-                return (
-                  <div key={idx} className="flex justify-between items-center text-[10px] sm:text-xs font-sans">
-                    <span className="font-semibold text-on-surface-variant truncate pr-2" title={s.name}>
-                      {s.name}
-                    </span>
-                    <div className="flex items-center gap-2 shrink-0">
-                      <span className="font-bold font-mono text-on-surface text-[10px]">
-                        {s.count}
-                      </span>
-                      <span className={`px-2 py-[1px] rounded-full text-[8px] font-bold border ${s.colorClass}`}>
-                        {s.label}
-                      </span>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Progress / Trend Indicator Row */}
-          <div className="flex items-center gap-1.5 text-teal-600 font-bold bg-teal-50 border border-teal-200 px-3 py-1.5 rounded-xl w-fit text-[11px] mt-4 shadow-xs">
-            <span className="material-symbols-outlined text-[14px] font-extrabold">check_circle</span>
-            <span>{dispatchPercentage}% Shipped Today</span>
-          </div>
-        </div>
-
-        {/* Card 4 */}
-        <div className="bg-surface-container-lowest rounded-xl shadow-sacred border-t-4 border-outline p-6 hover:-translate-y-1 transition-transform duration-300 border border-outline-variant/20">
-          <div className="flex justify-between items-start mb-4">
-            <div>
-              <p className="font-label-sm text-xs text-on-surface-variant uppercase tracking-wider mb-1 font-semibold">Total Collections</p>
-              <h3 className="font-display-lg text-3xl text-on-surface mt-1 font-bold">₹{(kpiValues.collections / 1000).toFixed(1)}k</h3>
-            </div>
-            <div className="w-10 h-10 rounded-full bg-secondary-fixed/50 flex items-center justify-center text-on-secondary-fixed-variant">
-              <span className="material-symbols-outlined">currency_rupee</span>
-            </div>
-          </div>
-          <div className="flex items-center text-sm">
-            <span className="material-symbols-outlined text-[16px] text-green-600 mr-1">trending_up</span>
-            <span className="text-green-600 font-semibold">+5%</span>
-            <span className="text-on-surface-variant ml-2">vs yesterday</span>
-          </div>
-        </div>
-      </div>
-
       {/* Main Content Layout Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
 
-        {/* Left column (Charts & Table) */}
-        <div className="lg:col-span-8 space-y-8">
+        {/* Left column (KPIs, Revenue Trends, Total Collections, Table) */}
+        <div className="lg:col-span-8 space-y-6">
 
-          {/* Donation Area-Bar Chart */}
-          <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-sacred p-6 border border-outline-variant/30">
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="font-sans text-lg font-bold text-on-surface">Donation Trends (Last 7 Days)</h3>
-              <div className="flex items-center gap-1">
-                <button
-                  onClick={handleRefresh}
-                  disabled={isRefreshing}
-                  className={`text-primary hover:bg-primary-container/10 p-2 rounded-full transition-all cursor-pointer ${isRefreshing ? 'opacity-50' : ''}`}
-                  title="Refresh Datasets"
-                >
-                  <RefreshCw size={18} className={isRefreshing ? 'animate-spin' : ''} />
-                </button>
-                <button
-                  onClick={() => triggerToast('Generating specialized trends analysis reports...')}
-                  className="text-primary hover:bg-primary-container/10 p-2 rounded-full transition-all cursor-pointer"
-                >
-                  <MoreVertical size={18} />
-                </button>
+          {/* Top 3 KPI Cards Row */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            {/* Card 1: Today's Sevas */}
+            <div
+              id="stat-card-today-devotees"
+              onClick={() => setShowDevoteeModal(true)}
+              className="bg-surface-container-lowest rounded-2xl shadow-sacred border-t-4 border-primary p-5 hover:-translate-y-1 transition-all duration-300 border border-outline-variant/20 cursor-pointer hover:shadow-md hover:bg-surface-container-low active:scale-[0.98] flex flex-col justify-between"
+            >
+              <div>
+                <div className="flex justify-between items-start mb-2">
+                  <div>
+                    <p className="font-label-sm text-[11px] font-bold text-on-surface-variant uppercase tracking-wider">TODAY&apos;S SEVAS</p>
+                    <h3 className="font-display-lg text-on-surface mt-1 font-bold flex items-baseline gap-1">
+                      <span className="text-2xl sm:text-3xl font-extrabold">{kpiValues.sevas}</span>
+                      <span className="text-xs font-semibold text-on-surface-variant/80">/ 355</span>
+                    </h3>
+                  </div>
+                  <div className="w-9 h-9 rounded-full bg-primary-container/20 flex items-center justify-center text-primary shrink-0">
+                    <Users size={16} />
+                  </div>
+                </div>
+
+                {/* Top 3 Sevas status and capacity */}
+                <div className="space-y-1.5 mt-3 pt-3 border-t border-outline-variant/10">
+                  {sevasStatus.slice(0, 3).map((s, idx) => {
+                    const getSevaShortName = (n: string) => {
+                      if (n === 'Maha Abhisheka') return 'Abhisheka';
+                      if (n === 'Archana Pooja') return 'Archana';
+                      if (n === 'Annadanam Seva') return 'Annadanam';
+                      if (n === 'Vahan Pooja') return 'Vahan Puja';
+                      if (n === 'Chandi Homa') return 'Chandi Homa';
+                      return n.split(' ')[0];
+                    };
+                    return (
+                      <div key={idx} className="flex justify-between items-center text-[10px] font-sans">
+                        <span className="font-semibold text-on-surface-variant truncate pr-1" title={s.name}>
+                          {getSevaShortName(s.name)}
+                        </span>
+                        <div className="flex items-center gap-1.5 shrink-0">
+                          <span className="font-bold font-mono text-on-surface text-[9px]">
+                            {s.count}/{s.capacity}
+                          </span>
+                          <span className={`px-1.5 py-[1px] rounded-full text-[8px] font-bold border ${s.colorClass}`}>
+                            {s.label === 'House Full' ? 'Full' : s.label === 'Almost Full' ? 'Near' : 'Avail'}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Trend Indicator Row */}
+              <div className="flex items-center gap-1 text-green-600 font-bold bg-green-50 border border-green-200 px-2.5 py-1 rounded-xl w-fit text-[10px] mt-3 shadow-xs">
+                <span className="material-symbols-outlined text-[12px] font-extrabold">trending_up</span>
+                <span>+12% vs yesterday</span>
               </div>
             </div>
 
-            {/* Chart.js Bar Chart */}
+            {/* Card 2: Recent Bookings */}
+            <div
+              onClick={() => setShowRecentBookingsModal(true)}
+              className="bg-surface-container-lowest rounded-2xl shadow-sacred border-t-4 border-secondary p-5 hover:-translate-y-1 transition-all duration-300 border border-outline-variant/20 cursor-pointer hover:shadow-md hover:bg-surface-container-low active:scale-[0.98] flex flex-col justify-between"
+            >
+              <div>
+                <div className="flex justify-between items-start mb-2">
+                  <div>
+                    <p className="font-label-sm text-[11px] font-bold text-on-surface-variant uppercase tracking-wider">RECENT BOOKINGS</p>
+                    <h3 className="font-display-lg text-2xl sm:text-3xl text-on-surface mt-1 font-bold">{kpiValues.bookings}</h3>
+                  </div>
+                  <div className="w-9 h-9 rounded-full bg-secondary-container/30 flex items-center justify-center text-secondary shrink-0">
+                    <span className="material-symbols-outlined text-[18px]">event_available</span>
+                  </div>
+                </div>
+                <p className="text-xs text-on-surface-variant font-medium mt-2">
+                  Online &amp; counter seva tickets booked.
+                </p>
+              </div>
+              <div className="flex items-center text-[10px] text-on-surface-variant bg-surface-container-low px-2.5 py-1 rounded-xl border border-outline-variant/20 w-fit mt-3 font-semibold">
+                <span className="material-symbols-outlined text-[12px] mr-1 text-secondary">schedule</span>
+                <span>Last 4 hours • Click to view</span>
+              </div>
+            </div>
+
+            {/* Card 3: Prasadam Dispatch */}
+            <div className="bg-surface-container-lowest rounded-2xl shadow-sacred border-t-4 border-tertiary p-5 hover:-translate-y-1 transition-all duration-300 border border-outline-variant/20 flex flex-col justify-between">
+              <div>
+                <div className="flex justify-between items-start mb-2">
+                  <div>
+                    <p className="font-label-sm text-[11px] font-bold text-on-surface-variant uppercase tracking-wider">PRASADAM DISPATCH</p>
+                    <h3 className="font-display-lg text-on-surface mt-1 font-bold flex items-baseline gap-1">
+                      <span className="text-2xl sm:text-3xl font-extrabold">{shippedCount}</span>
+                      <span className="text-xs font-semibold text-on-surface-variant/80">/ {totalPackages}</span>
+                    </h3>
+                  </div>
+                  <div className="w-9 h-9 rounded-full bg-tertiary-container/30 flex items-center justify-center text-tertiary shrink-0">
+                    <span className="material-symbols-outlined text-[18px]">local_shipping</span>
+                  </div>
+                </div>
+
+                {/* Top 3 Sevas dispatch status */}
+                <div className="space-y-1.5 mt-3 pt-3 border-t border-outline-variant/10">
+                  {dispatchStatusList.map((s, idx) => {
+                    return (
+                      <div key={idx} className="flex justify-between items-center text-[10px] font-sans">
+                        <span className="font-semibold text-on-surface-variant truncate pr-1" title={s.name}>
+                          {s.name}
+                        </span>
+                        <div className="flex items-center gap-1.5 shrink-0">
+                          <span className="font-bold font-mono text-on-surface text-[9px]">
+                            {s.count}
+                          </span>
+                          <span className={`px-1.5 py-[1px] rounded-full text-[8px] font-bold border ${s.colorClass}`}>
+                            {s.label}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Progress / Trend Indicator Row */}
+              <div className="flex items-center gap-1 text-teal-600 font-bold bg-teal-50 border border-teal-200 px-2.5 py-1 rounded-xl w-fit text-[10px] mt-3 shadow-xs">
+                <span className="material-symbols-outlined text-[12px] font-extrabold">check_circle</span>
+                <span>{dispatchPercentage}% Shipped Today</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Revenue Trends (Sevas vs Donations) Dual-Bar Chart */}
+          <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-sacred p-6 border border-outline-variant/30">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+              <div>
+                <h3 className="font-sans text-lg font-bold text-on-surface">Revenue Trends (Last 7 Days)</h3>
+                <p className="text-[11px] text-on-surface-variant font-medium mt-0.5">Comparative daily view of Seva Bookings vs Devotional Donations</p>
+              </div>
+
+              <div className="flex items-center gap-3">
+                {/* Visual Legend */}
+                <div className="flex items-center gap-3 bg-surface-container-low px-3 py-1.5 rounded-xl border border-outline-variant/30 text-xs font-bold shadow-2xs">
+                  <div className="flex items-center gap-1.5 text-on-surface">
+                    <span className="w-3 h-3 rounded-sm bg-[#8f4e00] shadow-xs shrink-0" />
+                    <span>Sevas</span>
+                  </div>
+                  <span className="text-outline-variant/60 font-normal">|</span>
+                  <div className="flex items-center gap-1.5 text-on-surface">
+                    <span className="w-3 h-3 rounded-sm bg-[#059669] shadow-xs shrink-0" />
+                    <span>Donations</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={handleRefresh}
+                    disabled={isRefreshing}
+                    className={`text-primary hover:bg-primary-container/10 p-2 rounded-full transition-all cursor-pointer ${isRefreshing ? 'opacity-50' : ''}`}
+                    title="Refresh Datasets"
+                  >
+                    <RefreshCw size={18} className={isRefreshing ? 'animate-spin' : ''} />
+                  </button>
+                  <button
+                    onClick={() => triggerToast('Generating specialized trends analysis reports...')}
+                    className="text-primary hover:bg-primary-container/10 p-2 rounded-full transition-all cursor-pointer"
+                  >
+                    <MoreVertical size={18} />
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Chart.js Dual-Bar Chart */}
             <div className="w-full h-64 bg-surface-container-low/50 rounded-xl border border-outline-variant/30 p-3 relative overflow-hidden">
               <canvas ref={barCanvasRef} className="w-full h-full" />
+            </div>
+          </div>
+
+          {/* Total Collections Horizontal Card */}
+          <div className="bg-surface-container-lowest rounded-2xl shadow-sacred border-l-4 border-primary p-5 border border-outline-variant/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:shadow-md transition-all">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shrink-0 shadow-inner">
+                <IndianRupee size={22} />
+              </div>
+              <div>
+                <p className="font-label-sm text-xs font-bold text-on-surface-variant uppercase tracking-wider">Total Collections</p>
+                <div className="flex items-center gap-2 mt-1">
+                  <span className="flex items-center gap-1 text-green-600 font-bold bg-green-50 border border-green-200 px-2.5 py-0.5 rounded-full text-xs shadow-2xs">
+                    <span className="material-symbols-outlined text-[14px] font-extrabold">trending_up</span>
+                    <span>+5%</span>
+                  </span>
+                  <span className="text-xs text-on-surface-variant font-medium">vs yesterday</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-baseline sm:items-end justify-between sm:justify-end gap-2 border-t sm:border-t-0 pt-2 sm:pt-0 border-outline-variant/10">
+              <span className="text-xs text-on-surface-variant font-semibold sm:hidden">Amount:</span>
+              <div className="text-right">
+                <span className="text-2xl sm:text-3xl font-extrabold text-on-surface font-sans tracking-tight">
+                  ₹{(kpiValues.collections / 1000).toFixed(1)}k
+                </span>
+                <span className="block text-[10px] text-on-surface-variant font-medium">Daily consolidated revenue</span>
+              </div>
             </div>
           </div>
 
@@ -829,7 +945,7 @@ export default function DashboardPortal({ onNavigate }: DashboardPortalProps) {
         </div>
 
         {/* Right column (Donut & Quick Actions) */}
-        <div className="lg:col-span-4 space-y-8">
+        <div className="lg:col-span-4 space-y-6">
 
           {/* Seva Popularity Doughnut Chart */}
           <div className="bg-surface-container-lowest rounded-2xl shadow-sacred p-6 border border-outline-variant/20 flex flex-col">
@@ -869,14 +985,14 @@ export default function DashboardPortal({ onNavigate }: DashboardPortalProps) {
 
                 const legendItems = hasAnyTodayOrYesterdayBookings
                   ? defaultLegendItems.map(item => {
-                      const todayCount = todayBookings.filter(b => b.sevaName === item.name && b.sevaStatus !== 'Cancelled').length;
-                      const yesterdayCount = bookings.filter(b => b.bookingDate === yesterdayStr && b.sevaName === item.name && b.sevaStatus !== 'Cancelled').length;
-                      return {
-                        ...item,
-                        today: todayCount,
-                        yesterday: yesterdayCount
-                      };
-                    })
+                    const todayCount = todayBookings.filter(b => b.sevaName === item.name && b.sevaStatus !== 'Cancelled').length;
+                    const yesterdayCount = bookings.filter(b => b.bookingDate === yesterdayStr && b.sevaName === item.name && b.sevaStatus !== 'Cancelled').length;
+                    return {
+                      ...item,
+                      today: todayCount,
+                      yesterday: yesterdayCount
+                    };
+                  })
                   : defaultLegendItems;
 
                 return legendItems.map((item, idx) => {
@@ -1015,8 +1131,8 @@ export default function DashboardPortal({ onNavigate }: DashboardPortalProps) {
             return sum + persons;
           }, 0);
 
-        const checkinPercentage = totalDevoteesToday > 0 
-          ? Math.round((checkinsCompletedCount / totalDevoteesToday) * 100) 
+        const checkinPercentage = totalDevoteesToday > 0
+          ? Math.round((checkinsCompletedCount / totalDevoteesToday) * 100)
           : 0;
 
         const sevasListForToday = Array.from(new Set(filteredTodayBookings.map(b => b.sevaName)));
@@ -1097,8 +1213,8 @@ export default function DashboardPortal({ onNavigate }: DashboardPortalProps) {
                     </div>
                     <div className="mt-2.5">
                       <div className="w-full bg-surface-container-high rounded-full h-1 overflow-hidden">
-                        <div 
-                          className="bg-primary h-1 rounded-full transition-all duration-500" 
+                        <div
+                          className="bg-primary h-1 rounded-full transition-all duration-500"
                           style={{ width: `${checkinPercentage}%` }}
                         />
                       </div>
@@ -1172,13 +1288,13 @@ export default function DashboardPortal({ onNavigate }: DashboardPortalProps) {
                         .filter(b => b.sevaStatus === 'Performed')
                         .reduce((sum, b) => sum + (b.persons || (b.pilgrims ? b.pilgrims.length + 1 : 1)), 0);
                       const checkinSevaPct = totalSevaPilgrims > 0 ? Math.round((performedSevaPilgrims / totalSevaPilgrims) * 100) : 0;
-                      
+
                       const isExpanded = expandedSevas[sevaName] ?? false;
 
                       return (
                         <div key={sIdx} className="bg-white border border-outline-variant/20 rounded-2xl overflow-hidden shadow-sacred-sm transition-all duration-300">
                           {/* Accordion Header */}
-                          <div 
+                          <div
                             onClick={() => toggleSevaAccordion(sevaName)}
                             className="p-4 flex justify-between items-center cursor-pointer hover:bg-surface-container-lowest transition-colors select-none"
                           >

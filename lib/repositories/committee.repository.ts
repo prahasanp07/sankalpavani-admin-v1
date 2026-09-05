@@ -20,7 +20,7 @@ export interface CreateCommitteeInput {
   scopeType: 'TRUST' | 'TEMPLE';
   scopeId?: string;
   parentId?: string | null;
-  category?: 'STANDING' | 'AD_HOC' | 'ADVISORY' | 'RENOVATION' | 'FESTIVAL' | 'FINANCE' | 'LEGAL' | 'CUSTOM';
+  category?: 'STANDING' | 'AD_HOC' | 'ADVISORY' | 'RENOVATION' | 'FESTIVAL' | 'FINANCE' | 'LEGAL' | 'CUSTOM' | (string & {});
   mandate?: string;
   formationDate?: string;
   dissolutionDate?: string | null;
@@ -31,7 +31,7 @@ export interface CreateCommitteeInput {
 export interface UpdateCommitteeInput {
   name?: string;
   code?: string;
-  category?: 'STANDING' | 'AD_HOC' | 'ADVISORY' | 'RENOVATION' | 'FESTIVAL' | 'FINANCE' | 'LEGAL' | 'CUSTOM';
+  category?: 'STANDING' | 'AD_HOC' | 'ADVISORY' | 'RENOVATION' | 'FESTIVAL' | 'FINANCE' | 'LEGAL' | 'CUSTOM' | (string & {});
   mandate?: string;
   formationDate?: string;
   dissolutionDate?: string | null;

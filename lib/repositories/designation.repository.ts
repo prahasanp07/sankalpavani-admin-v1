@@ -1,14 +1,14 @@
 import { db } from '../db/client';
-import { 
-  designations, 
-  officeBearers, 
-  designationRoleBindings, 
-  roles, 
-  roleAssignments, 
-  users, 
-  personProfiles, 
-  temples, 
-  auditEvents 
+import {
+  designations,
+  officeBearers,
+  designationRoleBindings,
+  roles,
+  roleAssignments,
+  users,
+  personProfiles,
+  temples,
+  auditEvents
 } from '../../db/schema';
 import { eq, and, sql, desc } from 'drizzle-orm';
 import { RequestContext } from '../tenant/context';
@@ -45,6 +45,7 @@ export interface AppointOfficeBearerInput {
   email?: string;
   phone?: string;
   gotra?: string;
+  nakshatra?: string;
   photoUrl?: string;
   designationId: string;
   scopeId?: string;
@@ -290,7 +291,7 @@ export class DesignationRepository {
       termStart: input.termStart ? new Date(input.termStart) : new Date(),
       termEnd: input.termEnd ? new Date(input.termEnd) : null,
       resolutionNo: input.resolutionNo || null,
-      metadataJson: input.metadataJson || {},
+      metadataJson: { ...(input.metadataJson || {}), ...(input.nakshatra ? { nakshatra: input.nakshatra } : {}) },
       appointmentStatus: 'ACTIVE',
       appointedBy: ctx.userId
     }).returning();
@@ -340,7 +341,7 @@ export class DesignationRepository {
   }
 
   /**
-   * List all office-bearer appointments across Trust and child Temples
+   * List all office-bearer appointments across Trust and Temples
    */
   async listOfficeBearers(ctx: RequestContext, filter?: { scopeId?: string; designationId?: string; status?: string }) {
     await authorization.require({
@@ -388,6 +389,7 @@ export class DesignationRepository {
           email: user?.email || '',
           phone: profile?.phone || user?.mobileNumber || '',
           gotra: profile?.gotra || '',
+          nakshatra: (ob.metadataJson as any)?.nakshatra || '',
           photoUrl: profile?.photoUrl || user?.avatarUrl || '',
           designationId: ob.designationId,
           designationName: designation?.name || 'Custom Designation',
@@ -409,8 +411,8 @@ export class DesignationRepository {
    * Update Office Bearer status (ACTIVE | EXPIRED | RESIGNED | REVOKED)
    */
   async updateOfficeBearerStatus(
-    ctx: RequestContext, 
-    appointmentId: string, 
+    ctx: RequestContext,
+    appointmentId: string,
     status: 'ACTIVE' | 'EXPIRED' | 'RESIGNED' | 'REVOKED'
   ) {
     await authorization.require({

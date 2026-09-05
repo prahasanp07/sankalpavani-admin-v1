@@ -7,22 +7,45 @@ import {
   Clock,
   ShieldCheck,
   ArrowLeft,
-  Crown
+  Building2,
+  Sparkles,
+  Landmark,
+  PlusCircle
 } from 'lucide-react';
 import { AuthProvider, useAuth } from '../../../../../contexts/AuthContext';
 import RequirePermission, { LockedViewFallback } from '../../../../../components/RequirePermission';
 import Sidebar from '../../../../../components/Sidebar';
-import DesignationsGovernance from '../../../../../components/DesignationsGovernance';
+import MastersHub from '../../../../../components/MastersHub';
 
-function DesignationsManagementContent() {
+function NewTempleCreationContent() {
   const params = useParams();
   const router = useRouter();
   const trustId = (params?.trustId as string) || 'trust_sringeri';
 
   const { session, isLoggedIn, isMounted, logout } = useAuth();
 
+  const [activeSubTab, setActiveSubTab] = useState('temple_info');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [currentTime, setCurrentTime] = useState('');
+  const [trustName, setTrustName] = useState('Sri Sringeri Sharada Dharma Trust');
+
+  // Fetch Trust Name for context
+  useEffect(() => {
+    const fetchTrustMeta = async () => {
+      try {
+        const res = await fetch(`/api/v1/trusts/${trustId}`);
+        if (res.ok) {
+          const json = await res.json();
+          if (json.data?.name) {
+            setTrustName(json.data.name);
+          }
+        }
+      } catch (err) {
+        console.warn('Fallback to default trust metadata', err);
+      }
+    };
+    fetchTrustMeta();
+  }, [trustId]);
 
   // Live Clock update
   useEffect(() => {
@@ -57,6 +80,10 @@ function DesignationsManagementContent() {
   const displayRole = session?.designation || session?.role || 'Super Administrator';
   const displayAvatar = session?.avatar || 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=150';
 
+  const handleSaveSuccess = (newTempleId: string) => {
+    router.push(`/trusts/${trustId}/dashboard`);
+  };
+
   const handleBackToDashboard = () => {
     router.push(`/trusts/${trustId}/dashboard`);
   };
@@ -65,8 +92,14 @@ function DesignationsManagementContent() {
     <div className="min-h-screen bg-background flex font-sans antialiased text-on-surface">
       {/* Global Navigation Sidebar */}
       <Sidebar
-        activeTab="designations"
-        setActiveTab={() => {}}
+        activeTab="add_temple"
+        setActiveTab={(tab) => {
+          if (tab === 'dashboard') {
+            router.push(`/trusts/${trustId}/dashboard`);
+          } else if (tab === 'designations') {
+            router.push(`/trusts/${trustId}/governance/designations`);
+          }
+        }}
         currentUser={displayEmail}
         onLogout={logout}
         mobileOpen={mobileMenuOpen}
@@ -100,8 +133,8 @@ function DesignationsManagementContent() {
             <div className="hidden sm:flex items-center gap-2 text-xs text-on-surface-variant font-medium">
               <span>/</span>
               <span className="font-serif font-bold text-primary text-sm flex items-center gap-1.5">
-                <Crown size={15} className="text-amber-700" />
-                Designations & Titles
+                <PlusCircle size={15} className="text-amber-700" />
+                Add New Temple
               </span>
             </div>
           </div>
@@ -132,13 +165,43 @@ function DesignationsManagementContent() {
 
         {/* Main Content Area */}
         <main className="flex-1 p-4 md:p-8 max-w-7xl w-full mx-auto">
+          {/* Context Banner */}
+          <div className="mb-6 p-4 rounded-2xl bg-gradient-to-r from-amber-500/10 via-primary/5 to-transparent border border-amber-500/20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-800 flex items-center justify-center shrink-0">
+                <Landmark size={20} />
+              </div>
+              <div>
+                <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-amber-800">
+                  Registering Temple Under Trust
+                </div>
+                <h3 className="font-serif text-base font-bold text-primary">
+                  {trustName}
+                </h3>
+              </div>
+            </div>
+            <div className="text-xs text-on-surface-variant font-medium">
+              Fill in the general details below to create and publish this temple.
+            </div>
+          </div>
+
           <RequirePermission
-            permission={['MANAGE_STAFF', 'MANAGE_ORG_CHART', 'VIEW_ORG_CHART', 'SUPER_ADMIN', 'DASHBOARD_VIEW']}
+            permission={['MANAGE_TEMPLE_INFO', 'MANAGE_SEVAS', 'MANAGE_FACILITIES', 'MANAGE_PRIESTS', 'MANAGE_ROSTER', 'VIEW_SEVAS', 'VIEW_PRIESTS']}
             mode="any"
-            fallback={<LockedViewFallback requiredPermission="MANAGE_STAFF" title="Governance Restricted" />}
+            fallback={<LockedViewFallback requiredPermission="MANAGE_TEMPLE_INFO" title="Masters Hub Access Restricted" />}
           >
-            <DesignationsGovernance
+            <MastersHub
+              activeSubTab={activeSubTab}
+              onNavigate={(tab) => {
+                if (tab === 'dashboard') {
+                  handleBackToDashboard();
+                } else {
+                  setActiveSubTab(tab);
+                }
+              }}
+              isCreationMode={true}
               trustId={trustId}
+              onSaveSuccess={handleSaveSuccess}
               onBack={handleBackToDashboard}
             />
           </RequirePermission>
@@ -148,10 +211,10 @@ function DesignationsManagementContent() {
   );
 }
 
-export default function DesignationsManagementPage() {
+export default function NewTemplePage() {
   return (
     <AuthProvider>
-      <DesignationsManagementContent />
+      <NewTempleCreationContent />
     </AuthProvider>
   );
 }

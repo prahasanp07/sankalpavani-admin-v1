@@ -1,12 +1,12 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { 
-  BarChart3, 
-  TrendingUp, 
-  ShieldCheck, 
-  Calendar, 
-  Activity, 
+import {
+  BarChart3,
+  TrendingUp,
+  ShieldCheck,
+  Calendar,
+  Activity,
   Download,
   DollarSign,
   Briefcase,
@@ -106,7 +106,7 @@ export default function SystemOverview() {
     .reduce((sum, b) => sum + b.amount, 0);
 
   const averageTicket = totalBookings > 0 ? Math.round(totalRevenue / totalBookings) : 0;
-  
+
   // Prasads fulfillment calculations
   const pendingPrasads = RAW_SHIPMENTS.filter(s => s.status === 'Pending').length;
   const packedPrasads = RAW_SHIPMENTS.filter(s => s.status === 'Packed').length;
@@ -411,163 +411,16 @@ export default function SystemOverview() {
         </div>
       </div>
 
-      {/* Aggregate Report Table */}
-      <div className="bg-surface-container-lowest rounded-2xl shadow-sacred border border-outline-variant/30 overflow-hidden">
-        {/* Tab switcher headers */}
-        <div className="bg-surface-container-low border-b border-outline-variant/20 px-6 py-3 flex flex-col sm:flex-row justify-between items-center gap-4">
-          <h3 className="font-sans text-sm font-bold text-on-surface-variant uppercase tracking-wider">
-            Aggregated Ledger Breakdown
-          </h3>
-          <div className="flex p-0.5 bg-white border border-outline-variant/30 rounded-xl gap-1">
-            {(['daily', 'seva', 'monthly', 'yearly'] as const).map(tab => (
-              <button
-                key={tab}
-                onClick={() => { setSelectedTab(tab); setSortKey('label'); setSortDirection('desc'); }}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer capitalize ${
-                  selectedTab === tab 
-                    ? 'bg-primary text-on-primary shadow-sm' 
-                    : 'text-on-surface-variant hover:text-primary'
-                }`}
-              >
-                {tab}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Table representation */}
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="bg-surface-container-low border-b divider-gold text-[11px] font-bold text-on-surface-variant uppercase tracking-wider select-none">
-                <th 
-                  className="py-4 px-6 cursor-pointer hover:text-primary transition-colors"
-                  onClick={() => handleSort('label')}
-                >
-                  {selectedTab === 'daily' ? 'Pooja Date' : selectedTab === 'seva' ? 'Seva offering' : selectedTab === 'monthly' ? 'Month' : 'Year'} {renderSortIndicator('label')}
-                </th>
-                <th 
-                  className="py-4 px-6 cursor-pointer hover:text-primary transition-colors text-center"
-                  onClick={() => handleSort('bookingsCount')}
-                >
-                  Total Bookings {renderSortIndicator('bookingsCount')}
-                </th>
-                <th 
-                  className="py-4 px-6 cursor-pointer hover:text-primary transition-colors"
-                  onClick={() => handleSort('settledRevenue')}
-                >
-                  Settled Revenue (₹) {renderSortIndicator('settledRevenue')}
-                </th>
-                
-                {selectedTab === 'seva' ? (
-                  <th className="py-4 px-6 text-center">Simulated Slot Capacity Util</th>
-                ) : (
-                  <>
-                    <th 
-                      className="py-4 px-6 cursor-pointer hover:text-primary transition-colors"
-                      onClick={() => handleSort('pendingAmount')}
-                    >
-                      Pending (₹) {renderSortIndicator('pendingAmount')}
-                    </th>
-                    <th 
-                      className="py-4 px-6 cursor-pointer hover:text-primary transition-colors"
-                      onClick={() => handleSort('refundedAmount')}
-                    >
-                      Refunded (₹) {renderSortIndicator('refundedAmount')}
-                    </th>
-                  </>
-                )}
-              </tr>
-            </thead>
-            <tbody className="text-sm font-medium text-on-surface divide-y divide-outline-variant/10">
-              {pageItems.length === 0 ? (
-                <tr>
-                  <td colSpan={5} className="py-8 text-center text-on-surface-variant font-medium">
-                    No transactions recorded in this period.
-                  </td>
-                </tr>
-              ) : (
-                pageItems.map((row, idx) => (
-                  <tr key={idx} className="hover:bg-surface-container-low/30 transition-colors">
-                    <td className="py-4 px-6 font-bold">{row.label}</td>
-                    <td className="py-4 px-6 text-center font-mono text-xs font-bold text-on-surface-variant">
-                      {row.bookingsCount} bookings
-                    </td>
-                    <td className="py-4 px-6 font-bold text-on-surface">₹{row.settledRevenue.toLocaleString()}</td>
-                    
-                    {selectedTab === 'seva' ? (
-                      <td className="py-4 px-6 text-center">
-                        <div className="inline-flex items-center gap-1.5 bg-green-50 text-green-700 px-2.5 py-0.5 rounded-full text-xs font-bold border border-green-200">
-                          {row.extraInfo}
-                        </div>
-                      </td>
-                    ) : (
-                      <>
-                        <td className="py-4 px-6 text-amber-600 font-semibold">₹{row.pendingAmount.toLocaleString()}</td>
-                        <td className="py-4 px-6 text-red-600 font-semibold">₹{row.refundedAmount.toLocaleString()}</td>
-                      </>
-                    )}
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Pagination controls */}
-        <div className="flex flex-col sm:flex-row items-center justify-between px-6 py-4 bg-surface-container-low border-t border-outline-variant/10 gap-4">
-          <div className="text-xs text-on-surface-variant font-medium">
-            Showing <span className="font-bold">{totalRowsCount === 0 ? 0 : startIndex + 1}</span> to{' '}
-            <span className="font-bold">{Math.min(startIndex + itemsPerPage, totalRowsCount)}</span> of{' '}
-            <span className="font-bold">{totalRowsCount}</span> report items
-          </div>
-          {totalPages > 1 && (
-            <div className="flex items-center gap-1">
-              <button
-                type="button"
-                disabled={currentPage === 1}
-                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                className="px-2.5 py-1.5 rounded-lg border border-outline-variant/30 text-xs font-bold bg-white text-on-surface-variant hover:border-primary disabled:opacity-50 disabled:hover:border-outline-variant/30 disabled:bg-surface-container transition-all cursor-pointer"
-              >
-                Previous
-              </button>
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-                <button
-                  key={page}
-                  type="button"
-                  onClick={() => setCurrentPage(page)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-all cursor-pointer ${
-                    currentPage === page
-                      ? 'bg-primary border-primary text-on-primary shadow-sm'
-                      : 'bg-white border-outline-variant/30 text-on-surface-variant hover:border-primary'
-                  }`}
-                >
-                  {page}
-                </button>
-              ))}
-              <button
-                type="button"
-                disabled={currentPage === totalPages}
-                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                className="px-2.5 py-1.5 rounded-lg border border-outline-variant/30 text-xs font-bold bg-white text-on-surface-variant hover:border-primary disabled:opacity-50 disabled:hover:border-outline-variant/30 disabled:bg-surface-container transition-all cursor-pointer"
-              >
-                Next
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
-
       {/* Visual Progress Analytics */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        
+
         {/* Seva Contribution Progress */}
         <div className="bg-white rounded-2xl p-6 border border-outline-variant/30 shadow-sacred">
           <h3 className="font-sans text-base font-bold text-on-surface mb-6 flex items-center gap-2">
             <TrendingUp size={18} className="text-primary" />
             Seva Revenue Contributions
           </h3>
-          
+
           <div className="space-y-4">
             {sevaContributions.map((c, idx) => (
               <div key={idx}>
@@ -642,6 +495,152 @@ export default function SystemOverview() {
         </div>
 
       </div>
+
+      {/* Aggregate Report Table */}
+      <div className="bg-surface-container-lowest rounded-2xl shadow-sacred border border-outline-variant/30 overflow-hidden">
+        {/* Tab switcher headers */}
+        <div className="bg-surface-container-low border-b border-outline-variant/20 px-6 py-3 flex flex-col sm:flex-row justify-between items-center gap-4">
+          <h3 className="font-sans text-sm font-bold text-on-surface-variant uppercase tracking-wider">
+            Aggregated Ledger Breakdown
+          </h3>
+          <div className="flex p-0.5 bg-white border border-outline-variant/30 rounded-xl gap-1">
+            {(['daily', 'seva', 'monthly', 'yearly'] as const).map(tab => (
+              <button
+                key={tab}
+                onClick={() => { setSelectedTab(tab); setSortKey('label'); setSortDirection('desc'); }}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer capitalize ${selectedTab === tab
+                  ? 'bg-primary text-on-primary shadow-sm'
+                  : 'text-on-surface-variant hover:text-primary'
+                  }`}
+              >
+                {tab}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Table representation */}
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="bg-surface-container-low border-b divider-gold text-[11px] font-bold text-on-surface-variant uppercase tracking-wider select-none">
+                <th
+                  className="py-4 px-6 cursor-pointer hover:text-primary transition-colors"
+                  onClick={() => handleSort('label')}
+                >
+                  {selectedTab === 'daily' ? 'Pooja Date' : selectedTab === 'seva' ? 'Seva offering' : selectedTab === 'monthly' ? 'Month' : 'Year'} {renderSortIndicator('label')}
+                </th>
+                <th
+                  className="py-4 px-6 cursor-pointer hover:text-primary transition-colors text-center"
+                  onClick={() => handleSort('bookingsCount')}
+                >
+                  Total Bookings {renderSortIndicator('bookingsCount')}
+                </th>
+                <th
+                  className="py-4 px-6 cursor-pointer hover:text-primary transition-colors"
+                  onClick={() => handleSort('settledRevenue')}
+                >
+                  Settled Revenue (₹) {renderSortIndicator('settledRevenue')}
+                </th>
+
+                {selectedTab === 'seva' ? (
+                  <th className="py-4 px-6 text-center">Simulated Slot Capacity Util</th>
+                ) : (
+                  <>
+                    <th
+                      className="py-4 px-6 cursor-pointer hover:text-primary transition-colors"
+                      onClick={() => handleSort('pendingAmount')}
+                    >
+                      Pending (₹) {renderSortIndicator('pendingAmount')}
+                    </th>
+                    <th
+                      className="py-4 px-6 cursor-pointer hover:text-primary transition-colors"
+                      onClick={() => handleSort('refundedAmount')}
+                    >
+                      Refunded (₹) {renderSortIndicator('refundedAmount')}
+                    </th>
+                  </>
+                )}
+              </tr>
+            </thead>
+            <tbody className="text-sm font-medium text-on-surface divide-y divide-outline-variant/10">
+              {pageItems.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="py-8 text-center text-on-surface-variant font-medium">
+                    No transactions recorded in this period.
+                  </td>
+                </tr>
+              ) : (
+                pageItems.map((row, idx) => (
+                  <tr key={idx} className="hover:bg-surface-container-low/30 transition-colors">
+                    <td className="py-4 px-6 font-bold">{row.label}</td>
+                    <td className="py-4 px-6 text-center font-mono text-xs font-bold text-on-surface-variant">
+                      {row.bookingsCount} bookings
+                    </td>
+                    <td className="py-4 px-6 font-bold text-on-surface">₹{row.settledRevenue.toLocaleString()}</td>
+
+                    {selectedTab === 'seva' ? (
+                      <td className="py-4 px-6 text-center">
+                        <div className="inline-flex items-center gap-1.5 bg-green-50 text-green-700 px-2.5 py-0.5 rounded-full text-xs font-bold border border-green-200">
+                          {row.extraInfo}
+                        </div>
+                      </td>
+                    ) : (
+                      <>
+                        <td className="py-4 px-6 text-amber-600 font-semibold">₹{row.pendingAmount.toLocaleString()}</td>
+                        <td className="py-4 px-6 text-red-600 font-semibold">₹{row.refundedAmount.toLocaleString()}</td>
+                      </>
+                    )}
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Pagination controls */}
+        <div className="flex flex-col sm:flex-row items-center justify-between px-6 py-4 bg-surface-container-low border-t border-outline-variant/10 gap-4">
+          <div className="text-xs text-on-surface-variant font-medium">
+            Showing <span className="font-bold">{totalRowsCount === 0 ? 0 : startIndex + 1}</span> to{' '}
+            <span className="font-bold">{Math.min(startIndex + itemsPerPage, totalRowsCount)}</span> of{' '}
+            <span className="font-bold">{totalRowsCount}</span> report items
+          </div>
+          {totalPages > 1 && (
+            <div className="flex items-center gap-1">
+              <button
+                type="button"
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                className="px-2.5 py-1.5 rounded-lg border border-outline-variant/30 text-xs font-bold bg-white text-on-surface-variant hover:border-primary disabled:opacity-50 disabled:hover:border-outline-variant/30 disabled:bg-surface-container transition-all cursor-pointer"
+              >
+                Previous
+              </button>
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                <button
+                  key={page}
+                  type="button"
+                  onClick={() => setCurrentPage(page)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-all cursor-pointer ${currentPage === page
+                    ? 'bg-primary border-primary text-on-primary shadow-sm'
+                    : 'bg-white border-outline-variant/30 text-on-surface-variant hover:border-primary'
+                    }`}
+                >
+                  {page}
+                </button>
+              ))}
+              <button
+                type="button"
+                disabled={currentPage === totalPages}
+                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                className="px-2.5 py-1.5 rounded-lg border border-outline-variant/30 text-xs font-bold bg-white text-on-surface-variant hover:border-primary disabled:opacity-50 disabled:hover:border-outline-variant/30 disabled:bg-surface-container transition-all cursor-pointer"
+              >
+                Next
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+
     </div>
   );
 }

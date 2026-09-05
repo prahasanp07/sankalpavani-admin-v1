@@ -2,7 +2,7 @@
 
 > **Project Name**: SankalpVani Multi-Temple & Trust Enterprise Governance Platform  
 > **Repository Version**: v1.0.0-Production-Ready  
-> **Generation Date**: September 3, 2026  
+> **Generation Date**: September 5, 2026  
 > **Architecture Law**: 100% Dynamic Hierarchy — Zero Hardcoded Enums across Temples, Trustees, Committees, Members, Designations, Roles, and Departments.
 
 ---
@@ -20,8 +20,10 @@
 10. [Audit, Lifecycle Tracking & Visual Term Progress Components](#10-audit-lifecycle-tracking--visual-term-progress-components)
 11. [Multi-Tenant Scoping, RLS & Authorization Engine](#11-multi-tenant-scoping-rls--authorization-engine)
 12. [Operational & Temple Management Subsystems](#12-operational--temple-management-subsystems)
-13. [Automated Verification & Test Suite Matrix](#13-automated-verification--test-suite-matrix)
-14. [Complete File & Component Inventory](#14-complete-file--component-inventory)
+13. [Modern Temple Dashboard & Operational Analytics](#13-modern-temple-dashboard--operational-analytics)
+14. [Settings & Notification Gateway Architecture](#14-settings--notification-gateway-architecture)
+15. [Automated Verification & Test Suite Matrix](#15-automated-verification--test-suite-matrix)
+16. [Complete File & Component Inventory](#16-complete-file--component-inventory)
 
 ---
 
@@ -30,7 +32,7 @@
 SankalpVani is an enterprise-grade, multi-tenant digital governance and operations platform built specifically for Hindu Temple Endowments, Religious Trusts (*Mutts / Peethams*), and independent temple complexes.
 
 ### The Problem Addressed
-Traditional temple software suffered from rigid, hardcoded organizational hierarchies, single-temple silos, conflation between ceremonial sanctum titles and software permissions, lack of sub-committee lifecycle tracking, and leaky multi-tenant data structures.
+Traditional temple software suffered from rigid, hardcoded organizational hierarchies, single-temple silos, conflation between ceremonial sanctum titles and software permissions, lack of sub-committee lifecycle tracking, inflexible financial analytics, and leaky multi-tenant data structures.
 
 ### The Solution Delivered
 The codebase has been engineered such that **every entity across the organizational hierarchy is 100% dynamically manageable by administrators at runtime**:
@@ -38,19 +40,21 @@ The codebase has been engineered such that **every entity across the organizatio
 - **Strict Multi-Tenant Boundary Isolation**: Zero cross-tenant credential or data leakage; independent trusts (e.g., Sringeri vs. Ahobila) operate in cryptographically and logically isolated partitions.
 - **Unified Apex Control Room (Screen 1)**: Unified Trust Portfolio Dashboard providing instant access to all 9 core governance modules and child temple workplaces.
 - **Apex Trust Board**: Trustees and office bearers are onboarded dynamically with legal resolution numbers, visual lifecycle term progress, and life-term support.
-- **Committees & Sub-Committees**: Dynamic formation of standing and ad-hoc wings (*Jeernodharana, Utsavam, Finance, Agama Advisory*) with member portfolios, status lifecycle changes (`ACTIVE`, `RELIEVED`, `EXPIRED`), and real-time roster sync.
+- **Committees & Sub-Committees**: Dynamic formation of standing and ad-hoc wings (*Jeernodharana, Utsavam, Finance, Agama Advisory*) with member portfolios, status lifecycle changes (`ACTIVE`, `RELIEVED`, `EXPIRED`), simplified timelines (Start Date, End Date), and real-time roster sync.
 - **Separation of Title and Role**: Ceremonial designations (*Pradhana Archaka, Bhandari*) exist independently of software roles, with optional auto-binding.
 - **Granular Dynamic RBAC/ABAC**: Custom roles with namespace-resource-action permission strings, interactive modal capability toggling, and cache-invalidating policy versions.
 - **Category Masters Taxonomies**: Pluggable masters for Trust Categories, Membership Types, and Committee Categories.
 - **Dynamic Departments**: Dynamic department generation per trust and temple, with inline on-the-fly creation within drawers.
 - **Persistent Scoped Context Switcher**: Real-time visual indicator distinguishing Global Trust Operations (Crimson) from Specific Temple Operations (Saffron).
+- **Executive Operational Analytics**: Re-engineered Temple Dashboard featuring dual-bar Seva vs Donation comparative trends, dynamic Seva Popularity Doughnut charts with rise/fall metrics, and quick action bento grids.
+- **Streamlined Notification Gateways**: Dedicated SMS, WhatsApp Business, and Email (SMTP) sender configurations with clean direct-entry fields and persistent storage.
 
 ---
 
 ## 2. Core Architectural Laws & Mathematical Invariants
 
 ### Law 1: Multi-Tenant Tree Invariant
-$$\text{Tenant} \longrightarrow \text{Trust (Apex Boundary)} \xrightarrow{\text{Materialized Path}} \{\text{Child Temples}, \text{Divisions}, \text{Committees}\}$$
+$$\text{Tenant} \longrightarrow \text{Trust (Apex Boundary)} \xrightarrow{\text{Materialized Path}} \{\text{Temples}, \text{Divisions}, \text{Committees}\}$$
 Every operational entity strictly belongs to exactly one root Trust, with materialized paths (`/trust_id/temple_id/...`) enabling hierarchical queries.
 
 ### Law 2: The Architectural Separation Law
@@ -226,6 +230,8 @@ graph TD
     Roles["Dynamic RBAC & Roles (/governance/roles)"]
     Categories["Category Masters Dropdown & Preview"]
     TempleWorkplace["Temple Operational Workplace & POS (/)"]
+    AnalyticsDashboard["Executive Analytics & Revenue Trends"]
+    SettingsPortal["Notification Gateways & Security Settings"]
 
     Dashboard --> Designations
     Dashboard --> Roles
@@ -235,6 +241,8 @@ graph TD
     Dashboard --> Committees
     Dashboard --> Members
     Dashboard --> TempleWorkplace
+    TempleWorkplace --> AnalyticsDashboard
+    TempleWorkplace --> SettingsPortal
 ```
 
 ---
@@ -257,8 +265,8 @@ On Screen 1 ([`app/trusts/[trustId]/dashboard/page.tsx`](file:///c:/Users/praha/
    - Interactive modal preview for quick inspection.
 4. **Add New Temple** (`Plus` icon): High-visibility primary button launching the dynamic temple creation modal.
 5. **Trustees & Board** (`Users` icon): Direct navigation to `/governance/trustees`.
-6. **Committees** (`Layers` icon): Direct navigation to `/governance/committees`.
-7. **Members** (`UserCheck` icon): Direct navigation to `/governance/members` *(Renamed from "Members & Roster")*.
+6. **Committees** (`Layers` icon): Direct navigation to `/governance/committees`. Form modal features optional category, simplified Start Date / End Date timeline.
+7. **Members** (`UserCheck` icon): Direct navigation to `/governance/members`.
 8. **Assign Members to Committee (Optional)** (`UserPlus` icon): Quick link to committee roster assignments.
 9. **Archakas Registry & Duty Roster** (`CalendarClock` icon): Direct drill-down into temple duty rosters and ritual registries.
 10. **Bidirectional Navigation (`← Dashboard`)**: Smooth 1-click return to the main operational counter and temple workplace (`/`).
@@ -328,15 +336,60 @@ Whenever custom roles, permissions, or assignments change, the `policyVersions` 
 ## 12. Operational & Temple Management Subsystems
 
 1. **Seva & Pooja Management**: Multi-priest assignment, daily/festival quotas, advance booking rules, and Gotra-based sankalpam recording.
-2. **Priest Lineage & Rostering**: Priest profile management (Veda shakha, gotra, certifications), shift rosters, duty exchange workflows, and leave management.
-3. **Devotee Booking & Smart Passes**: Multi-channel booking (Counter, Online, Mobile), biometric/QR token pass generation, family member gotra grouping, and automatic receipt generation.
-4. **Finance, Hundi & Treasury**: Multi-custodian digital Hundi counting sessions, CCTV reference logs, cash/gold reconciliation, and daily temple financial ledgers.
-5. **Logistics & Sacred Prasadam Dispatch**: Postal dispatch tracking for overseas/remote sankalpam prasadam boxes, automated shipping labels, and devotee delivery SMS/WhatsApp alerts.
-6. **Facilities & Queue Infrastructure**: Kalyana Mandapam slot bookings, guest house room allocations, queue complex sensor integration, and maintenance tracking.
+2. **Calendar View & Seva Booking Workflow** ([`components/CalendarView.tsx`](file:///c:/Users/praha/Documents/PraGana%20Innovations%20Projects/Sankalpavani-v1/components/CalendarView.tsx)):
+   - Single-line summary header: `Seva Overview - [Selected Date / Current Date]`.
+   - Devotee demographics: Optional Age and Gender inputs.
+   - Dynamic Payment Gateway Mode:
+     - **UPI**: Instant dynamic QR code generation (MVP) with direct scan-and-pay.
+     - **Card / NetBanking**: Seamless checkout redirection.
+     - **Status Display**: Real-time confirmation message *"Thank you, payment is successful. Seva is booked"* upon verified payment.
+3. **Priest Lineage & Rostering**: Priest profile management (Veda shakha, gotra, certifications), shift rosters, duty exchange workflows, and leave management.
+4. **Devotee Booking & Smart Passes**: Multi-channel booking (Counter, Online, Mobile), biometric/QR token pass generation, family member gotra grouping, and automatic receipt generation.
+5. **Finance, Hundi & Treasury**: Multi-custodian digital Hundi counting sessions, CCTV reference logs, cash/gold reconciliation, and daily temple financial ledgers.
+6. **Logistics & Sacred Prasadam Dispatch**: Postal dispatch tracking for overseas/remote sankalpam prasadam boxes, automated shipping labels, and devotee delivery SMS/WhatsApp alerts.
+7. **Facilities & Queue Infrastructure**: Kalyana Mandapam slot bookings, guest house room allocations, queue complex sensor integration, and maintenance tracking.
 
 ---
 
-## 13. Automated Verification & Test Suite Matrix
+## 13. Modern Temple Dashboard & Operational Analytics
+
+[`components/DashboardPortal.tsx`](file:///c:/Users/praha/Documents/PraGana%20Innovations%20Projects/Sankalpavani-v1/components/DashboardPortal.tsx) has been architected with a high-conversion, executive 2-column layout:
+
+```
+┌──────────────────────────────────────────────────────────┬─────────────────────────────┐
+│ LEFT COLUMN (Operational Ledger & Trends)                │ RIGHT COLUMN (Intelligence) │
+├──────────────────────────────────────────────────────────┼─────────────────────────────┤
+│ 1. 3 KPI Metric Badges (Daily Collections, Sevas, Devotees)│ 1. Seva Popularity Doughnut │
+│ 2. Revenue Trends (Dual Bars: | Sevas | Donations |)     │    Chart + Rise/Fall %      │
+│ 3. Total Collections Summary Strip                       │ 2. Quick Actions Bento Grid │
+│ 4. Recent Transactions Ledger & Audit Records            │                             │
+└──────────────────────────────────────────────────────────┴─────────────────────────────┘
+```
+
+- **Dual-Bar Revenue Trends**: Separate color-coded bars on every day's X-axis comparison (Saffron for Sevas, Amber/Gold for Donations) with interactive tooltips.
+- **Seva Popularity Doughnut Chart**: Visual percentage distribution across Archana, Rudrabhishekam, Kalyanam, and Special Pujas with net growth and decline indicator tags.
+- **Quick Actions Bento Grid**: Instant 1-click launchers for Seva Booking, Hundi Counting, Priest Rostering, and Devotee Receipt generation.
+
+---
+
+## 14. Settings & Notification Gateway Architecture
+
+[`components/Settings.tsx`](file:///c:/Users/praha/Documents/PraGana%20Innovations%20Projects/Sankalpavani-v1/components/Settings.tsx) provides a streamlined administrative interface for temple communications:
+
+1. **SMS Gateway**:
+   - Primary Field: `SMS Sending Phone Number / Virtual No. *` (`smsConfig.sendingPhoneNumber`).
+   - Purpose: Automated booking SMS confirmations & barcode tokens.
+2. **WhatsApp Business API**:
+   - Primary Field: `WhatsApp Sending Phone Number *` (`whatsappConfig.sendingPhoneNumber`).
+   - Purpose: Automated digital e-passes, seva timings, and prasadam dispatch alerts.
+3. **Email (SMTP) Gateway**:
+   - Primary Field: `Sender's Email ID (From Address) *` (`emailConfig.senderEmail`).
+   - Purpose: Formatted 80G tax exemption receipts, sankalpa certificates, and annual statements.
+4. **Persistent Sync**: Automatically persists to `sankalpvani_notification_settings` in browser local storage and syncs with temple communication backends.
+
+---
+
+## 15. Automated Verification & Test Suite Matrix
 
 The entire project is verified with 10 comprehensive test suites written in TypeScript:
 
@@ -356,7 +409,7 @@ The entire project is verified with 10 comprehensive test suites written in Type
 
 ---
 
-## 14. Complete File & Component Inventory
+## 16. Complete File & Component Inventory
 
 ### Database Schemas
 - `db/schema/core.ts`: Trusts, Organization Nodes, Temples, Users, Person Profiles, Memberships, Designations, Office Bearers, Committees, Committee Members, Reporting Relationships, Departments, Custom Roles.
@@ -398,6 +451,10 @@ The entire project is verified with 10 comprehensive test suites written in Type
 - `app/trusts/[trustId]/governance/designations/page.tsx`
 - `app/trusts/[trustId]/governance/members/page.tsx`
 - `app/trusts/[trustId]/governance/roles/page.tsx`
+- `components/DashboardPortal.tsx` *(Temple Operational Analytics & Bento Grid)*
+- `components/CalendarView.tsx` *(Seva Calendar & Dynamic UPI / Gateway Booking)*
+- `components/Settings.tsx` *(Notification Gateways & Security Settings)*
+- `components/CommitteesGovernance.tsx` *(Committees & Dynamic Modal)*
 - `components/governance/TrusteeCard.tsx`
 - `components/governance/MemberCard.tsx`
 - `components/governance/AppointTrusteeModal.tsx`
@@ -409,4 +466,4 @@ The entire project is verified with 10 comprehensive test suites written in Type
 
 ## Conclusion
 
-The SankalpVani platform stands as a **complete, production-ready, 100% dynamic multi-tenant hierarchy and temple governance operating system**. Every administrative entity (temples, trustees, committees, members, designations, custom roles, category masters, matrix reporting trees, and dynamic departments) is dynamically configurable through intuitive, sacred-aesthetic UI interfaces and protected by rigorous database schemas, RLS guards, and automated test suites with zero TypeScript errors.
+The SankalpVani platform stands as a **complete, production-ready, 100% dynamic multi-tenant hierarchy and temple governance operating system**. Every administrative entity (temples, trustees, committees, members, designations, custom roles, category masters, matrix reporting trees, operational analytics dashboards, and dynamic departments) is dynamically configurable through intuitive, sacred-aesthetic UI interfaces and protected by rigorous database schemas, RLS guards, and automated test suites with zero TypeScript errors.

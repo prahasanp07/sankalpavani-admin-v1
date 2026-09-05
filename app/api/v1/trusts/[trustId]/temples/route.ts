@@ -16,7 +16,7 @@ const CreateTempleSchema = z.object({
     email: z.string().optional(),
     phone: z.string().optional(),
   }).passthrough().optional(),
-  status: z.enum(['ACTIVE', 'SUSPENDED', 'MAINTENANCE']).default('ACTIVE')
+  status: z.enum(['ACTIVE', 'OPERATIONAL', 'SUSPENDED', 'MAINTENANCE']).default('ACTIVE')
 });
 
 export async function GET(

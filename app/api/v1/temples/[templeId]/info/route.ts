@@ -4,11 +4,14 @@ import { templeRepository } from '@/lib/repositories/temple.repository';
 import { z } from 'zod';
 
 const UpdateInfoSchema = z.object({
+  code: z.string().optional(),
   name: z.string().optional(),
+  deity: z.string().optional(),
+  status: z.enum(['ACTIVE', 'OPERATIONAL', 'MAINTENANCE', 'SUSPENDED']).optional(),
   tagline: z.string().optional(),
   description: z.string().optional(),
   hotline: z.string().optional(),
-  officialEmail: z.string().email().optional(),
+  officialEmail: z.string().email().optional().or(z.literal('')),
   websiteUrl: z.string().optional(),
   mapsUrl: z.string().optional(),
   photos: z.array(z.string()).optional(),

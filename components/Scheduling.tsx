@@ -381,14 +381,10 @@ export default function Scheduling({ onBack }: SchedulingProps) {
           <div className="pt-4 border-t divider-gold flex justify-end gap-3">
             <button
               type="button"
-              disabled={
-                priestsData.find(p => p.name === formPriest)?.status === 'On Leave' || 
-                shifts.some(s => s.priestName === formPriest && s.date === selectedDate && s.slot === formSlot)
-              }
-              onClick={() => handleCreateShift(false)}
-              className="px-4 py-2.5 bg-surface-container-low hover:bg-primary-container/10 border border-outline-variant/40 text-on-surface-variant hover:text-primary text-xs font-bold rounded-xl shadow-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              onClick={() => setShowAssignForm(false)}
+              className="px-4 py-2.5 bg-surface-container-low hover:bg-surface-container border border-outline-variant/40 text-on-surface-variant hover:text-on-surface text-xs font-bold rounded-xl shadow-sm cursor-pointer transition-all active:scale-95"
             >
-              Save as Draft
+              Cancel
             </button>
             <button
               type="button"

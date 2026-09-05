@@ -23,6 +23,9 @@ import {
 
 interface TempleInfoProps {
   onBack: () => void;
+  isCreationMode?: boolean;
+  trustId?: string;
+  onSaveSuccess?: (newTempleId: string) => void;
 }
 
 interface DarshanTimingConfig {
@@ -31,7 +34,10 @@ interface DarshanTimingConfig {
 }
 
 interface TempleDetails {
+  code?: string;
   templeName: string;
+  primaryDeity?: string;
+  status?: 'ACTIVE' | 'OPERATIONAL' | 'MAINTENANCE' | 'SUSPENDED';
   address: string;
   phone: string;
   email: string;
@@ -55,16 +61,19 @@ interface TempleDetails {
 }
 
 const DEFAULT_DETAILS: TempleDetails = {
-  templeName: 'SankalpVani Sacred Abode',
-  address: 'SankalpVani Temple, Devasthanam Road, Bengaluru, Karnataka, 560001',
-  phone: '+91 80 2345 6789',
-  email: 'info@temple1.com',
-  website: 'https://www.sankalpvani.com',
-  googleMapsLink: 'https://maps.google.com/?q=SankalpVani+Temple+Bengaluru',
+  code: 'VST-01',
+  templeName: 'Sri Vidyashankara Temple',
+  primaryDeity: 'Lord Vidyashankara (Shiva Linga)',
+  status: 'ACTIVE',
+  address: 'Sri Sringeri Math, Harihara Street, Sringeri, Chikkamagaluru, Karnataka 577139',
+  phone: '+91 82652 50123',
+  email: 'info@vidyashankara.org',
+  website: 'https://sringeri.net/temples/vidyashankara',
+  googleMapsLink: 'https://maps.google.com/?q=Sri+Vidyashankara+Temple+Sringeri',
   darshanMorning: '06:00 AM - 12:30 PM',
   darshanEvening: '04:30 PM - 09:00 PM',
   capacityPerSlot: 150,
-  sthalaMahime: 'People say this temple is beautiful and offers a peaceful, divine atmosphere. Visitors highlight the spacious and clean grounds, making it ideal for meditation.',
+  sthalaMahime: 'Consecrated by Jagadguru Sri Vidyaranya in memory of Guru Vidyashankara, this historic sanctum offers a serene spiritual haven with 12 zodiac stone pillars aligning with the solar calendar.',
   photos: [
     'https://images.unsplash.com/photo-1602631985686-2bb06089d482?auto=format&fit=crop&q=80&w=800'
   ],
@@ -76,8 +85,36 @@ const DEFAULT_DETAILS: TempleDetails = {
   timingsSpecialOccasions: { morning: '05:00 AM - 10:00 PM (Continuous)', evening: 'N/A' }
 };
 
-export default function TempleInfo({ onBack }: TempleInfoProps) {
+const NEW_TEMPLE_DETAILS: TempleDetails = {
+  code: '',
+  templeName: '',
+  primaryDeity: '',
+  status: 'ACTIVE',
+  address: '',
+  phone: '',
+  email: '',
+  website: '',
+  googleMapsLink: '',
+  darshanMorning: '06:00 AM - 12:30 PM',
+  darshanEvening: '04:30 PM - 09:00 PM',
+  capacityPerSlot: 150,
+  sthalaMahime: '',
+  photos: [
+    'https://images.unsplash.com/photo-1602631985686-2bb06089d482?auto=format&fit=crop&q=80&w=800'
+  ],
+  primaryPhotoIndex: 0,
+  bannerPhotoIndex: 0,
+  timingsNormal: { morning: '06:00 AM - 12:30 PM', evening: '04:30 PM - 09:00 PM' },
+  timingsWeekends: { morning: '06:00 AM - 01:30 PM', evening: '04:00 PM - 09:30 PM' },
+  timingsDhanurMasa: { morning: '04:30 AM - 12:00 PM', evening: '05:00 PM - 08:30 PM' },
+  timingsSpecialOccasions: { morning: '05:00 AM - 10:00 PM (Continuous)', evening: 'N/A' }
+};
+
+export default function TempleInfo({ onBack, isCreationMode = false, trustId = 'trust_sringeri', onSaveSuccess }: TempleInfoProps) {
   const [details, setDetails] = useState<TempleDetails>(() => {
+    if (isCreationMode) {
+      return { ...NEW_TEMPLE_DETAILS };
+    }
     if (typeof window !== 'undefined') {
       const cached = localStorage.getItem('sankalpvani_temple_details');
       if (cached) {
@@ -95,11 +132,12 @@ export default function TempleInfo({ onBack }: TempleInfoProps) {
   const [isSaving, setIsSaving] = useState(false);
   const [success, setSuccess] = useState(false);
 
-  // Load from backend API on mount
+  // Load from backend API on mount (only when not creating a new temple)
   useEffect(() => {
+    if (isCreationMode) return;
     async function loadBackendInfo() {
       try {
-        const res = await fetch('/api/v1/temples/temple_vidyashankara/info?trustId=trust_sringeri');
+        const res = await fetch(`/api/v1/temples/temple_vidyashankara/info?trustId=${trustId}`);
         if (res.ok) {
           const json = await res.json();
           if (json.data?.temple) {
@@ -107,7 +145,10 @@ export default function TempleInfo({ onBack }: TempleInfoProps) {
             const s = json.data.settings;
             setDetails(prev => ({
               ...prev,
+              code: t.code || prev.code,
               templeName: t.name || prev.templeName,
+              primaryDeity: (t.contactJson as any)?.deity || t.deity || prev.primaryDeity,
+              status: t.status || prev.status,
               tagline: s.tagline || prev.tagline,
               officialHotline: s.hotline || prev.officialHotline,
               officialEmail: s.officialEmail || prev.officialEmail,
@@ -123,7 +164,7 @@ export default function TempleInfo({ onBack }: TempleInfoProps) {
       }
     }
     loadBackendInfo();
-  }, []);
+  }, [isCreationMode, trustId]);
 
   const [openPanels, setOpenPanels] = useState({
     normal: true,
@@ -161,13 +202,11 @@ export default function TempleInfo({ onBack }: TempleInfoProps) {
     const file = files[0];
     const reader = new FileReader();
     reader.onload = (event) => {
-      if (event.target?.result && typeof event.target.result === 'string') {
-        const newPhotos = [...photos, event.target.result];
-        const newPrimaryIndex = photos.length === 0 ? 0 : (details.primaryPhotoIndex ?? 0);
+      if (event.target?.result) {
+        const newPhotoUrl = event.target.result as string;
         setDetails({
           ...details,
-          photos: newPhotos,
-          primaryPhotoIndex: newPrimaryIndex
+          photos: [...photos, newPhotoUrl]
         });
       }
     };
@@ -175,27 +214,27 @@ export default function TempleInfo({ onBack }: TempleInfoProps) {
     e.target.value = '';
   };
 
-  const handleReplacePrimaryPhoto = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChangePrimaryPhoto = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
     const file = files[0];
     const reader = new FileReader();
     reader.onload = (event) => {
-      if (event.target?.result && typeof event.target.result === 'string') {
+      if (event.target?.result) {
+        const newPhotoUrl = event.target.result as string;
         const photos = details.photos || [];
         const primaryIdx = details.primaryPhotoIndex ?? 0;
-        const newPhotos = [...photos];
 
         if (photos.length === 0) {
-          newPhotos.push(event.target.result);
           setDetails({
             ...details,
-            photos: newPhotos,
+            photos: [newPhotoUrl],
             primaryPhotoIndex: 0
           });
         } else {
-          newPhotos[primaryIdx] = event.target.result;
+          const newPhotos = [...photos];
+          newPhotos[primaryIdx] = newPhotoUrl;
           setDetails({
             ...details,
             photos: newPhotos
@@ -262,19 +301,11 @@ export default function TempleInfo({ onBack }: TempleInfoProps) {
     changePrimaryInputRef.current?.click();
   };
 
-  useEffect(() => {
-    // Already loaded in lazy initializer
-  }, []);
-
   const isFormValid = () => {
     return (
+      (details.code ? details.code.trim() !== '' : true) &&
       details.templeName.trim() !== '' &&
-      details.address.trim() !== '' &&
-      details.phone.trim() !== '' &&
-      details.email.trim() !== '' &&
-      details.website.trim() !== '' &&
-      details.googleMapsLink.trim() !== '' &&
-      (details.sthalaMahime || '').trim() !== ''
+      details.address.trim() !== ''
     );
   };
 
@@ -288,22 +319,67 @@ export default function TempleInfo({ onBack }: TempleInfoProps) {
     };
 
     try {
-      await fetch('/api/v1/temples/temple_vidyashankara/info?trustId=trust_sringeri', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: updatedDetails.templeName,
-          tagline: updatedDetails.tagline,
-          hotline: updatedDetails.officialHotline || updatedDetails.phone,
-          officialEmail: updatedDetails.officialEmail || updatedDetails.email,
-          websiteUrl: updatedDetails.website,
-          mapsUrl: updatedDetails.googleMapsLink,
-          primaryPhotoIndex: updatedDetails.primaryPhotoIndex,
-          photos: updatedDetails.photos
-        })
-      });
+      if (isCreationMode) {
+        // Generate a clean code from input or name (e.g. "Sri Venkateswara" -> "SVT-03")
+        const inputCode = updatedDetails.code?.trim().toUpperCase();
+        const codePrefix = updatedDetails.templeName
+          .split(' ')
+          .map(w => w[0]?.toUpperCase() || '')
+          .slice(0, 3)
+          .join('') || 'TMP';
+        const code = inputCode || `${codePrefix}-${Math.floor(10 + Math.random() * 90)}`;
+
+        const res = await fetch(`/api/v1/trusts/${trustId}/temples`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: updatedDetails.templeName,
+            code: code,
+            deity: updatedDetails.primaryDeity,
+            tagline: updatedDetails.tagline || (updatedDetails.primaryDeity ? `Sanctum of ${updatedDetails.primaryDeity}` : 'Sanctum of Peace & Divinity'),
+            description: updatedDetails.sthalaMahime || 'Sacred temple under the Divine Trust.',
+            addressJson: { address: updatedDetails.address },
+            contactJson: {
+              hotline: updatedDetails.officialHotline || updatedDetails.phone,
+              email: updatedDetails.officialEmail || updatedDetails.email,
+              phone: updatedDetails.phone,
+              deity: updatedDetails.primaryDeity
+            },
+            status: updatedDetails.status || (publish ? 'ACTIVE' : 'MAINTENANCE')
+          })
+        });
+
+        if (res.ok) {
+          const json = await res.json();
+          const newId = json.data?.id || `temple_${Date.now()}`;
+          setIsSaving(false);
+          setSuccess(true);
+          if (onSaveSuccess) {
+            setTimeout(() => onSaveSuccess(newId), 1200);
+          }
+          return;
+        }
+      } else {
+        await fetch(`/api/v1/temples/temple_vidyashankara/info?trustId=${trustId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            code: updatedDetails.code,
+            name: updatedDetails.templeName,
+            deity: updatedDetails.primaryDeity,
+            status: updatedDetails.status,
+            tagline: updatedDetails.tagline,
+            hotline: updatedDetails.officialHotline || updatedDetails.phone,
+            officialEmail: updatedDetails.officialEmail || updatedDetails.email,
+            websiteUrl: updatedDetails.website,
+            mapsUrl: updatedDetails.googleMapsLink,
+            primaryPhotoIndex: updatedDetails.primaryPhotoIndex,
+            photos: updatedDetails.photos
+          })
+        });
+      }
     } catch (e) {
-      console.warn('Backend save fallback to local storage');
+      console.warn('Backend save fallback to local storage', e);
     }
 
     localStorage.setItem('sankalpvani_temple_details', JSON.stringify(updatedDetails));
@@ -313,7 +389,11 @@ export default function TempleInfo({ onBack }: TempleInfoProps) {
     }
     setIsSaving(false);
     setSuccess(true);
-    setTimeout(() => setSuccess(false), 3000);
+    if (isCreationMode && onSaveSuccess) {
+      setTimeout(() => onSaveSuccess(`temple_${Date.now()}`), 1200);
+    } else {
+      setTimeout(() => setSuccess(false), 3000);
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -381,28 +461,81 @@ export default function TempleInfo({ onBack }: TempleInfoProps) {
             </button>
             {openSections.generalIdentity && (
               <div className="p-6 space-y-4 animate-[fadeIn_0.2s_ease-out]">
-                <div className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {/* Code - Placed before Temple Name */}
                   <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1">Temple Official Name</label>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1">
+                      Code (Unique ID) <span className="text-red-500">*</span>
+                    </label>
                     <input
                       type="text"
                       required
-                      value={details.templeName}
-                      onChange={(e) => setDetails({ ...details, templeName: e.target.value })}
-                      className="w-full px-4 py-2.5 bg-surface-container-low border border-outline rounded-xl text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                      placeholder="e.g. VST-01"
+                      value={details.code ?? ''}
+                      onChange={(e) => setDetails({ ...details, code: e.target.value.toUpperCase() })}
+                      className="w-full px-4 py-2.5 bg-surface-container-low border border-outline rounded-xl text-sm font-mono uppercase placeholder:text-on-surface-variant/60 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
                     />
                   </div>
 
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1">Physical Address</label>
-                    <textarea
-                      rows={3}
+                  {/* Temple Name */}
+                  <div className="md:col-span-2">
+                    <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1">
+                      Temple Official Name <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
                       required
-                      value={details.address}
-                      onChange={(e) => setDetails({ ...details, address: e.target.value })}
-                      className="w-full px-4 py-2.5 bg-surface-container-low border border-outline rounded-xl text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                      placeholder="e.g. Sri Vidyashankara Temple / Sri Sharadamba Devasthanam"
+                      value={details.templeName}
+                      onChange={(e) => setDetails({ ...details, templeName: e.target.value })}
+                      className="w-full px-4 py-2.5 bg-surface-container-low border border-outline rounded-xl text-sm placeholder:text-on-surface-variant/60 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
                     />
                   </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Primary Deity / Sanctum */}
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1">
+                      Primary Deity / Sanctum
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Lord Vidyashankara (Shiva Linga) / Goddess Sharadamba"
+                      value={details.primaryDeity ?? ''}
+                      onChange={(e) => setDetails({ ...details, primaryDeity: e.target.value })}
+                      className="w-full px-4 py-2.5 bg-surface-container-low border border-outline rounded-xl text-sm placeholder:text-on-surface-variant/60 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                    />
+                  </div>
+
+                  {/* Initial Status / Sanctum Status Dropdown */}
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1">
+                      Sanctum Initial Status <span className="text-red-500">*</span>
+                    </label>
+                    <select
+                      value={details.status || 'ACTIVE'}
+                      onChange={(e) => setDetails({ ...details, status: e.target.value as any })}
+                      className="w-full px-4 py-2.5 bg-surface-container-low border border-outline rounded-xl text-sm text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary cursor-pointer font-medium"
+                    >
+                      <option value="ACTIVE">Active</option>
+                      <option value="OPERATIONAL">Operational</option>
+                      <option value="MAINTENANCE">Maintenance</option>
+                      <option value="SUSPENDED">Suspended</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1">Physical Address</label>
+                  <textarea
+                    rows={3}
+                    required
+                    placeholder="e.g. Sri Sringeri Math, Harihara Street, Sringeri, Chikkamagaluru, Karnataka 577139"
+                    value={details.address}
+                    onChange={(e) => setDetails({ ...details, address: e.target.value })}
+                    className="w-full px-4 py-2.5 bg-surface-container-low border border-outline rounded-xl text-sm placeholder:text-on-surface-variant/60 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                  />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -413,9 +546,10 @@ export default function TempleInfo({ onBack }: TempleInfoProps) {
                     <input
                       type="text"
                       required
+                      placeholder="e.g. +91 82652 50123 / +91 98450 12345"
                       value={details.phone}
                       onChange={(e) => setDetails({ ...details, phone: e.target.value })}
-                      className="w-full px-4 py-2.5 bg-surface-container-low border border-outline rounded-xl text-sm focus:outline-none"
+                      className="w-full px-4 py-2.5 bg-surface-container-low border border-outline rounded-xl text-sm placeholder:text-on-surface-variant/60 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
                     />
                   </div>
 
@@ -426,9 +560,10 @@ export default function TempleInfo({ onBack }: TempleInfoProps) {
                     <input
                       type="email"
                       required
+                      placeholder="e.g. info@vidyashankara.org / info@sringeri.org"
                       value={details.email}
                       onChange={(e) => setDetails({ ...details, email: e.target.value })}
-                      className="w-full px-4 py-2.5 bg-surface-container-low border border-outline rounded-xl text-sm focus:outline-none"
+                      className="w-full px-4 py-2.5 bg-surface-container-low border border-outline rounded-xl text-sm placeholder:text-on-surface-variant/60 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
                     />
                   </div>
 
@@ -439,9 +574,10 @@ export default function TempleInfo({ onBack }: TempleInfoProps) {
                     <input
                       type="url"
                       required
+                      placeholder="e.g. https://sringeri.net/temples/vidyashankara"
                       value={details.website}
                       onChange={(e) => setDetails({ ...details, website: e.target.value })}
-                      className="w-full px-4 py-2.5 bg-surface-container-low border border-outline rounded-xl text-sm focus:outline-none"
+                      className="w-full px-4 py-2.5 bg-surface-container-low border border-outline rounded-xl text-sm placeholder:text-on-surface-variant/60 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
                     />
                   </div>
                   <div className="md:col-span-2">
@@ -451,9 +587,10 @@ export default function TempleInfo({ onBack }: TempleInfoProps) {
                     <input
                       type="url"
                       required
+                      placeholder="e.g. https://maps.google.com/?q=Sri+Vidyashankara+Temple+Sringeri"
                       value={details.googleMapsLink}
                       onChange={(e) => setDetails({ ...details, googleMapsLink: e.target.value })}
-                      className="w-full px-4 py-2.5 bg-surface-container-low border border-outline rounded-xl text-sm focus:outline-none"
+                      className="w-full px-4 py-2.5 bg-surface-container-low border border-outline rounded-xl text-sm placeholder:text-on-surface-variant/60 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
                     />
                   </div>
                 </div>
@@ -462,9 +599,10 @@ export default function TempleInfo({ onBack }: TempleInfoProps) {
                   <textarea
                     rows={3}
                     required
+                    placeholder="e.g. Consecrated by Jagadguru Sri Adi Shankaracharya, this historic sanctum offers a serene spiritual haven with 12 zodiac stone pillars aligning with the solar calendar..."
                     value={details.sthalaMahime ?? ''}
                     onChange={(e) => setDetails({ ...details, sthalaMahime: e.target.value })}
-                    className="w-full px-4 py-2.5 bg-surface-container-low border border-outline rounded-xl text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                    className="w-full px-4 py-2.5 bg-surface-container-low border border-outline rounded-xl text-sm placeholder:text-on-surface-variant/60 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
                   />
                 </div>
               </div>
@@ -639,9 +777,10 @@ export default function TempleInfo({ onBack }: TempleInfoProps) {
                     <input
                       type="number"
                       required
+                      placeholder="e.g. 150"
                       value={details.capacityPerSlot}
                       onChange={(e) => setDetails({ ...details, capacityPerSlot: Number(e.target.value) })}
-                      className="w-full px-4 py-2.5 bg-surface-container-low border border-outline rounded-xl text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                      className="w-full px-4 py-2.5 bg-surface-container-low border border-outline rounded-xl text-sm placeholder:text-on-surface-variant/60 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
                     />
                   </div>
                 </div>
@@ -866,7 +1005,7 @@ export default function TempleInfo({ onBack }: TempleInfoProps) {
             <input
               type="file"
               ref={changePrimaryInputRef}
-              onChange={handleReplacePrimaryPhoto}
+              onChange={handleChangePrimaryPhoto}
               accept="image/*"
               className="hidden"
             />

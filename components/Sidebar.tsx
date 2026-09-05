@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   LayoutDashboard,
   Grid,
@@ -17,11 +18,20 @@ import {
   Building2,
   Landmark,
   Layers,
-  ChevronDown
+  ChevronDown,
+  Crown,
+  Tag,
+  Plus,
+  Users,
+  UserPlus,
+  CalendarClock,
+  FolderTree
 } from 'lucide-react';
 
 import { useAuth, STAKEHOLDER_PERSONAS } from '../contexts/AuthContext';
 import { PermissionKey } from '../utils/permissions';
+import GovernanceMastersModal from './governance/GovernanceMastersModal';
+import { MasterType } from '@/lib/types/masters';
 
 interface SidebarProps {
   activeTab: string;
@@ -61,19 +71,24 @@ export default function Sidebar({
   activeTrustId: propTrustId = 'trust_sringeri',
   activeTempleId: propTempleId = 'temple_vidyashankara'
 }: SidebarProps) {
-  const { 
-    session, 
-    hasPermission, 
-    updateSession, 
-    activeScope, 
+  const {
+    session,
+    activeScope,
+    activeTempleName,
     activeTrustId,
-    activeTempleName, 
-    activeTempleId, 
-    availableTemples, 
-    switchScope 
+    activeTempleId,
+    hasPermission,
+    switchStaffPersona,
+    resetToSuperAdmin,
+    updateSession,
+    switchScope
   } = useAuth();
+  const router = useRouter();
   const [templeLogo, setTempleLogo] = useState('https://lh3.googleusercontent.com/aida-public/AB6AXuANcPfzsfum8zGj2STDpP_Eds0xOoXxtm_OjHwVkP2MZOW3999u6oVf8P-7GeIMQA1hFSnmMM-gxsed4iDD-ruqP0OJKhI0LBMl2OTllKr3RJspedpV9pOsdDyz43dF_teOB1cC39MQgm579_rgeQq4Evh6iDEqE4aFi5LR5E3SLkqyCjsFrlyNnt_YF1ph80p1i-M4ec2yFc2A9oBE9U3sOA8W64XAiqtD-IxdDQLuoEYwwIz6gU1SePMjmWX2QVVSn1bT8aiesII');
   const [personaMenuOpen, setPersonaMenuOpen] = useState(false);
+  const [categoryDropdownOpen, setCategoryDropdownOpen] = useState(false);
+  const [mastersModalOpen, setMastersModalOpen] = useState(false);
+  const [mastersInitialTab, setMastersInitialTab] = useState<MasterType>('TRUSTEE_CATEGORY');
 
   useEffect(() => {
     const updateLogo = () => {
@@ -106,8 +121,8 @@ export default function Sidebar({
   const templeNavItems = [
     { id: 'dashboard', label: 'Temple Dashboard', icon: LayoutDashboard, perm: ['DASHBOARD_VIEW'] },
     { id: 'calendar', label: 'Devotee Bookings', icon: Calendar, perm: ['VIEW_BOOKINGS', 'REGISTER_BOOKINGS'] },
-    { id: 'transactions', label: 'Financial Ledger', icon: Receipt, perm: ['VIEW_FINANCE', 'PRINT_RECEIPTS'] },
-    { id: 'masters_hub', label: 'Rituals & Masters', icon: Grid, perm: ['VIEW_SEVAS', 'MANAGE_SEVAS', 'VIEW_PRIESTS', 'MANAGE_PRIESTS', 'MANAGE_TEMPLE_INFO'] },
+    { id: 'transactions', label: 'Seva Ledger', icon: Receipt, perm: ['VIEW_FINANCE', 'PRINT_RECEIPTS'] },
+    { id: 'masters_hub', label: 'Masters', icon: Grid, perm: ['VIEW_SEVAS', 'MANAGE_SEVAS', 'VIEW_PRIESTS', 'MANAGE_PRIESTS', 'MANAGE_TEMPLE_INFO'] },
     { id: 'prasadam', label: 'Prasadam Dispatch', icon: Utensils, perm: ['PROCESS_LOGISTICS'] },
     // { id: 'org_chart', label: 'Org Hierarchy', icon: Network, perm: ['VIEW_ORG_CHART'] }, // TEMPORARILY COMMENTED OUT FROM UI
     { id: 'system_overview', label: 'Temple Reports', icon: BarChart3, perm: ['VIEW_REPORTS'] },
@@ -122,6 +137,23 @@ export default function Sidebar({
 
   const handleNavClick = (id: string) => {
     setActiveTab(id);
+    if (typeof window !== 'undefined') {
+      try {
+        const storedState = localStorage.getItem('sankalpvani_navigation_state');
+        const parsed = storedState ? JSON.parse(storedState) : {};
+        localStorage.setItem('sankalpvani_navigation_state', JSON.stringify({ ...parsed, activeTab: id }));
+      } catch (e) { }
+
+      if (window.location.pathname !== '/') {
+        if (id === 'dashboard') {
+          router.push('/');
+        } else if (id === 'designations') {
+          router.push(`/trusts/${currentTrustId}/governance/designations`);
+        } else {
+          router.push('/');
+        }
+      }
+    }
     if (setMobileOpen) setMobileOpen(false);
   };
 
@@ -129,6 +161,8 @@ export default function Sidebar({
   const displayAvatar = session?.avatar || adminAvatar;
   const displayDesignation = session?.designation || session?.role || 'Staff Member';
   const isTrustAdmin = session?.isSuperAdmin || hasPermission('SUPER_ADMIN');
+  const isTrustScope = activeScope === 'TRUST';
+  const currentTrustId = activeTrustId || propTrustId || 'trust_sringeri';
 
   return (
     <>
@@ -143,11 +177,10 @@ export default function Sidebar({
           />
           <h1 className="font-serif text-xl text-primary text-center font-bold tracking-tight">SankalpVani</h1>
           <div className="flex items-center gap-1.5 mt-2 w-full justify-center">
-            <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full text-center shadow-xs truncate max-w-[210px] ${
-              activeScope === 'TRUST'
-                ? 'bg-red-800 text-white'
-                : 'bg-orange-600 text-white'
-            }`}>
+            <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full text-center shadow-xs truncate max-w-[210px] ${activeScope === 'TRUST'
+              ? 'bg-red-800 text-white'
+              : 'bg-orange-600 text-white'
+              }`}>
               {activeScope === 'TRUST'
                 ? 'Viewing: Global Trust Operations'
                 : `Viewing: ${activeTempleName || 'Sri Vidyashankara Temple'}`}
@@ -183,39 +216,196 @@ export default function Sidebar({
             );
           })}
 
-          {scopeContext === 'trust' && (
-            <div className="space-y-1">
-              <a
-                href={`/trusts/${activeTrustId}/dashboard`}
-                className="w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl font-sans text-xs font-bold text-primary bg-primary-container/10 border-r-4 border-primary shadow-xs"
+          {/* Trust Governance Section */}
+          {(isTrustScope || scopeContext === 'trust') && (
+            <div className="space-y-1 pt-1">
+              <button
+                type="button"
+                onClick={() => handleNavClick('dashboard')}
+                className={`w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl font-sans text-xs transition-all cursor-pointer text-left ${activeTab === 'dashboard'
+                  ? 'font-bold text-primary bg-primary-container/10 border-r-4 border-primary shadow-xs'
+                  : 'font-semibold text-on-surface-variant hover:bg-primary-container/5 hover:text-primary'
+                  }`}
+                title="Open Trust Dashboard & Portfolio"
               >
-                <LayoutDashboard size={16} />
-                <span>Trust Portfolio</span>
-              </a>
-              <a
-                href={`/trusts/${activeTrustId}/governance/roles`}
-                className="w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl font-sans text-xs font-semibold text-on-surface-variant hover:bg-primary-container/5 hover:text-primary transition-all"
-              >
-                <ShieldCheck size={16} />
-                <span>Dynamic RBAC & Roles</span>
-              </a>
+                <Landmark size={16} />
+                <span>Trust Dashboard</span>
+              </button>
+
+              {/* Items displayed in Trust Dashboard (Governance & Masters) */}
+              <div className="pl-3.5 pr-1 py-1 space-y-0.5 border-l-2 border-primary/20 ml-3 mt-1">
+                {/* 1. Designation & Titles */}
+                <button
+                  type="button"
+                  onClick={() => handleNavClick('designations')}
+                  className={`w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg font-sans text-[11px] transition-colors cursor-pointer text-left ${activeTab === 'designations'
+                    ? 'font-bold text-primary bg-primary-container/15'
+                    : 'font-medium text-on-surface-variant hover:bg-primary-container/5 hover:text-primary'
+                    }`}
+                >
+                  <Crown size={13} className="shrink-0 text-amber-700" />
+                  <span className="truncate">Designation & Titles</span>
+                </button>
+
+                {/* 2. Dynamic RBAC & Roles */}
+                <button
+                  type="button"
+                  onClick={() => handleNavClick('roles')}
+                  className={`w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg font-sans text-[11px] transition-colors cursor-pointer text-left ${activeTab === 'roles'
+                    ? 'font-bold text-primary bg-primary-container/15'
+                    : 'font-medium text-on-surface-variant hover:bg-primary-container/5 hover:text-primary'
+                    }`}
+                >
+                  <ShieldCheck size={13} className="shrink-0 text-primary" />
+                  <span className="truncate">Dynamic RBAC & Roles <span className="italic font-normal text-[10px] text-on-surface-variant/80">(Optional)</span></span>
+                </button>
+
+                {/* 3. Category Dropdown / Submenu */}
+                <div>
+                  <button
+                    type="button"
+                    onClick={() => setCategoryDropdownOpen(!categoryDropdownOpen)}
+                    className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg font-sans text-[11px] font-medium text-on-surface-variant hover:bg-primary-container/5 hover:text-primary transition-colors cursor-pointer text-left"
+                  >
+                    <div className="flex items-center gap-2 min-w-0">
+                      <Tag size={13} className="shrink-0 text-amber-800" />
+                      <span className="truncate">Category</span>
+                    </div>
+                    <ChevronDown size={12} className={`shrink-0 transition-transform ${categoryDropdownOpen ? 'rotate-180' : ''}`} />
+                  </button>
+
+                  {categoryDropdownOpen && (
+                    <div className="pl-4 pr-1 py-1 space-y-0.5 animate-[fadeIn_0.15s_ease-out]">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setMastersInitialTab('TRUSTEE_CATEGORY');
+                          setMastersModalOpen(true);
+                        }}
+                        className="w-full flex items-center gap-1.5 px-2 py-1 rounded-md font-sans text-[10px] text-on-surface-variant hover:text-primary hover:bg-primary/5 transition-colors cursor-pointer text-left"
+                      >
+                        <FolderTree size={11} className="shrink-0 text-primary" />
+                        <span className="truncate">Trust Categories - Master</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setMastersInitialTab('MEMBERSHIP_TYPE');
+                          setMastersModalOpen(true);
+                        }}
+                        className="w-full flex items-center gap-1.5 px-2 py-1 rounded-md font-sans text-[10px] text-on-surface-variant hover:text-primary hover:bg-primary/5 transition-colors cursor-pointer text-left"
+                      >
+                        <UserCheck size={11} className="shrink-0 text-primary" />
+                        <span className="truncate">Membership Type - Master</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setMastersInitialTab('COMMITTEE_CATEGORY');
+                          setMastersModalOpen(true);
+                        }}
+                        className="w-full flex items-center gap-1.5 px-2 py-1 rounded-md font-sans text-[10px] text-on-surface-variant hover:text-primary hover:bg-primary/5 transition-colors cursor-pointer text-left"
+                      >
+                        <Layers size={11} className="shrink-0 text-primary" />
+                        <span className="truncate">Committee Category - Master</span>
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                {/* 4. Add New Temple */}
+                <button
+                  type="button"
+                  onClick={() => handleNavClick('add_temple')}
+                  className={`w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg font-sans text-[11px] transition-colors cursor-pointer text-left ${activeTab === 'add_temple'
+                    ? 'font-bold text-primary bg-primary-container/15'
+                    : 'font-medium text-on-surface-variant hover:bg-primary-container/5 hover:text-primary'
+                    }`}
+                >
+                  <Plus size={13} className="shrink-0 text-primary" />
+                  <span className="truncate">Add New Temple</span>
+                </button>
+
+                {/* 5. Trustees & Board */}
+                <button
+                  type="button"
+                  onClick={() => handleNavClick('trustees')}
+                  className={`w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg font-sans text-[11px] transition-colors cursor-pointer text-left ${activeTab === 'trustees'
+                    ? 'font-bold text-primary bg-primary-container/15'
+                    : 'font-medium text-on-surface-variant hover:bg-primary-container/5 hover:text-primary'
+                    }`}
+                >
+                  <Users size={13} className="shrink-0 text-primary" />
+                  <span className="truncate">Trustees & Board</span>
+                </button>
+
+                {/* 6. Committees */}
+                <button
+                  type="button"
+                  onClick={() => handleNavClick('committees')}
+                  className={`w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg font-sans text-[11px] transition-colors cursor-pointer text-left ${activeTab === 'committees'
+                    ? 'font-bold text-primary bg-primary-container/15'
+                    : 'font-medium text-on-surface-variant hover:bg-primary-container/5 hover:text-primary'
+                    }`}
+                >
+                  <Layers size={13} className="shrink-0 text-primary" />
+                  <span className="truncate">Committees</span>
+                </button>
+
+                {/* 7. Members */}
+                <button
+                  type="button"
+                  onClick={() => handleNavClick('members')}
+                  className={`w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg font-sans text-[11px] transition-colors cursor-pointer text-left ${activeTab === 'members'
+                    ? 'font-bold text-primary bg-primary-container/15'
+                    : 'font-medium text-on-surface-variant hover:bg-primary-container/5 hover:text-primary'
+                    }`}
+                >
+                  <UserCheck size={13} className="shrink-0 text-primary" />
+                  <span className="truncate">Members</span>
+                </button>
+
+                {/* 8. Assign Members to Committee */}
+                <button
+                  type="button"
+                  onClick={() => handleNavClick('committees')}
+                  className={`w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg font-sans text-[11px] transition-colors cursor-pointer text-left ${activeTab === 'committees'
+                    ? 'font-bold text-primary bg-primary-container/15'
+                    : 'font-medium text-on-surface-variant hover:bg-primary-container/5 hover:text-primary'
+                    }`}
+                >
+                  <UserPlus size={13} className="shrink-0 text-primary" />
+                  <span className="truncate">Assign Members to Committee</span>
+                </button>
+
+                {/* 9. Archakas Registry & Duty Roster */}
+                <a
+                  href={`/trusts/${currentTrustId}/temples/temple_vidyashankara/dashboard`}
+                  className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg font-sans text-[11px] font-medium text-on-surface-variant hover:bg-primary-container/5 hover:text-primary transition-colors"
+                >
+                  <CalendarClock size={13} className="shrink-0 text-primary" />
+                  <span className="truncate">Archakas Registry & Duty Roster</span>
+                </a>
+              </div>
             </div>
           )}
 
-          {/* Trust Portfolio Dashboard Link */}
-          <div className="pt-3 pb-1 border-t border-outline-variant/30 mt-3">
-            <p className="text-[9px] font-mono font-bold uppercase tracking-wider text-on-surface-variant/70 mb-1.5 px-3">
-              Trust Control Center
-            </p>
-            <a
-              href={`/trusts/${activeTrustId}/dashboard`}
-              className="w-full flex items-center gap-2 px-3.5 py-2 rounded-xl font-sans text-xs font-bold text-amber-800 hover:bg-amber-500/10 transition-colors"
-              title="Open Trust Portfolio"
-            >
-              <Landmark size={14} className="shrink-0" />
-              <span>Trust Dashboard</span>
-            </a>
-          </div>
+          {/* Temple Scope: Quick Link to Trust Control Center when in Temple mode */}
+          {!isTrustScope && scopeContext !== 'trust' && (
+            <div className="pt-3 pb-1 border-t border-outline-variant/30 mt-3">
+              <p className="text-[9px] font-mono font-bold uppercase tracking-wider text-on-surface-variant/70 mb-1.5 px-3">
+                Trust Control Center
+              </p>
+              <a
+                href={`/trusts/${currentTrustId}/dashboard`}
+                className="w-full flex items-center gap-2 px-3.5 py-2 rounded-xl font-sans text-xs font-bold text-amber-800 hover:bg-amber-500/10 transition-colors"
+                title="Open Trust Dashboard"
+              >
+                <Landmark size={14} className="shrink-0" />
+                <span>Trust Dashboard</span>
+              </a>
+            </div>
+          )}
         </nav>
 
         {/* Footer Stakeholder Persona Switcher & Profile */}
@@ -264,9 +454,8 @@ export default function Sidebar({
                         updateSession(persona);
                         setPersonaMenuOpen(false);
                       }}
-                      className={`w-full text-left px-2 py-1.5 rounded-lg text-[10px] font-sans font-semibold transition-colors cursor-pointer flex flex-col ${
-                        session?.email === persona.email ? 'bg-primary text-on-primary shadow-xs' : 'text-on-surface hover:bg-surface-container'
-                      }`}
+                      className={`w-full text-left px-2 py-1.5 rounded-lg text-[10px] font-sans font-semibold transition-colors cursor-pointer flex flex-col ${session?.email === persona.email ? 'bg-primary text-on-primary shadow-xs' : 'text-on-surface hover:bg-surface-container'
+                        }`}
                     >
                       <span className="font-bold truncate">{persona.designation}</span>
                       <span className="text-[8px] opacity-80 truncate">{persona.name} ({persona.email})</span>
@@ -289,9 +478,8 @@ export default function Sidebar({
                         updateSession(persona);
                         setPersonaMenuOpen(false);
                       }}
-                      className={`w-full text-left px-2 py-1.5 rounded-lg text-[10px] font-sans font-semibold transition-colors cursor-pointer flex flex-col ${
-                        session?.email === persona.email ? 'bg-amber-800 text-white shadow-xs' : 'text-on-surface hover:bg-surface-container'
-                      }`}
+                      className={`w-full text-left px-2 py-1.5 rounded-lg text-[10px] font-sans font-semibold transition-colors cursor-pointer flex flex-col ${session?.email === persona.email ? 'bg-amber-800 text-white shadow-xs' : 'text-on-surface hover:bg-surface-container'
+                        }`}
                     >
                       <span className="font-bold truncate">{persona.designation}</span>
                       <span className="text-[8px] opacity-80 truncate">{persona.name} ({persona.email})</span>
@@ -352,7 +540,7 @@ export default function Sidebar({
             </div>
 
             <nav className="flex-1 space-y-1 overflow-y-auto">
-              {scopeContext === 'temple' && visibleTempleNavItems.map((item) => {
+              {(!isTrustScope && scopeContext !== 'trust') && visibleTempleNavItems.map((item) => {
                 const Icon = item.icon;
                 const isSelected = activeTab === item.id;
                 return (
@@ -369,6 +557,84 @@ export default function Sidebar({
                   </button>
                 );
               })}
+
+              {(isTrustScope || scopeContext === 'trust') && (
+                <div className="space-y-1">
+                  <button
+                    type="button"
+                    onClick={() => handleNavClick('dashboard')}
+                    className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl font-sans text-xs font-bold text-left cursor-pointer ${activeTab === 'dashboard'
+                      ? 'text-primary bg-primary-container/10 font-bold'
+                      : 'text-on-surface-variant hover:bg-primary-container/5 hover:text-primary'
+                      }`}
+                  >
+                    <Landmark size={15} />
+                    <span>Trust Dashboard</span>
+                  </button>
+                  <div className="pl-3 py-1 space-y-1 border-l-2 border-primary/20 ml-2">
+                    <button
+                      type="button"
+                      onClick={() => handleNavClick('designations')}
+                      className={`flex items-center gap-2 text-[11px] w-full text-left py-1 cursor-pointer ${activeTab === 'designations' ? 'text-primary font-bold' : 'text-on-surface-variant'}`}
+                    >
+                      <Crown size={12} className="text-amber-700" />
+                      <span>Designation & Titles</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleNavClick('roles')}
+                      className={`flex items-center gap-2 text-[11px] w-full text-left py-1 cursor-pointer ${activeTab === 'roles' ? 'text-primary font-bold' : 'text-on-surface-variant hover:text-primary'}`}
+                    >
+                      <ShieldCheck size={12} className="text-primary" />
+                      <span>Dynamic RBAC & Roles <span className="italic font-normal text-[10px] text-on-surface-variant/80">(Optional)</span></span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleNavClick('add_temple')}
+                      className={`flex items-center gap-2 text-[11px] w-full text-left py-1 cursor-pointer ${activeTab === 'add_temple' ? 'text-primary font-bold' : 'text-on-surface-variant hover:text-primary'}`}
+                    >
+                      <Plus size={12} className="text-primary" />
+                      <span>Add New Temple</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleNavClick('trustees')}
+                      className={`flex items-center gap-2 text-[11px] w-full text-left py-1 cursor-pointer ${activeTab === 'trustees' ? 'text-primary font-bold' : 'text-on-surface-variant hover:text-primary'}`}
+                    >
+                      <Users size={12} className="text-primary" />
+                      <span>Trustees & Board</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleNavClick('committees')}
+                      className={`flex items-center gap-2 text-[11px] w-full text-left py-1 cursor-pointer ${activeTab === 'committees' ? 'text-primary font-bold' : 'text-on-surface-variant hover:text-primary'}`}
+                    >
+                      <Layers size={12} className="text-primary" />
+                      <span>Committees</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleNavClick('members')}
+                      className={`flex items-center gap-2 text-[11px] w-full text-left py-1 cursor-pointer ${activeTab === 'members' ? 'text-primary font-bold' : 'text-on-surface-variant hover:text-primary'}`}
+                    >
+                      <UserCheck size={12} className="text-primary" />
+                      <span>Members</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleNavClick('committees')}
+                      className={`flex items-center gap-2 text-[11px] w-full text-left py-1 cursor-pointer ${activeTab === 'committees' ? 'text-primary font-bold' : 'text-on-surface-variant hover:text-primary'}`}
+                    >
+                      <UserPlus size={12} className="text-primary" />
+                      <span>Assign Members</span>
+                    </button>
+                    <a href={`/trusts/${currentTrustId}/temples/temple_vidyashankara/dashboard`} className="flex items-center gap-2 text-[11px] text-on-surface-variant py-1">
+                      <CalendarClock size={12} className="text-primary" />
+                      <span>Archakas Registry</span>
+                    </a>
+                  </div>
+                </div>
+              )}
 
               <div className="pt-2 pb-1 border-t border-outline-variant/30 mt-2">
                 <a
@@ -393,6 +659,14 @@ export default function Sidebar({
           </div>
         </div>
       )}
+
+      {/* Governance Masters Modal */}
+      <GovernanceMastersModal
+        isOpen={mastersModalOpen}
+        onClose={() => setMastersModalOpen(false)}
+        trustId={currentTrustId}
+        initialTab={mastersInitialTab}
+      />
     </>
   );
 }

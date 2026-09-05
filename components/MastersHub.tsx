@@ -13,9 +13,20 @@ import OrgChart from './OrgChart';
 interface MastersHubProps {
   activeSubTab: string;
   onNavigate: (tabId: string) => void;
+  isCreationMode?: boolean;
+  trustId?: string;
+  onSaveSuccess?: (newTempleId: string) => void;
+  onBack?: () => void;
 }
 
-export default function MastersHub({ activeSubTab, onNavigate }: MastersHubProps) {
+export default function MastersHub({
+  activeSubTab,
+  onNavigate,
+  isCreationMode = false,
+  trustId,
+  onSaveSuccess,
+  onBack
+}: MastersHubProps) {
   const tabs = [
     { id: 'temple_info', title: 'General Details', icon: 'temple_hindu' },
     { id: 'seva_master', title: 'Seva Offerings', icon: 'menu_book' },
@@ -25,6 +36,8 @@ export default function MastersHub({ activeSubTab, onNavigate }: MastersHubProps
     { id: 'scheduling', title: 'Archakas Duty Roster', icon: 'calendar_month' }
   ];
 
+  const handleBack = onBack || (() => onNavigate('dashboard'));
+
   return (
     <div className="space-y-6 animate-[fadeIn_0.5s_ease-out]">
       {/* Page Header */}
@@ -32,13 +45,15 @@ export default function MastersHub({ activeSubTab, onNavigate }: MastersHubProps
         <div className="max-w-xl">
           <div className="flex items-center gap-2 text-xs font-bold text-primary uppercase tracking-wider mb-1">
             <Database size={14} />
-            <span>System Masters</span>
+            <span>{isCreationMode ? 'New Temple Registration' : 'System Masters'}</span>
           </div>
           <h2 className="font-serif text-3xl md:text-4xl text-primary font-semibold tracking-tight">
-            Masters Hub
+            {isCreationMode ? 'Add New Temple' : 'Masters Hub'}
           </h2>
           <p className="font-sans text-sm text-on-surface-variant font-medium mt-1">
-            Access and configure vital temple databases, parameters, resources, and scheduling systems.
+            {isCreationMode
+              ? 'Configure identity, offerings, facilities, and archakas for the new temple branch.'
+              : 'Access and configure vital temple databases, parameters, resources, and scheduling systems.'}
           </p>
         </div>
 
@@ -99,22 +114,27 @@ export default function MastersHub({ activeSubTab, onNavigate }: MastersHubProps
       {/* Selected Tab Content Container */}
       <div className="bg-surface-container-lowest/40 rounded-3xl p-1 md:p-2">
         {activeSubTab === 'temple_info' && (
-          <TempleInfo onBack={() => onNavigate('dashboard')} />
+          <TempleInfo
+            onBack={handleBack}
+            isCreationMode={isCreationMode}
+            trustId={trustId}
+            onSaveSuccess={onSaveSuccess}
+          />
         )}
         {activeSubTab === 'seva_master' && (
-          <SevaMaster onBack={() => onNavigate('dashboard')} />
+          <SevaMaster onBack={handleBack} />
         )}
         {activeSubTab === 'temple_facilities' && (
-          <TempleFacilities onBack={() => onNavigate('dashboard')} />
+          <TempleFacilities onBack={handleBack} />
         )}
         {activeSubTab === 'archaka_master' && (
-          <PriestMaster onBack={() => onNavigate('dashboard')} />
+          <PriestMaster onBack={handleBack} />
         )}
         {/* {activeSubTab === 'org_chart' && (
-          <OrgChart onBack={() => onNavigate('dashboard')} />
+          <OrgChart onBack={handleBack} />
         )} */}
         {activeSubTab === 'scheduling' && (
-          <Scheduling onBack={() => onNavigate('dashboard')} />
+          <Scheduling onBack={handleBack} />
         )}
       </div>
     </div>

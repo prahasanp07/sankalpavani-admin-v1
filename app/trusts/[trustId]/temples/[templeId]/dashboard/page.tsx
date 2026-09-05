@@ -2,14 +2,14 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { 
-  Menu, 
-  Bell, 
-  Clock, 
-  Settings as SettingsIcon, 
-  LogOut, 
-  ChevronDown, 
-  ShieldCheck, 
+import {
+  Menu,
+  Bell,
+  Clock,
+  Settings as SettingsIcon,
+  LogOut,
+  ChevronDown,
+  ShieldCheck,
   ArrowLeft,
   Building2
 } from 'lucide-react';
@@ -61,15 +61,15 @@ function TempleWorkspaceContent() {
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
-      const options: Intl.DateTimeFormatOptions = { 
-        weekday: 'short', 
-        year: 'numeric', 
-        month: 'short', 
-        day: '2-digit', 
-        hour: '2-digit', 
-        minute: '2-digit', 
+      const options: Intl.DateTimeFormatOptions = {
+        weekday: 'short',
+        year: 'numeric',
+        month: 'short',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
         second: '2-digit',
-        hour12: true 
+        hour12: true
       };
       setCurrentTime(now.toLocaleString('en-IN', options));
     };
@@ -114,11 +114,11 @@ function TempleWorkspaceContent() {
   return (
     <div className="min-h-screen bg-background flex font-sans antialiased text-on-surface">
       {/* Sidebar with Scoped Context */}
-      <Sidebar 
-        activeTab={activeTab} 
-        setActiveTab={(tab) => setActiveTab(tab)} 
-        currentUser={displayEmail} 
-        onLogout={logout} 
+      <Sidebar
+        activeTab={activeTab}
+        setActiveTab={(tab) => setActiveTab(tab)}
+        currentUser={displayEmail}
+        onLogout={logout}
         mobileOpen={mobileMenuOpen}
         setMobileOpen={setMobileMenuOpen}
         adminName={displayName}
@@ -130,7 +130,7 @@ function TempleWorkspaceContent() {
         {/* Header Bar */}
         <header className="h-16 border-b divider-gold bg-surface-container/60 backdrop-blur-md sticky top-0 z-30 px-4 md:px-8 flex items-center justify-between shadow-sacred">
           <div className="flex items-center gap-3">
-            <button 
+            <button
               onClick={() => setMobileMenuOpen(true)}
               className="md:hidden p-2 text-on-surface-variant hover:text-primary rounded-xl focus:outline-none hover:bg-surface-container"
             >
@@ -162,7 +162,7 @@ function TempleWorkspaceContent() {
             </div>
 
             {/* Active Role Badge */}
-            <div 
+            <div
               className="hidden lg:flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold shadow-xs cursor-default"
             >
               <ShieldCheck size={13} />
@@ -170,10 +170,10 @@ function TempleWorkspaceContent() {
             </div>
 
             {/* Profile Avatar */}
-            <img 
-              alt="Admin" 
-              className="w-8 h-8 rounded-full object-cover border border-primary/40 shadow-xs cursor-pointer" 
-              src={displayAvatar} 
+            <img
+              alt="Admin"
+              className="w-8 h-8 rounded-full object-cover border border-primary/40 shadow-xs cursor-pointer"
+              src={displayAvatar}
               onClick={() => router.push(`/select-organization`)}
               title="Click to Switch Organization"
             />
@@ -183,7 +183,7 @@ function TempleWorkspaceContent() {
         {/* Main Content Area */}
         <main className="flex-1 p-4 md:p-8 max-w-7xl w-full mx-auto">
           {activeTab === 'dashboard' && (
-            <RequirePermission 
+            <RequirePermission
               permission="DASHBOARD_VIEW"
               fallback={<LockedViewFallback requiredPermission="DASHBOARD_VIEW" title="Executive Dashboard Restricted" />}
             >
@@ -192,20 +192,20 @@ function TempleWorkspaceContent() {
           )}
 
           {['masters_hub', 'temple_info', 'seva_master', 'temple_facilities', 'archaka_master', 'scheduling'].includes(activeTab) && (
-            <RequirePermission 
+            <RequirePermission
               permission={['MANAGE_TEMPLE_INFO', 'MANAGE_SEVAS', 'MANAGE_FACILITIES', 'MANAGE_PRIESTS', 'MANAGE_ROSTER', 'MANAGE_ORG_CHART', 'VIEW_SEVAS', 'VIEW_PRIESTS']}
               mode="any"
               fallback={<LockedViewFallback requiredPermission="MANAGE_TEMPLE_INFO" title="Masters Hub Restricted" />}
             >
-              <MastersHub 
-                activeSubTab={activeTab === 'masters_hub' ? 'temple_info' : activeTab} 
-                onNavigate={(tab) => setActiveTab(tab)} 
+              <MastersHub
+                activeSubTab={activeTab === 'masters_hub' ? 'temple_info' : activeTab}
+                onNavigate={(tab) => setActiveTab(tab)}
               />
             </RequirePermission>
           )}
 
           {activeTab === 'org_chart' && (
-            <RequirePermission 
+            <RequirePermission
               permission={['VIEW_ORG_CHART', 'MANAGE_ORG_CHART']}
               mode="any"
               fallback={<LockedViewFallback requiredPermission="VIEW_ORG_CHART" title="Organization Chart Restricted" />}
@@ -215,7 +215,7 @@ function TempleWorkspaceContent() {
           )}
 
           {activeTab === 'transactions' && (
-            <RequirePermission 
+            <RequirePermission
               permission="VIEW_FINANCE"
               fallback={<LockedViewFallback requiredPermission="VIEW_FINANCE" title="Financial Ledger Restricted" />}
             >
@@ -224,7 +224,7 @@ function TempleWorkspaceContent() {
           )}
 
           {activeTab === 'prasadam' && (
-            <RequirePermission 
+            <RequirePermission
               permission="PROCESS_LOGISTICS"
               fallback={<LockedViewFallback requiredPermission="PROCESS_LOGISTICS" title="Holy Prasadam Logistics Restricted" />}
             >
@@ -233,7 +233,7 @@ function TempleWorkspaceContent() {
           )}
 
           {activeTab === 'system_overview' && (
-            <RequirePermission 
+            <RequirePermission
               permission="VIEW_REPORTS"
               fallback={<LockedViewFallback requiredPermission="VIEW_REPORTS" title="System Reports Restricted" />}
             >
@@ -242,7 +242,7 @@ function TempleWorkspaceContent() {
           )}
 
           {activeTab === 'calendar' && (
-            <RequirePermission 
+            <RequirePermission
               permission={['VIEW_BOOKINGS', 'REGISTER_BOOKINGS']}
               mode="any"
               fallback={<LockedViewFallback requiredPermission="VIEW_BOOKINGS" title="Bookings Calendar Restricted" />}
@@ -252,7 +252,7 @@ function TempleWorkspaceContent() {
           )}
 
           {activeTab === 'settings' && (
-            <RequirePermission 
+            <RequirePermission
               permission="MANAGE_SETTINGS"
               fallback={<LockedViewFallback requiredPermission="MANAGE_SETTINGS" title="System Configuration Restricted" />}
             >

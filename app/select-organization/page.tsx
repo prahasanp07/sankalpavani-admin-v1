@@ -2,20 +2,20 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { 
-  Building2, 
-  Landmark, 
-  ChevronRight, 
-  ShieldCheck, 
-  Sparkles, 
-  LogOut, 
-  UserCheck, 
-  Check, 
-  Layers, 
-  Calendar, 
-  Receipt, 
-  Utensils, 
-  Clock 
+import {
+  Building2,
+  Landmark,
+  ChevronRight,
+  ShieldCheck,
+  Sparkles,
+  LogOut,
+  UserCheck,
+  Check,
+  Layers,
+  Calendar,
+  Receipt,
+  Utensils,
+  Clock
 } from 'lucide-react';
 import { useAuth, STAKEHOLDER_PERSONAS } from '../../contexts/AuthContext';
 
@@ -218,11 +218,10 @@ export default function SelectOrganizationPage() {
                       updateSession(persona);
                       setSelectedTrustId(persona.trustId || 'trust_sringeri');
                     }}
-                    className={`px-2 py-1 rounded-lg text-[10px] font-sans font-bold transition-all cursor-pointer ${
-                      session?.email === persona.email
-                        ? 'bg-primary text-on-primary shadow-xs scale-102 ring-1 ring-primary'
-                        : 'bg-surface-container hover:bg-surface-container-high text-on-surface border border-outline-variant/30'
-                    }`}
+                    className={`px-2 py-1 rounded-lg text-[10px] font-sans font-bold transition-all cursor-pointer ${session?.email === persona.email
+                      ? 'bg-primary text-on-primary shadow-xs scale-102 ring-1 ring-primary'
+                      : 'bg-surface-container hover:bg-surface-container-high text-on-surface border border-outline-variant/30'
+                      }`}
                   >
                     {persona.designation}
                   </button>
@@ -247,11 +246,10 @@ export default function SelectOrganizationPage() {
                       updateSession(persona);
                       setSelectedTrustId(persona.trustId || 'trust_ahobila');
                     }}
-                    className={`px-2 py-1 rounded-lg text-[10px] font-sans font-bold transition-all cursor-pointer ${
-                      session?.email === persona.email
-                        ? 'bg-amber-800 text-white shadow-xs scale-102 ring-1 ring-amber-700'
-                        : 'bg-surface-container hover:bg-surface-container-high text-on-surface border border-outline-variant/30'
-                    }`}
+                    className={`px-2 py-1 rounded-lg text-[10px] font-sans font-bold transition-all cursor-pointer ${session?.email === persona.email
+                      ? 'bg-amber-800 text-white shadow-xs scale-102 ring-1 ring-amber-700'
+                      : 'bg-surface-container hover:bg-surface-container-high text-on-surface border border-outline-variant/30'
+                      }`}
                   >
                     {persona.designation}
                   </button>
@@ -305,7 +303,7 @@ export default function SelectOrganizationPage() {
                 Trust Apex Governance
               </h3>
               <p className="text-xs text-on-surface-variant mt-1.5 leading-relaxed">
-                Umbrella administration across all child temples, dynamic RBAC role authoring, and consolidated audit trails.
+                Umbrella administration across all temples, dynamic RBAC role authoring, and consolidated audit trails.
               </p>
 
               <div className="space-y-2.5 mt-6">
@@ -319,7 +317,7 @@ export default function SelectOrganizationPage() {
                 </div>
                 <div className="flex items-center gap-2 text-xs text-on-surface font-semibold p-2.5 rounded-xl bg-surface-container/50">
                   <Landmark size={15} className="text-primary" />
-                  <span>{filteredTemples.length} Authorized Child Temples</span>
+                  <span>{filteredTemples.length} Authorized Temples</span>
                 </div>
               </div>
             </div>
