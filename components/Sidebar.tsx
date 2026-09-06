@@ -23,8 +23,7 @@ import {
   Tag,
   Plus,
   Users,
-  UserPlus,
-  CalendarClock,
+  Bell,
   FolderTree
 } from 'lucide-react';
 
@@ -120,13 +119,13 @@ export default function Sidebar({
   // Temple Level Operational Nav Items
   const templeNavItems = [
     { id: 'dashboard', label: 'Temple Dashboard', icon: LayoutDashboard, perm: ['DASHBOARD_VIEW'] },
+    { id: 'masters_hub', label: 'Masters', icon: Grid, perm: ['VIEW_SEVAS', 'MANAGE_SEVAS', 'VIEW_PRIESTS', 'MANAGE_PRIESTS', 'MANAGE_TEMPLE_INFO'] },
     { id: 'calendar', label: 'Devotee Bookings', icon: Calendar, perm: ['VIEW_BOOKINGS', 'REGISTER_BOOKINGS'] },
     { id: 'transactions', label: 'Seva Ledger', icon: Receipt, perm: ['VIEW_FINANCE', 'PRINT_RECEIPTS'] },
-    { id: 'masters_hub', label: 'Masters', icon: Grid, perm: ['VIEW_SEVAS', 'MANAGE_SEVAS', 'VIEW_PRIESTS', 'MANAGE_PRIESTS', 'MANAGE_TEMPLE_INFO'] },
     { id: 'prasadam', label: 'Prasadam Dispatch', icon: Utensils, perm: ['PROCESS_LOGISTICS'] },
     // { id: 'org_chart', label: 'Org Hierarchy', icon: Network, perm: ['VIEW_ORG_CHART'] }, // TEMPORARILY COMMENTED OUT FROM UI
     { id: 'system_overview', label: 'Temple Reports', icon: BarChart3, perm: ['VIEW_REPORTS'] },
-    { id: 'settings', label: 'Temple Settings', icon: Settings, perm: ['MANAGE_SETTINGS'] },
+    { id: 'settings', label: 'Temple Notifications', icon: Bell, perm: ['MANAGE_SETTINGS'] },
   ];
 
   // Filter items strictly by user's role permissions (Dynamic Role-based Display)
@@ -247,73 +246,7 @@ export default function Sidebar({
                   <span className="truncate">Designation & Titles</span>
                 </button>
 
-                {/* 2. Dynamic RBAC & Roles */}
-                <button
-                  type="button"
-                  onClick={() => handleNavClick('roles')}
-                  className={`w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg font-sans text-[11px] transition-colors cursor-pointer text-left ${activeTab === 'roles'
-                    ? 'font-bold text-primary bg-primary-container/15'
-                    : 'font-medium text-on-surface-variant hover:bg-primary-container/5 hover:text-primary'
-                    }`}
-                >
-                  <ShieldCheck size={13} className="shrink-0 text-primary" />
-                  <span className="truncate">Dynamic RBAC & Roles <span className="italic font-normal text-[10px] text-on-surface-variant/80">(Optional)</span></span>
-                </button>
-
-                {/* 3. Category Dropdown / Submenu */}
-                <div>
-                  <button
-                    type="button"
-                    onClick={() => setCategoryDropdownOpen(!categoryDropdownOpen)}
-                    className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg font-sans text-[11px] font-medium text-on-surface-variant hover:bg-primary-container/5 hover:text-primary transition-colors cursor-pointer text-left"
-                  >
-                    <div className="flex items-center gap-2 min-w-0">
-                      <Tag size={13} className="shrink-0 text-amber-800" />
-                      <span className="truncate">Category</span>
-                    </div>
-                    <ChevronDown size={12} className={`shrink-0 transition-transform ${categoryDropdownOpen ? 'rotate-180' : ''}`} />
-                  </button>
-
-                  {categoryDropdownOpen && (
-                    <div className="pl-4 pr-1 py-1 space-y-0.5 animate-[fadeIn_0.15s_ease-out]">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setMastersInitialTab('TRUSTEE_CATEGORY');
-                          setMastersModalOpen(true);
-                        }}
-                        className="w-full flex items-center gap-1.5 px-2 py-1 rounded-md font-sans text-[10px] text-on-surface-variant hover:text-primary hover:bg-primary/5 transition-colors cursor-pointer text-left"
-                      >
-                        <FolderTree size={11} className="shrink-0 text-primary" />
-                        <span className="truncate">Trust Categories - Master</span>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setMastersInitialTab('MEMBERSHIP_TYPE');
-                          setMastersModalOpen(true);
-                        }}
-                        className="w-full flex items-center gap-1.5 px-2 py-1 rounded-md font-sans text-[10px] text-on-surface-variant hover:text-primary hover:bg-primary/5 transition-colors cursor-pointer text-left"
-                      >
-                        <UserCheck size={11} className="shrink-0 text-primary" />
-                        <span className="truncate">Membership Type - Master</span>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setMastersInitialTab('COMMITTEE_CATEGORY');
-                          setMastersModalOpen(true);
-                        }}
-                        className="w-full flex items-center gap-1.5 px-2 py-1 rounded-md font-sans text-[10px] text-on-surface-variant hover:text-primary hover:bg-primary/5 transition-colors cursor-pointer text-left"
-                      >
-                        <Layers size={11} className="shrink-0 text-primary" />
-                        <span className="truncate">Committee Category - Master</span>
-                      </button>
-                    </div>
-                  )}
-                </div>
-
-                {/* 4. Add New Temple */}
+                {/* 2. Add new temple */}
                 <button
                   type="button"
                   onClick={() => handleNavClick('add_temple')}
@@ -323,36 +256,10 @@ export default function Sidebar({
                     }`}
                 >
                   <Plus size={13} className="shrink-0 text-primary" />
-                  <span className="truncate">Add New Temple</span>
+                  <span className="truncate">Add new temple</span>
                 </button>
 
-                {/* 5. Trustees & Board */}
-                <button
-                  type="button"
-                  onClick={() => handleNavClick('trustees')}
-                  className={`w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg font-sans text-[11px] transition-colors cursor-pointer text-left ${activeTab === 'trustees'
-                    ? 'font-bold text-primary bg-primary-container/15'
-                    : 'font-medium text-on-surface-variant hover:bg-primary-container/5 hover:text-primary'
-                    }`}
-                >
-                  <Users size={13} className="shrink-0 text-primary" />
-                  <span className="truncate">Trustees & Board</span>
-                </button>
-
-                {/* 6. Committees */}
-                <button
-                  type="button"
-                  onClick={() => handleNavClick('committees')}
-                  className={`w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg font-sans text-[11px] transition-colors cursor-pointer text-left ${activeTab === 'committees'
-                    ? 'font-bold text-primary bg-primary-container/15'
-                    : 'font-medium text-on-surface-variant hover:bg-primary-container/5 hover:text-primary'
-                    }`}
-                >
-                  <Layers size={13} className="shrink-0 text-primary" />
-                  <span className="truncate">Committees</span>
-                </button>
-
-                {/* 7. Members */}
+                {/* 3. Members */}
                 <button
                   type="button"
                   onClick={() => handleNavClick('members')}
@@ -365,7 +272,20 @@ export default function Sidebar({
                   <span className="truncate">Members</span>
                 </button>
 
-                {/* 8. Assign Members to Committee */}
+                {/* 4. Trustees & Board */}
+                <button
+                  type="button"
+                  onClick={() => handleNavClick('trustees')}
+                  className={`w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg font-sans text-[11px] transition-colors cursor-pointer text-left ${activeTab === 'trustees'
+                    ? 'font-bold text-primary bg-primary-container/15'
+                    : 'font-medium text-on-surface-variant hover:bg-primary-container/5 hover:text-primary'
+                    }`}
+                >
+                  <Users size={13} className="shrink-0 text-primary" />
+                  <span className="truncate">Trustees & Board</span>
+                </button>
+
+                {/* 5. Committees */}
                 <button
                   type="button"
                   onClick={() => handleNavClick('committees')}
@@ -374,18 +294,22 @@ export default function Sidebar({
                     : 'font-medium text-on-surface-variant hover:bg-primary-container/5 hover:text-primary'
                     }`}
                 >
-                  <UserPlus size={13} className="shrink-0 text-primary" />
-                  <span className="truncate">Assign Members to Committee</span>
+                  <Layers size={13} className="shrink-0 text-primary" />
+                  <span className="truncate">Committees</span>
                 </button>
 
-                {/* 9. Archakas Registry & Duty Roster */}
-                <a
-                  href={`/trusts/${currentTrustId}/temples/temple_vidyashankara/dashboard`}
-                  className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg font-sans text-[11px] font-medium text-on-surface-variant hover:bg-primary-container/5 hover:text-primary transition-colors"
+                {/* 6. Dynamic RBAC...(opt.) */}
+                <button
+                  type="button"
+                  onClick={() => handleNavClick('roles')}
+                  className={`w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg font-sans text-[11px] transition-colors cursor-pointer text-left ${activeTab === 'roles'
+                    ? 'font-bold text-primary bg-primary-container/15'
+                    : 'font-medium text-on-surface-variant hover:bg-primary-container/5 hover:text-primary'
+                    }`}
                 >
-                  <CalendarClock size={13} className="shrink-0 text-primary" />
-                  <span className="truncate">Archakas Registry & Duty Roster</span>
-                </a>
+                  <ShieldCheck size={13} className="shrink-0 text-primary" />
+                  <span className="truncate">Dynamic RBAC... <span className="italic font-normal text-[10px] text-on-surface-variant/80">(opt.)</span></span>
+                </button>
               </div>
             </div>
           )}
@@ -572,46 +496,27 @@ export default function Sidebar({
                     <span>Trust Dashboard</span>
                   </button>
                   <div className="pl-3 py-1 space-y-1 border-l-2 border-primary/20 ml-2">
+                    {/* 1. Designation & Titles */}
                     <button
                       type="button"
                       onClick={() => handleNavClick('designations')}
                       className={`flex items-center gap-2 text-[11px] w-full text-left py-1 cursor-pointer ${activeTab === 'designations' ? 'text-primary font-bold' : 'text-on-surface-variant'}`}
                     >
-                      <Crown size={12} className="text-amber-700" />
+                      <Crown size={12} className="text-amber-700 shrink-0" />
                       <span>Designation & Titles</span>
                     </button>
-                    <button
-                      type="button"
-                      onClick={() => handleNavClick('roles')}
-                      className={`flex items-center gap-2 text-[11px] w-full text-left py-1 cursor-pointer ${activeTab === 'roles' ? 'text-primary font-bold' : 'text-on-surface-variant hover:text-primary'}`}
-                    >
-                      <ShieldCheck size={12} className="text-primary" />
-                      <span>Dynamic RBAC & Roles <span className="italic font-normal text-[10px] text-on-surface-variant/80">(Optional)</span></span>
-                    </button>
+
+                    {/* 2. Add new temple */}
                     <button
                       type="button"
                       onClick={() => handleNavClick('add_temple')}
                       className={`flex items-center gap-2 text-[11px] w-full text-left py-1 cursor-pointer ${activeTab === 'add_temple' ? 'text-primary font-bold' : 'text-on-surface-variant hover:text-primary'}`}
                     >
                       <Plus size={12} className="text-primary" />
-                      <span>Add New Temple</span>
+                      <span>Add new temple</span>
                     </button>
-                    <button
-                      type="button"
-                      onClick={() => handleNavClick('trustees')}
-                      className={`flex items-center gap-2 text-[11px] w-full text-left py-1 cursor-pointer ${activeTab === 'trustees' ? 'text-primary font-bold' : 'text-on-surface-variant hover:text-primary'}`}
-                    >
-                      <Users size={12} className="text-primary" />
-                      <span>Trustees & Board</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleNavClick('committees')}
-                      className={`flex items-center gap-2 text-[11px] w-full text-left py-1 cursor-pointer ${activeTab === 'committees' ? 'text-primary font-bold' : 'text-on-surface-variant hover:text-primary'}`}
-                    >
-                      <Layers size={12} className="text-primary" />
-                      <span>Committees</span>
-                    </button>
+
+                    {/* 3. Members */}
                     <button
                       type="button"
                       onClick={() => handleNavClick('members')}
@@ -620,18 +525,36 @@ export default function Sidebar({
                       <UserCheck size={12} className="text-primary" />
                       <span>Members</span>
                     </button>
+
+                    {/* 4. Trustees & Board */}
+                    <button
+                      type="button"
+                      onClick={() => handleNavClick('trustees')}
+                      className={`flex items-center gap-2 text-[11px] w-full text-left py-1 cursor-pointer ${activeTab === 'trustees' ? 'text-primary font-bold' : 'text-on-surface-variant hover:text-primary'}`}
+                    >
+                      <Users size={12} className="text-primary" />
+                      <span>Trustees & Board</span>
+                    </button>
+
+                    {/* 5. Committees */}
                     <button
                       type="button"
                       onClick={() => handleNavClick('committees')}
                       className={`flex items-center gap-2 text-[11px] w-full text-left py-1 cursor-pointer ${activeTab === 'committees' ? 'text-primary font-bold' : 'text-on-surface-variant hover:text-primary'}`}
                     >
-                      <UserPlus size={12} className="text-primary" />
-                      <span>Assign Members</span>
+                      <Layers size={12} className="text-primary" />
+                      <span>Committees</span>
                     </button>
-                    <a href={`/trusts/${currentTrustId}/temples/temple_vidyashankara/dashboard`} className="flex items-center gap-2 text-[11px] text-on-surface-variant py-1">
-                      <CalendarClock size={12} className="text-primary" />
-                      <span>Archakas Registry</span>
-                    </a>
+
+                    {/* 6. Dynamic RBAC...(opt.) */}
+                    <button
+                      type="button"
+                      onClick={() => handleNavClick('roles')}
+                      className={`flex items-center gap-2 text-[11px] w-full text-left py-1 cursor-pointer ${activeTab === 'roles' ? 'text-primary font-bold' : 'text-on-surface-variant hover:text-primary'}`}
+                    >
+                      <ShieldCheck size={12} className="text-primary" />
+                      <span>Dynamic RBAC... <span className="italic font-normal text-[10px] text-on-surface-variant/80">(opt.)</span></span>
+                    </button>
                   </div>
                 </div>
               )}
@@ -665,6 +588,7 @@ export default function Sidebar({
         isOpen={mastersModalOpen}
         onClose={() => setMastersModalOpen(false)}
         trustId={currentTrustId}
+        trustName={currentTrustId === 'trust_ahobila' ? 'Sri Ahobila Matha Devasthanam Trust' : 'Sri Sringeri Sharada Dharma Trust'}
         initialTab={mastersInitialTab}
       />
     </>

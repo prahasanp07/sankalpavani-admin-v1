@@ -126,6 +126,8 @@ export default function MembersGovernance({
     gotra: '',
     nakshatra: '',
     photoUrl: '',
+    preferredCommEmail: true,
+    preferredCommWhatsAppSms: true,
     membershipType: 'STAFF' as any,
     templeIds: [] as string[],
     committeeId: '',
@@ -220,6 +222,8 @@ export default function MembersGovernance({
         gotra: '',
         nakshatra: '',
         photoUrl: '',
+        preferredCommEmail: true,
+        preferredCommWhatsAppSms: true,
         membershipType: 'STAFF',
         templeIds: [],
         committeeId: '',
@@ -625,6 +629,47 @@ export default function MembersGovernance({
                       <option key={n} value={n}>{n}</option>
                     ))}
                   </select>
+                </div>
+              </div>
+
+              {/* Preferred Communication */}
+              <div className="p-3.5 rounded-2xl bg-surface-container/60 border border-outline-variant/30 space-y-2">
+                <label className="font-bold text-on-surface flex items-center gap-1.5">
+                  <Mail size={14} className="text-primary" />
+                  <span>Preferred Communication</span>
+                </label>
+                <div className="flex flex-wrap gap-2 pt-1">
+                  <label
+                    className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl border text-xs cursor-pointer transition-all ${
+                      formData.preferredCommEmail
+                        ? 'bg-primary-container/20 border-primary text-primary font-bold shadow-xs'
+                        : 'bg-surface-container-low border-outline-variant/40 text-on-surface hover:bg-surface-container'
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={formData.preferredCommEmail}
+                      onChange={(e) => setFormData({ ...formData, preferredCommEmail: e.target.checked })}
+                      className="rounded text-primary focus:ring-primary accent-primary"
+                    />
+                    <span className="truncate">Email</span>
+                  </label>
+
+                  <label
+                    className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl border text-xs cursor-pointer transition-all ${
+                      formData.preferredCommWhatsAppSms
+                        ? 'bg-primary-container/20 border-primary text-primary font-bold shadow-xs'
+                        : 'bg-surface-container-low border-outline-variant/40 text-on-surface hover:bg-surface-container'
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={formData.preferredCommWhatsAppSms}
+                      onChange={(e) => setFormData({ ...formData, preferredCommWhatsAppSms: e.target.checked })}
+                      className="rounded text-primary focus:ring-primary accent-primary"
+                    />
+                    <span className="truncate">WhatsApp / SMS</span>
+                  </label>
                 </div>
               </div>
 

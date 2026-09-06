@@ -48,6 +48,7 @@ export async function GET(
           hotline: '+91 82652 50123',
           officialEmail: 'info@vidyashankara.org',
           websiteUrl: 'https://sringeri.net/temples/vidyashankara',
+          todayCollections: '₹ 4,80,000',
           activeSevas: 18,
           activePriests: 5,
           createdAt: new Date().toISOString()
@@ -63,6 +64,7 @@ export async function GET(
           hotline: '+91 82652 50555',
           officialEmail: 'contact@sharadamba.org',
           websiteUrl: 'https://sringeri.net/temples/sharadamba',
+          todayCollections: '₹ 3,45,000',
           activeSevas: 24,
           activePriests: 8,
           createdAt: new Date().toISOString()

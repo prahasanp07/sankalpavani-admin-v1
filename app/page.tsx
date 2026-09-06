@@ -176,7 +176,7 @@ function AdminPortalContent() {
       case 'prasadam': return 'Remote Prasadam Dispatch & Logistics';
       case 'system_overview': return 'System Performance & Security Logs';
       case 'calendar': return 'Devotee Bookings Calendar';
-      case 'settings': return 'Administrative Configuration & Access Settings';
+      case 'settings': return 'Temple Notifications & Configuration';
       default: return 'Temple Administration Portal';
     }
   };

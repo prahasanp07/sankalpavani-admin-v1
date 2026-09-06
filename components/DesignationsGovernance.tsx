@@ -22,9 +22,13 @@ import {
   Crown,
   ChevronRight,
   Moon,
-  Compass
+  Compass,
+  Tag,
+  Layers
 } from 'lucide-react';
 import { STANDARD_GOTRAS, STANDARD_NAKSHATRAS } from './TrusteesGovernance';
+import GovernanceMastersModal from '@/components/governance/GovernanceMastersModal';
+import { MasterType } from '@/lib/types/masters';
 
 export interface DesignationItem {
   id: string;
@@ -78,13 +82,21 @@ interface RoleOption {
 
 interface DesignationsGovernanceProps {
   trustId?: string;
+  trustName?: string;
   onBack?: () => void;
 }
 
 export default function DesignationsGovernance({
   trustId = 'trust_sringeri',
+  trustName,
   onBack
 }: DesignationsGovernanceProps) {
+  const currentTrustName = (
+    trustName ||
+    (trustId === 'trust_ahobila'
+      ? 'Sri Ahobila Matha Devasthanam Trust'
+      : 'Sri Sringeri Sharada Dharma Trust')
+  ).toUpperCase();
   const [activeTab, setActiveTab] = useState<'DESIGNATIONS' | 'OFFICE_BEARERS'>('DESIGNATIONS');
   const [designations, setDesignations] = useState<DesignationItem[]>([]);
   const [officeBearers, setOfficeBearers] = useState<OfficeBearerItem[]>([]);
@@ -127,6 +139,10 @@ export default function DesignationsGovernance({
     isLifeTerm: false,
     resolutionNo: ''
   });
+
+  // Category Masters Modal
+  const [isMastersModalOpen, setIsMastersModalOpen] = useState(false);
+  const [mastersInitialTab, setMastersInitialTab] = useState<MasterType>('TRUSTEE_CATEGORY');
 
   const fetchData = async () => {
     setIsLoading(true);
@@ -324,7 +340,9 @@ export default function DesignationsGovernance({
               <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-primary px-2 py-0.5 rounded bg-primary/10">
                 Trust Governance & Designations
               </span>
-              <span className="text-xs text-on-surface-variant font-mono">{trustId}</span>
+              <span className="text-xs font-bold font-sans text-on-surface uppercase tracking-wide">
+                {currentTrustName}
+              </span>
             </div>
             <h2 className="font-serif text-2xl md:text-3xl font-bold text-primary tracking-tight mt-0.5">
               Designations & Office Bearers
@@ -349,59 +367,84 @@ export default function DesignationsGovernance({
             <span>Create Designation</span>
           </button>
 
-          <button
+          {/* <button
             onClick={() => setIsAppointOpen(true)}
             className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-primary hover:bg-primary/90 text-on-primary font-sans text-xs font-bold shadow-sacred transition-all cursor-pointer"
           >
             <Award size={14} />
             <span>Appoint Office Bearer</span>
-          </button>
+          </button> */}
         </div>
       </div>
 
-      {/* Governance KPI Analytics */}
+      {/* Category Masters & Action Modals */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="p-5 rounded-2xl bg-surface-container/60 border border-outline-variant/30 shadow-xs flex items-center justify-between">
+        {/* Block 1: Trust Categories - Master */}
+        <div
+          onClick={() => {
+            setMastersInitialTab('TRUSTEE_CATEGORY');
+            setIsMastersModalOpen(true);
+          }}
+          className="p-5 rounded-2xl bg-surface-container/60 hover:bg-surface-container border border-outline-variant/30 hover:border-amber-500/50 shadow-xs hover:shadow-md transition-all cursor-pointer group flex items-center justify-between"
+        >
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">Designations Catalog</p>
-            <h3 className="font-serif text-2xl font-bold text-on-surface mt-1">{designations.length} Titles</h3>
-            <p className="text-[10px] text-emerald-700 font-bold mt-0.5">{trustTitlesCount} Trust / {templeTitlesCount} Temple</p>
+            <p className="text-[11px] font-bold uppercase tracking-wider text-amber-800 dark:text-amber-400">Master Taxonomy</p>
+            <h3 className="font-serif text-lg font-bold text-on-surface group-hover:text-primary transition-colors mt-0.5">Trust Categories - Master</h3>
+            <p className="text-[10px] text-amber-700 dark:text-amber-500 font-bold mt-0.5 flex items-center gap-1">Open Category Master →</p>
           </div>
-          <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
-            <Crown size={24} />
+          <div className="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-700 flex items-center justify-center group-hover:scale-105 transition-transform shrink-0">
+            <Tag size={24} />
           </div>
         </div>
 
-        <div className="p-5 rounded-2xl bg-surface-container/60 border border-outline-variant/30 shadow-xs flex items-center justify-between">
+        {/* Block 2: Membership Type - Master */}
+        <div
+          onClick={() => {
+            setMastersInitialTab('MEMBERSHIP_TYPE');
+            setIsMastersModalOpen(true);
+          }}
+          className="p-5 rounded-2xl bg-surface-container/60 hover:bg-surface-container border border-outline-variant/30 hover:border-primary/50 shadow-xs hover:shadow-md transition-all cursor-pointer group flex items-center justify-between"
+        >
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">Active Office Bearers</p>
-            <h3 className="font-serif text-2xl font-bold text-on-surface mt-1">{activeOfficeBearersCount} Appointees</h3>
-            <p className="text-[10px] text-amber-700 font-bold mt-0.5">Term-Bound Appointees</p>
+            <p className="text-[11px] font-bold uppercase tracking-wider text-primary">Master Taxonomy</p>
+            <h3 className="font-serif text-lg font-bold text-on-surface group-hover:text-primary transition-colors mt-0.5">Membership Type - Master</h3>
+            <p className="text-[10px] text-primary font-bold mt-0.5 flex items-center gap-1">Open Membership Master →</p>
           </div>
-          <div className="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-700 flex items-center justify-center">
+          <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center group-hover:scale-105 transition-transform shrink-0">
             <Users size={24} />
           </div>
         </div>
 
-        <div className="p-5 rounded-2xl bg-surface-container/60 border border-outline-variant/30 shadow-xs flex items-center justify-between">
+        {/* Block 3: Committee Category - Master */}
+        <div
+          onClick={() => {
+            setMastersInitialTab('COMMITTEE_CATEGORY');
+            setIsMastersModalOpen(true);
+          }}
+          className="p-5 rounded-2xl bg-surface-container/60 hover:bg-surface-container border border-outline-variant/30 hover:border-purple-500/50 shadow-xs hover:shadow-md transition-all cursor-pointer group flex items-center justify-between"
+        >
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">Role-Bound Titles</p>
-            <h3 className="font-serif text-2xl font-bold text-on-surface mt-1">{titlesWithRolesCount} Linked</h3>
-            <p className="text-[10px] text-purple-700 font-bold mt-0.5">Auto Software Permissions</p>
+            <p className="text-[11px] font-bold uppercase tracking-wider text-purple-800 dark:text-purple-400">Master Taxonomy</p>
+            <h3 className="font-serif text-lg font-bold text-on-surface group-hover:text-primary transition-colors mt-0.5">Committee Category - Master</h3>
+            <p className="text-[10px] text-purple-700 dark:text-purple-400 font-bold mt-0.5 flex items-center gap-1">Open Committee Master →</p>
           </div>
-          <div className="w-12 h-12 rounded-xl bg-purple-500/10 text-purple-700 flex items-center justify-center">
-            <Link size={24} />
+          <div className="w-12 h-12 rounded-xl bg-purple-500/10 text-purple-700 flex items-center justify-center group-hover:scale-105 transition-transform shrink-0">
+            <Layers size={24} />
           </div>
         </div>
 
-        <div className="p-5 rounded-2xl bg-surface-container/60 border border-outline-variant/30 shadow-xs flex items-center justify-between">
+        {/* Block 4: Appoint Office Bearer */}
+        <div
+          onClick={() => setIsAppointOpen(true)}
+          className="p-5 rounded-2xl bg-surface-container/60 hover:bg-surface-container border border-outline-variant/30 hover:border-emerald-500/50 shadow-xs hover:shadow-md transition-all cursor-pointer group flex items-center justify-between"
+        >
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">PRD Architectural Law</p>
-            <h3 className="font-serif text-sm font-bold text-primary mt-1">Designation ≠ Role</h3>
-            <p className="text-[10px] text-on-surface-variant font-medium mt-0.5">Title vs Software Access Separation</p>
+            <p className="text-[11px] font-bold uppercase tracking-wider text-emerald-800 dark:text-emerald-400">Sanctum &amp; Board</p>
+            <h3 className="font-serif text-lg font-bold text-on-surface group-hover:text-primary transition-colors mt-0.5">Trustees Appointment</h3>
+            <p className="text-[10px] text-emerald-700 dark:text-emerald-500 font-bold mt-0.5 flex items-center gap-1">Launch Appointment Form →</p>
           </div>
-          <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
-            <ShieldCheck size={24} />
+          <div className="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-700 flex items-center justify-center group-hover:scale-105 transition-transform shrink-0">
+            <Award size={24} />
           </div>
         </div>
       </div>
@@ -411,21 +454,19 @@ export default function DesignationsGovernance({
         <div className="flex items-center gap-2 bg-surface-container-low p-1 rounded-2xl border border-outline-variant/30 text-xs font-bold">
           <button
             onClick={() => setActiveTab('DESIGNATIONS')}
-            className={`px-4 py-2 rounded-xl transition-all cursor-pointer ${
-              activeTab === 'DESIGNATIONS'
-                ? 'bg-primary text-on-primary shadow-sacred'
-                : 'text-on-surface-variant hover:text-primary'
-            }`}
+            className={`px-4 py-2 rounded-xl transition-all cursor-pointer ${activeTab === 'DESIGNATIONS'
+              ? 'bg-primary text-on-primary shadow-sacred'
+              : 'text-on-surface-variant hover:text-primary'
+              }`}
           >
             Designations Catalog ({designations.length})
           </button>
           <button
             onClick={() => setActiveTab('OFFICE_BEARERS')}
-            className={`px-4 py-2 rounded-xl transition-all cursor-pointer ${
-              activeTab === 'OFFICE_BEARERS'
-                ? 'bg-primary text-on-primary shadow-sacred'
-                : 'text-on-surface-variant hover:text-primary'
-            }`}
+            className={`px-4 py-2 rounded-xl transition-all cursor-pointer ${activeTab === 'OFFICE_BEARERS'
+              ? 'bg-primary text-on-primary shadow-sacred'
+              : 'text-on-surface-variant hover:text-primary'
+              }`}
           >
             Active Office Bearers ({officeBearers.length})
           </button>
@@ -483,18 +524,45 @@ export default function DesignationsGovernance({
                   {d.description || 'Traditional or administrative organizational title.'}
                 </p>
 
-                {d.roleBinding && (
-                  <div className="p-2.5 rounded-xl bg-purple-500/10 border border-purple-400/20 text-xs text-purple-900 space-y-1 mt-2">
-                    <div className="flex items-center gap-1.5 font-bold">
-                      <Link size={13} className="text-purple-700" />
-                      <span>Bound Software Role:</span>
+                {(() => {
+                  const activeAppointees = officeBearers.filter(
+                    (ob) => ob.designationId === d.id && ob.appointmentStatus === 'ACTIVE'
+                  );
+                  return (
+                    <div className="p-2.5 rounded-xl bg-surface-container border border-outline-variant/30 text-xs text-on-surface mt-2 flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-1.5 font-bold text-on-surface-variant text-[11px] shrink-0">
+                        <Users size={13} className="text-primary" />
+                        <span>Appointed Member:</span>
+                      </div>
+
+                      <div className="flex items-center gap-1.5 min-w-0">
+                        {activeAppointees.length > 0 ? (
+                          <div className="flex items-center gap-1.5 truncate">
+                            {activeAppointees[0].photoUrl ? (
+                              <img
+                                src={activeAppointees[0].photoUrl}
+                                alt={activeAppointees[0].personName}
+                                className="w-5 h-5 rounded-full object-cover border border-primary/30 shrink-0"
+                              />
+                            ) : (
+                              <div className="w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center text-[10px] font-bold shrink-0">
+                                {activeAppointees[0].personName.charAt(0)}
+                              </div>
+                            )}
+                            <span
+                              className="font-bold text-on-surface text-xs truncate max-w-[170px]"
+                              title={activeAppointees.map((a) => a.personName).join(', ')}
+                            >
+                              {activeAppointees.map((a) => a.personName).join(', ')}
+                            </span>
+                          </div>
+                        ) : (
+                          <span className="text-[11px] text-on-surface-variant italic">None appointed yet</span>
+                        )}
+                      </div>
                     </div>
-                    <p className="text-[11px] font-medium pl-4">{d.roleBinding.roleName}</p>
-                    {d.roleBinding.autoAssign && (
-                      <p className="text-[10px] text-purple-700 font-bold pl-4">⚡ Auto-assigned on appointment</p>
-                    )}
-                  </div>
-                )}
+                  );
+                })()}
               </div>
 
               <div className="pt-4 mt-4 border-t border-outline-variant/20 flex items-center justify-between">
@@ -545,11 +613,10 @@ export default function DesignationsGovernance({
                       <span className="text-[10px] font-mono font-bold text-primary px-2 py-0.5 rounded bg-primary/10">
                         {ob.scopeName}
                       </span>
-                      <span className={`text-[9px] font-bold px-2 py-0.5 rounded ${
-                        ob.appointmentStatus === 'ACTIVE'
-                          ? 'text-emerald-700 bg-emerald-500/10'
-                          : 'text-error bg-error/10'
-                      }`}>
+                      <span className={`text-[9px] font-bold px-2 py-0.5 rounded ${ob.appointmentStatus === 'ACTIVE'
+                        ? 'text-emerald-700 bg-emerald-500/10'
+                        : 'text-error bg-error/10'
+                        }`}>
                         {ob.appointmentStatus}
                       </span>
                     </div>
@@ -623,6 +690,53 @@ export default function DesignationsGovernance({
         </div>
       )}
 
+      {/* Governance KPI Analytics */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="p-5 rounded-2xl bg-surface-container/60 border border-outline-variant/30 shadow-xs flex items-center justify-between">
+          <div>
+            <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">Designations Catalog</p>
+            <h3 className="font-serif text-2xl font-bold text-on-surface mt-1">{designations.length} Titles</h3>
+            <p className="text-[10px] text-emerald-700 font-bold mt-0.5">{trustTitlesCount} Trust / {templeTitlesCount} Temple</p>
+          </div>
+          <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+            <Crown size={24} />
+          </div>
+        </div>
+
+        <div className="p-5 rounded-2xl bg-surface-container/60 border border-outline-variant/30 shadow-xs flex items-center justify-between">
+          <div>
+            <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">Active Office Bearers</p>
+            <h3 className="font-serif text-2xl font-bold text-on-surface mt-1">{activeOfficeBearersCount} Appointees</h3>
+            <p className="text-[10px] text-amber-700 font-bold mt-0.5">Term-Bound Appointees</p>
+          </div>
+          <div className="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-700 flex items-center justify-center">
+            <Users size={24} />
+          </div>
+        </div>
+
+        <div className="p-5 rounded-2xl bg-surface-container/60 border border-outline-variant/30 shadow-xs flex items-center justify-between">
+          <div>
+            <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">Role-Bound Titles</p>
+            <h3 className="font-serif text-2xl font-bold text-on-surface mt-1">{titlesWithRolesCount} Linked</h3>
+            <p className="text-[10px] text-purple-700 font-bold mt-0.5">Auto Software Permissions</p>
+          </div>
+          <div className="w-12 h-12 rounded-xl bg-purple-500/10 text-purple-700 flex items-center justify-center">
+            <Link size={24} />
+          </div>
+        </div>
+
+        <div className="p-5 rounded-2xl bg-surface-container/60 border border-outline-variant/30 shadow-xs flex items-center justify-between">
+          <div>
+            <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">PRD Architectural Law</p>
+            <h3 className="font-serif text-sm font-bold text-primary mt-1">Designation ≠ Role</h3>
+            <p className="text-[10px] text-on-surface-variant font-medium mt-0.5">Title vs Software Access Separation</p>
+          </div>
+          <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+            <ShieldCheck size={24} />
+          </div>
+        </div>
+      </div>
+
       {/* CREATE DESIGNATION MODAL */}
       {isCreateDesigOpen && (
         <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
@@ -673,20 +787,20 @@ export default function DesignationsGovernance({
 
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="font-bold text-on-surface">Title Scope Level</label>
+                  <label className="font-bold text-on-surface">Designation for</label>
                   <select
                     value={desigFormData.scopeType}
                     onChange={(e) => setDesigFormData({ ...desigFormData, scopeType: e.target.value as any })}
                     className="w-full p-2.5 rounded-xl bg-surface-container-low border border-outline-variant/40 text-on-surface focus:outline-none focus:border-primary"
                   >
-                    <option value="TRUST">Trust Umbrella Title</option>
-                    <option value="TEMPLE">Temple Branch Specific</option>
+                    <option value="TRUST">Trust</option>
+                    <option value="TEMPLE">Temple</option>
                   </select>
                 </div>
 
                 {desigFormData.scopeType === 'TEMPLE' && (
                   <div className="space-y-1">
-                    <label className="font-bold text-on-surface">Assign Specific Temple</label>
+                    <label className="font-bold text-on-surface">For Temple</label>
                     <select
                       value={desigFormData.scopeId}
                       onChange={(e) => setDesigFormData({ ...desigFormData, scopeId: e.target.value })}
@@ -702,7 +816,7 @@ export default function DesignationsGovernance({
               </div>
 
               {/* Role Binding */}
-              <div className="p-3.5 rounded-2xl bg-surface-container-low border border-outline-variant/30 space-y-2">
+              {/* <div className="p-3.5 rounded-2xl bg-surface-container-low border border-outline-variant/30 space-y-2">
                 <div className="flex items-center gap-1.5 font-bold text-primary">
                   <Link size={14} />
                   <span>Optional Software Role Binding</span>
@@ -720,7 +834,7 @@ export default function DesignationsGovernance({
                     <option key={r.id} value={r.id}>{r.name} ({r.roleKey})</option>
                   ))}
                 </select>
-              </div>
+              </div> */}
 
               <div className="flex justify-end gap-2 pt-2 border-t border-outline-variant/20">
                 <button
@@ -769,7 +883,7 @@ export default function DesignationsGovernance({
 
             <form onSubmit={handleAppointOfficeBearer} className="space-y-4 text-xs font-sans">
               <div className="space-y-1">
-                <label className="font-bold text-on-surface">Designation Title *</label>
+                <label className="font-bold text-on-surface">Trust Designation *</label>
                 <select
                   required
                   value={appointFormData.designationId}
@@ -792,7 +906,7 @@ export default function DesignationsGovernance({
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="font-bold text-on-surface">Appointee Full Name *</label>
+                  <label className="font-bold text-on-surface">Member Name *</label>
                   <input
                     type="text"
                     required
@@ -932,6 +1046,14 @@ export default function DesignationsGovernance({
           </div>
         </div>
       )}
+      {/* Governance Masters Modal */}
+      <GovernanceMastersModal
+        isOpen={isMastersModalOpen}
+        onClose={() => setIsMastersModalOpen(false)}
+        trustId={trustId}
+        trustName={currentTrustName}
+        initialTab={mastersInitialTab}
+      />
     </div>
   );
 }

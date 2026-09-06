@@ -37,6 +37,7 @@ interface Seva {
   selectedDate?: string;
   dateFrom?: string;
   dateTo?: string;
+  trustResolutionDateTime?: string;
 }
 
 interface SevaMasterProps {
@@ -88,7 +89,8 @@ export default function SevaMaster({ onBack }: SevaMasterProps) {
     selectedDays: [] as string[],
     selectedDate: '',
     dateFrom: '',
-    dateTo: ''
+    dateTo: '',
+    trustResolutionDateTime: ''
   });
 
   // Load from backend API with fallback
@@ -178,7 +180,8 @@ export default function SevaMaster({ onBack }: SevaMasterProps) {
       selectedDays: newSeva.selectedDays,
       selectedDate: newSeva.selectedDate,
       dateFrom: newSeva.dateFrom,
-      dateTo: newSeva.dateTo
+      dateTo: newSeva.dateTo,
+      trustResolutionDateTime: newSeva.trustResolutionDateTime || undefined
     };
 
     try {
@@ -223,7 +226,8 @@ export default function SevaMaster({ onBack }: SevaMasterProps) {
       selectedDays: [],
       selectedDate: '',
       dateFrom: '',
-      dateTo: ''
+      dateTo: '',
+      trustResolutionDateTime: ''
     });
     setShowAddForm(false);
   };
@@ -428,7 +432,19 @@ export default function SevaMaster({ onBack }: SevaMasterProps) {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1">
+                Trust Resolution (Date & Time)
+              </label>
+              <input
+                type="datetime-local"
+                value={newSeva.trustResolutionDateTime}
+                onChange={(e) => setNewSeva({ ...newSeva, trustResolutionDateTime: e.target.value })}
+                className="w-full px-3.5 py-2.5 bg-white border border-outline rounded-xl text-sm focus:outline-none focus:border-primary font-mono text-on-surface"
+              />
+            </div>
+
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1">About Seva</label>
               <textarea
@@ -744,6 +760,15 @@ export default function SevaMaster({ onBack }: SevaMasterProps) {
                             </div>
                           </div>
                           <div>
+                            <label className="text-[10px] text-on-surface-variant font-bold block mb-0.5">Trust Resolution (Date & Time)</label>
+                            <input
+                              type="datetime-local"
+                              value={editForm.trustResolutionDateTime ?? ''}
+                              onChange={(e) => setEditForm({ ...editForm, trustResolutionDateTime: e.target.value })}
+                              className="w-full px-2.5 py-1 bg-white border border-outline rounded-lg text-xs focus:outline-none focus:border-primary font-mono"
+                            />
+                          </div>
+                          <div>
                             <label className="text-[10px] text-on-surface-variant font-bold block mb-0.5">About Seva</label>
                             <textarea
                               value={editForm.aboutSeva ?? ''}
@@ -769,6 +794,11 @@ export default function SevaMaster({ onBack }: SevaMasterProps) {
                             {s.timeRange && (
                               <span className="text-[10px] text-primary bg-primary-container/20 px-2 py-0.5 border border-primary/10 rounded-full font-semibold flex items-center gap-1.5 w-fit font-mono">
                                 <Clock size={11} className="text-primary shrink-0" /> {s.timeRange}
+                              </span>
+                            )}
+                            {s.trustResolutionDateTime && (
+                              <span className="text-[10px] text-amber-800 bg-amber-500/10 px-2 py-0.5 border border-amber-500/20 rounded-full font-semibold font-mono">
+                                Resolution: {new Date(s.trustResolutionDateTime).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}
                               </span>
                             )}
                             {s.type === 'Weekly' && s.selectedDays && s.selectedDays.length > 0 && (

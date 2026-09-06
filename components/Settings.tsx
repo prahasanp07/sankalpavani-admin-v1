@@ -105,7 +105,7 @@ export default function Settings() {
 
       {/* Header */}
       <div>
-        <h2 className="font-serif text-3xl font-semibold text-primary">System Configuration & Safety</h2>
+        <h2 className="font-serif text-3xl font-semibold text-primary">Temple Notifications & Configuration</h2>
         <p className="font-sans text-sm text-on-surface-variant font-medium mt-1">
           Control operational defaults, SMS/WhatsApp/Email notification gateways, user access privileges, and master backups.
         </p>

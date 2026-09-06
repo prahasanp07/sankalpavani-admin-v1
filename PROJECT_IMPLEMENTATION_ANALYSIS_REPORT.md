@@ -2,7 +2,7 @@
 
 > **Project Name**: SankalpVani Multi-Temple & Trust Enterprise Governance Platform  
 > **Repository Version**: v1.0.0-Production-Ready  
-> **Generation Date**: September 5, 2026  
+> **Generation Date**: September 7, 2026  
 > **Architecture Law**: 100% Dynamic Hierarchy — Zero Hardcoded Enums across Temples, Trustees, Committees, Members, Designations, Roles, and Departments.
 
 ---
@@ -14,14 +14,14 @@
 4. [Complete Database Schema Architecture](#4-complete-database-schema-architecture)
 5. [Backend Repositories & Domain Services](#5-backend-repositories--domain-services)
 6. [Complete REST API Catalogue](#6-complete-rest-api-catalogue)
-7. [Frontend UI Portals & Unified Screen 1 Control Center](#7-frontend-ui-portals--unified-screen-1-control-center)
+7. [Frontend UI Portals & Unified Navigation Hierarchy](#7-frontend-ui-portals--unified-navigation-hierarchy)
 8. [Governance Action Sequence & Category Masters Architecture](#8-governance-action-sequence--category-masters-architecture)
 9. [Staff Onboarding 2-Step Identity vs. Access Rights Wizard](#9-staff-onboarding-2-step-identity-vs-access-rights-wizard)
 10. [Audit, Lifecycle Tracking & Visual Term Progress Components](#10-audit-lifecycle-tracking--visual-term-progress-components)
 11. [Multi-Tenant Scoping, RLS & Authorization Engine](#11-multi-tenant-scoping-rls--authorization-engine)
 12. [Operational & Temple Management Subsystems](#12-operational--temple-management-subsystems)
 13. [Modern Temple Dashboard & Operational Analytics](#13-modern-temple-dashboard--operational-analytics)
-14. [Settings & Notification Gateway Architecture](#14-settings--notification-gateway-architecture)
+14. [Temple Notifications & Communication Gateway Architecture](#14-temple-notifications--communication-gateway-architecture)
 15. [Automated Verification & Test Suite Matrix](#15-automated-verification--test-suite-matrix)
 16. [Complete File & Component Inventory](#16-complete-file--component-inventory)
 
@@ -38,14 +38,21 @@ Traditional temple software suffered from rigid, hardcoded organizational hierar
 The codebase has been engineered such that **every entity across the organizational hierarchy is 100% dynamically manageable by administrators at runtime**:
 - **Multi-Temple Workspace**: A Trust dynamically spawns and manages unlimited child operational temples.
 - **Strict Multi-Tenant Boundary Isolation**: Zero cross-tenant credential or data leakage; independent trusts (e.g., Sringeri vs. Ahobila) operate in cryptographically and logically isolated partitions.
-- **Unified Apex Control Room (Screen 1)**: Unified Trust Portfolio Dashboard providing instant access to all 9 core governance modules and child temple workplaces.
+- **Unified Apex Control Room (Screen 1)**: Unified Trust Portfolio Dashboard providing instant access to 7 streamlined governance modules and child temple workplaces.
+- **Focused Role-Based Sidebar Navigation**:
+  - **Trust Admin Scope**: Clean 6-item sequence (`1. Designation & Titles`, `2. Add new temple`, `3. Members`, `4. Trustees & Board`, `5. Committees`, `6. Dynamic RBAC... (opt.)`).
+  - **Temple Admin Scope**: Streamlined 7-item operational sequence (`1. Temple Dashboard`, `2. Masters`, `3. Devotee Bookings`, `4. Seva Ledger`, `5. Prasadam Dispatch`, `6. Temple Reports`, `7. Temple Notifications`).
+- **Dynamic Category Masters & Contextual Modals**: Universal `GovernanceMastersModal` dynamically re-titling forms (*New Trust Category*, *New Membership Type Category*, *New Committee Category*) with Trust-branded headers.
+- **Interactive Designations Governance**: Fast popup modal launchers for category taxonomy authoring and office bearer appointments, with simplified appointee identity badges.
+- **Preferred Communication Channels**: Multi-channel preference selection (*Email*, *WhatsApp / SMS*) for trust members with interactive pill checkboxes matching multi-temple scoping aesthetics.
+- **Auditable Trust Resolutions for Sevas**: Timestamps and resolution tracking (`trustResolutionDateTime`) capturing date and time of trust board approval for pooja offerings.
 - **Apex Trust Board**: Trustees and office bearers are onboarded dynamically with legal resolution numbers, visual lifecycle term progress, and life-term support.
 - **Committees & Sub-Committees**: Dynamic formation of standing and ad-hoc wings (*Jeernodharana, Utsavam, Finance, Agama Advisory*) with member portfolios, status lifecycle changes (`ACTIVE`, `RELIEVED`, `EXPIRED`), simplified timelines (Start Date, End Date), and real-time roster sync.
 - **Separation of Title and Role**: Ceremonial designations (*Pradhana Archaka, Bhandari*) exist independently of software roles, with optional auto-binding.
 - **Granular Dynamic RBAC/ABAC**: Custom roles with namespace-resource-action permission strings, interactive modal capability toggling, and cache-invalidating policy versions.
-- **Category Masters Taxonomies**: Pluggable masters for Trust Categories, Membership Types, and Committee Categories.
 - **Dynamic Departments**: Dynamic department generation per trust and temple, with inline on-the-fly creation within drawers.
 - **Persistent Scoped Context Switcher**: Real-time visual indicator distinguishing Global Trust Operations (Crimson) from Specific Temple Operations (Saffron).
+- **Dynamic Temple Portfolio & Real-time Metrics**: Dynamic child temple cards displaying 3 essential operational metrics: Today's Collections (e.g. `₹ 4,80,000`), Sevas Configured (e.g. `18 Offerings`), and Priest Cadre (e.g. `5 Staff`).
 - **Executive Operational Analytics**: Re-engineered Temple Dashboard featuring dual-bar Seva vs Donation comparative trends, dynamic Seva Popularity Doughnut charts with rise/fall metrics, and quick action bento grids.
 - **Streamlined Notification Gateways**: Dedicated SMS, WhatsApp Business, and Email (SMTP) sender configurations with clean direct-entry fields and persistent storage.
 
@@ -108,7 +115,7 @@ The database is built on PostgreSQL with Drizzle ORM, partitioned into domain sc
 2. **`organizationNodes`**: Materialized path tree for hierarchy visualization (`id`, `trustId`, `parentId`, `nodeType`, `materializedPath`, `status`).
 3. **`temples`**: Child operational temples under a Trust (`id`, `trustId`, `code`, `name`, `deity`, `tradition`, `status`).
 4. **`users`**: Platform user identity (`id`, `email`, `name`, `mobileNumber`, `avatarUrl`, `status`).
-5. **`personProfiles`**: Demographic and cultural profile (`id`, `trustId`, `userId`, `fullName`, `phone`, `gotra`, `nakshatra`, `rashi`).
+5. **`personProfiles`**: Demographic and cultural profile (`id`, `trustId`, `userId`, `fullName`, `phone`, `gotra`, `nakshatra`, `rashi`, `preferredCommunication`).
 6. **`trustMemberships`**: Trust-level affiliation (`id`, `trustId`, `userId`, `membershipType`, `validFrom`, `validUntil`, `status`).
 7. **`templeMemberships`**: Child temple operational assignment (`id`, `trustId`, `templeId`, `userId`, `status`).
 8. **`designations`**: Dynamic official and traditional titles (`id`, `trustId`, `scopeType`, `scopeId`, `name`, `description`).
@@ -132,7 +139,7 @@ The database is built on PostgreSQL with Drizzle ORM, partitioned into domain sc
 1. **`auditEvents`**: Append-only log recording actor, event type, target entity, request ID, timestamp, and JSON payload.
 
 ### D. `db/schema/operations.ts` — Operational Subsystems
-1. **`sevas`**: Pooja catalogue with multi-priest, quota, and online eligibility flags.
+1. **`sevas`**: Pooja catalogue with multi-priest, quota, online eligibility flags, and `trustResolutionDateTime`.
 2. **`priestProfiles`**: Lineage, Veda shakha, qualification, and active sanctum assignments.
 3. **`priestRosters`**: Shift schedules, duty statuses, and replacement tracking.
 4. **`sevaBookings`**: Devotee bookings, sankalpam details (Gotra, Nakshatra, Rashi), and token QR codes.
@@ -152,7 +159,7 @@ All business logic is encapsulated in strongly-typed repository classes under `l
 | **`TrusteeRepository`** | [`lib/repositories/trustee.repository.ts`](file:///c:/Users/praha/Documents/PraGana%20Innovations%20Projects/Sankalpavani-v1/lib/repositories/trustee.repository.ts) | Board member appointments, resolution numbers, terms, trustee categories (`HEREDITARY`, `NOMINATED`, `DONOR`), life terms. |
 | **`CommitteeRepository`** | [`lib/repositories/committee.repository.ts`](file:///c:/Users/praha/Documents/PraGana%20Innovations%20Projects/Sankalpavani-v1/lib/repositories/committee.repository.ts) | Committee/sub-committee tree management, category filters, member roster assignments, role designations, status updates (`RELIEVED`, `ACTIVE`). |
 | **`DesignationRepository`** | [`lib/repositories/designation.repository.ts`](file:///c:/Users/praha/Documents/PraGana%20Innovations%20Projects/Sankalpavani-v1/lib/repositories/designation.repository.ts) | Dynamic title authoring, resolution references, life-term support, and software role auto-assignment/revocation. |
-| **`MemberRepository`** | [`lib/repositories/member.repository.ts`](file:///c:/Users/praha/Documents/PraGana%20Innovations%20Projects/Sankalpavani-v1/lib/repositories/member.repository.ts) | Unified directory, Gotra/demographic profiles, multi-temple assignments, committee linkages, status transitions. |
+| **`MemberRepository`** | [`lib/repositories/member.repository.ts`](file:///c:/Users/praha/Documents/PraGana%20Innovations%20Projects/Sankalpavani-v1/lib/repositories/member.repository.ts) | Unified directory, Gotra/demographic profiles, preferred communication, multi-temple assignments, committee linkages, status transitions. |
 | **`RoleRepository`** | [`lib/repositories/role.repository.ts`](file:///c:/Users/praha/Documents/PraGana%20Innovations%20Projects/Sankalpavani-v1/lib/repositories/role.repository.ts) | Custom roles, permission bindings, scope cascading (`ALL_DESCENDANTS`), and cache-invalidating policy versions. |
 | **`OrgChartRepository`** | [`lib/repositories/org-chart.repository.ts`](file:///c:/Users/praha/Documents/PraGana%20Innovations%20Projects/Sankalpavani-v1/lib/repositories/org-chart.repository.ts) | React Flow graph node/edge generator, reportee count computation, and cycle detection algorithms. |
 | **`DepartmentRepository`** | [`lib/repositories/department.repository.ts`](file:///c:/Users/praha/Documents/PraGana%20Innovations%20Projects/Sankalpavani-v1/lib/repositories/department.repository.ts) | Dynamic department management, scope inheritance, and auto-seeding defaults. |
@@ -190,9 +197,9 @@ All APIs follow standard HTTP REST semantics, return `{ data, meta }` envelopes,
 - `PATCH /api/v1/trusts/[trustId]/office-bearers/[appointmentId]`: Updates status (`ACTIVE`, `RESIGNED`, `EXPIRED`, `REVOKED`).
 
 ### 5. Members & Unified Directory
-- `GET /api/v1/trusts/[trustId]/members`: Lists all members with demographic profiles, assigned temples, and committee portfolios.
+- `GET /api/v1/trusts/[trustId]/members`: Lists all members with demographic profiles, assigned temples, communication preferences, and committee portfolios.
 - `POST /api/v1/trusts/[trustId]/members`: Registers/invites a new member with multi-temple and committee bindings.
-- `PATCH /api/v1/trusts/[trustId]/members/[userId]`: Updates member profile, Gotra, or status (`ACTIVE`, `SUSPENDED`, `REVOKED`).
+- `PATCH /api/v1/trusts/[trustId]/members/[userId]`: Updates member profile, Gotra, communication channels, or status (`ACTIVE`, `SUSPENDED`, `REVOKED`).
 - `GET /api/v1/trusts/[trustId]/temples/[templeId]/members`: Lists members scoped to a specific child temple.
 - `POST /api/v1/trusts/[trustId]/temples/[templeId]/members`: Assigns a member to a child temple.
 
@@ -215,61 +222,88 @@ All APIs follow standard HTTP REST semantics, return `{ data, meta }` envelopes,
 
 ---
 
-## 7. Frontend UI Portals & Unified Screen 1 Control Center
+## 7. Frontend UI Portals & Unified Navigation Hierarchy
 
-Built on Next.js App Router, Tailwind CSS, and Lucide Icons, adhering to the **Sacred Temple Gold & Ivory** design system:
+Built on Next.js App Router, Tailwind CSS, and Lucide Icons, adhering to the **Sacred Temple Gold & Ivory** design system with strictly partitioned navigation sidebars:
 
 ```mermaid
 graph TD
-    Dashboard["Unified Trust Control Room (Screen 1)\n(/trusts/[trustId]/dashboard)"]
-    Temples["Temples Workspace & Status Modal"]
-    Trustees["Trustees & Board (/governance/trustees)"]
-    Committees["Committees & Sub-Committees (/governance/committees)"]
-    Members["Members Directory (/governance/members)"]
-    Designations["Designations & Titles (/governance/designations)"]
-    Roles["Dynamic RBAC & Roles (/governance/roles)"]
-    Categories["Category Masters Dropdown & Preview"]
-    TempleWorkplace["Temple Operational Workplace & POS (/)"]
-    AnalyticsDashboard["Executive Analytics & Revenue Trends"]
-    SettingsPortal["Notification Gateways & Security Settings"]
+    subgraph TrustAdminScope["Trust Admin Scope Sidebar (6 Items)"]
+        T1["1. Designation & Titles (/governance/designations)"]
+        T2["2. Add new temple (Dynamic Modal)"]
+        T3["3. Members (/governance/members)"]
+        T4["4. Trustees & Board (/governance/trustees)"]
+        T5["5. Committees (/governance/committees)"]
+        T6["6. Dynamic RBAC... (opt.) (/governance/roles)"]
+    end
 
-    Dashboard --> Designations
-    Dashboard --> Roles
-    Dashboard --> Categories
-    Dashboard --> Temples
-    Dashboard --> Trustees
-    Dashboard --> Committees
-    Dashboard --> Members
-    Dashboard --> TempleWorkplace
-    TempleWorkplace --> AnalyticsDashboard
-    TempleWorkplace --> SettingsPortal
+    subgraph TempleAdminScope["Temple Admin Scope Sidebar (7 Items)"]
+        M1["1. Temple Dashboard (dashboard)"]
+        M2["2. Masters (masters)"]
+        M3["3. Devotee Bookings (bookings)"]
+        M4["4. Seva Ledger (pos)"]
+        M5["5. Prasadam Dispatch (logistics)"]
+        M6["6. Temple Reports (reports)"]
+        M7["7. Temple Notifications (settings)"]
+    end
+
+    Dashboard["Unified Trust Control Room (Screen 1)\n(/trusts/[trustId]/dashboard)"]
+    Dashboard --> TrustAdminScope
+    Dashboard --> TempleAdminScope
 ```
+
+### Sidebar Navigation Layouts:
+
+#### A. Trust Admin Scope ([`components/Sidebar.tsx`](file:///c:/Users/praha/Documents/PraGana%20Innovations%20Projects/Sankalpavani-v1/components/Sidebar.tsx))
+1. **Designation** (`Crown` icon): Direct navigation to designations governance, with interactive cards launching category taxonomy modals.
+2. **Add new temple** (`Building2` icon): Instant trigger for the dynamic child temple creation modal.
+3. **Members** (`Users` icon): Direct navigation to the unified members directory and preferred communication manager.
+4. **Trustees & Board** (`Award` icon): Direct navigation to apex trustee appointments, resolutions, and term lifecycle trackers.
+5. **Committees** (`Layers` icon): Direct navigation to committee trees, ad-hoc wings, and roster allocations.
+6. ***Dynamic RBAC... (opt.)*** (*italicized*, `ShieldCheck` icon): Direct navigation to granular capability matrices and custom software roles.
+
+#### B. Temple Admin Scope ([`components/Sidebar.tsx`](file:///c:/Users/praha/Documents/PraGana%20Innovations%20Projects/Sankalpavani-v1/components/Sidebar.tsx))
+1. **Temple Dashboard** (`LayoutDashboard` icon): Dual-bar trends, collections KPIs, and Seva popularity analytics.
+2. **Masters** (`Database` icon): Sanctum pooja catalogue, priest cadre profiles, and duty shifts.
+3. **Devotee Bookings** (`Calendar` icon): Calendar-based Seva bookings, Gotra recordings, and dynamic QR/UPI tokens.
+4. **Seva Ledger** (`FileSpreadsheet` icon): Counter ticketing, digital cashier registers, and audit ledgers.
+5. **Prasadam Dispatch** (`PackageCheck` icon): Postal logistics, packaging status, and courier tracking.
+6. **Temple Reports** (`PieChart` icon): Daily reconciliation, 80G tax summaries, and financial reports.
+7. **Temple Notifications** (`Bell` icon): Gateway configurations for SMS, WhatsApp Business API, and SMTP email services.
+
 
 ---
 
 ## 8. Governance Action Sequence & Category Masters Architecture
 
-On Screen 1 ([`app/trusts/[trustId]/dashboard/page.tsx`](file:///c:/Users/praha/Documents/PraGana%20Innovations%20Projects/Sankalpavani-v1/app/trusts/%5BtrustId%5D/dashboard/page.tsx)), the top header action toolbar is organized in the following sequential order:
+On Screen 1 ([`app/trusts/[trustId]/dashboard/page.tsx`](file:///c:/Users/praha/Documents/PraGana%20Innovations%20Projects/Sankalpavani-v1/app/trusts/%5BtrustId%5D/dashboard/page.tsx)), the top header action toolbar is organized in the following focused sequential order:
 
 ```
-[ ← Dashboard ] [ ↻ ] [ 1. Designation & Titles ] [ 2. Dynamic RBAC & Roles ] [ 3. Category ▾ ] [ 4. + Add New Temple ] [ 5. Trustees & Board ] [ 6. Committees ] [ 7. Members ] [ 8. Assign Members to Committee ] [ 9. Archakas Registry & Duty Roster ]
+[ ← Dashboard ] [ ↻ ] [ 1. Designation & Titles ] [ 2. Dynamic RBAC & Roles ] [ 3. Category ▾ ] [ 4. + Add New Temple ] [ 5. Trustees & Board ] [ 6. Committees ] [ 7. Members ]
 ```
 
 ### Action Modules Breakdown:
 1. **Designation & Titles** (`Crown` icon): Direct navigation to `/governance/designations`.
+   - Features top 4 interactive trigger cards launching popup modals:
+     - **Trust Categories**: Launches category master on Trust Categories tab.
+     - **Membership Type**: Launches category master on Membership Types tab.
+     - **Committee Category**: Launches category master on Committee Categories tab.
+     - **Appoint Office Bearer**: Launches office bearer appointment modal.
+   - Simplified appointee badge on designation cards: `👤 Appointed Member: [Avatar] [Name]`.
+   - Bold uppercase trust branding in the header.
 2. **Dynamic RBAC & Roles** (`ShieldCheck` icon): Direct navigation to `/governance/roles`.
-3. **Category Masters Dropdown & Modal** (`Tag` icon):
-   - **a. Trust Categories - Master**: Classification taxonomies (*Religious & Spiritual Peetham*, *Charitable & Annadanam Endowment*, *Heritage & Architectural Devasthanam*).
-   - **b. Membership Type - Master**: (*Apex Governance Head*, *General Body Voting Member*, *Nominated Advisory Member*, *Life Patron / Mahadatha*).
-   - **c. Committee Category - Master**: (*Statutory Audit & Accounts*, *Festival & Brahmotsavam Planning*, *Agama & Sanctum Advisory*, *Works & Infrastructure*).
-   - Interactive modal preview for quick inspection.
+3. **Category Masters Dropdown & Dynamic Modal** (`Tag` icon) ([`components/governance/GovernanceMastersModal.tsx`](file:///c:/Users/praha/Documents/PraGana%20Innovations%20Projects/Sankalpavani-v1/components/governance/GovernanceMastersModal.tsx)):
+   - Renders active Trust Name in the modal header with a gold emblem.
+   - Contextually re-titles the form header dynamically based on the selected taxonomy:
+     - **Trust Categories**: `"New Trust Category"`
+     - **Membership Types**: `"New Membership Type Category"`
+     - **Committee Categories**: `"New Committee Category"`
+   - Interactive preview table with real-time add, edit, and deletion capabilities.
 4. **Add New Temple** (`Plus` icon): High-visibility primary button launching the dynamic temple creation modal.
 5. **Trustees & Board** (`Users` icon): Direct navigation to `/governance/trustees`.
 6. **Committees** (`Layers` icon): Direct navigation to `/governance/committees`. Form modal features optional category, simplified Start Date / End Date timeline.
 7. **Members** (`UserCheck` icon): Direct navigation to `/governance/members`.
-8. **Assign Members to Committee (Optional)** (`UserPlus` icon): Quick link to committee roster assignments.
-9. **Archakas Registry & Duty Roster** (`CalendarClock` icon): Direct drill-down into temple duty rosters and ritual registries.
-10. **Bidirectional Navigation (`← Dashboard`)**: Smooth 1-click return to the main operational counter and temple workplace (`/`).
+8. **Bidirectional Navigation (`← Dashboard`)**: Smooth 1-click return to the main operational counter and temple workplace (`/`).
 
 ---
 
@@ -335,19 +369,24 @@ Whenever custom roles, permissions, or assignments change, the `policyVersions` 
 
 ## 12. Operational & Temple Management Subsystems
 
-1. **Seva & Pooja Management**: Multi-priest assignment, daily/festival quotas, advance booking rules, and Gotra-based sankalpam recording.
-2. **Calendar View & Seva Booking Workflow** ([`components/CalendarView.tsx`](file:///c:/Users/praha/Documents/PraGana%20Innovations%20Projects/Sankalpavani-v1/components/CalendarView.tsx)):
+1. **Seva & Pooja Management & Resolution Tracking** ([`components/SevaMaster.tsx`](file:///c:/Users/praha/Documents/PraGana%20Innovations%20Projects/Sankalpavani-v1/components/SevaMaster.tsx)):
+   - Multi-priest assignment, daily/festival quotas, advance booking rules, and Gotra-based sankalpam recording.
+   - **Trust Resolution Date & Time (`trustResolutionDateTime`)**: Official legal timestamp field (`datetime-local`) recording the exact date and time of trust board approval across new seva creation, inline edit mode, and catalog listings with clock badges.
+2. **Member Governance & Multi-Channel Communication** ([`components/MembersGovernance.tsx`](file:///c:/Users/praha/Documents/PraGana%20Innovations%20Projects/Sankalpavani-v1/components/MembersGovernance.tsx)):
+   - **Preferred Communication**: Interactive pill-style checkboxes for `Email` and `WhatsApp / SMS`, styled identically to *Assign to Temple(s) (Multi-Temple Scope)* with glowing saffron/gold borders and active checkmarks.
+   - Multi-temple scoping with child temple chips and committee linkages.
+3. **Calendar View & Seva Booking Workflow** ([`components/CalendarView.tsx`](file:///c:/Users/praha/Documents/PraGana%20Innovations%20Projects/Sankalpavani-v1/components/CalendarView.tsx)):
    - Single-line summary header: `Seva Overview - [Selected Date / Current Date]`.
    - Devotee demographics: Optional Age and Gender inputs.
    - Dynamic Payment Gateway Mode:
      - **UPI**: Instant dynamic QR code generation (MVP) with direct scan-and-pay.
      - **Card / NetBanking**: Seamless checkout redirection.
      - **Status Display**: Real-time confirmation message *"Thank you, payment is successful. Seva is booked"* upon verified payment.
-3. **Priest Lineage & Rostering**: Priest profile management (Veda shakha, gotra, certifications), shift rosters, duty exchange workflows, and leave management.
-4. **Devotee Booking & Smart Passes**: Multi-channel booking (Counter, Online, Mobile), biometric/QR token pass generation, family member gotra grouping, and automatic receipt generation.
-5. **Finance, Hundi & Treasury**: Multi-custodian digital Hundi counting sessions, CCTV reference logs, cash/gold reconciliation, and daily temple financial ledgers.
-6. **Logistics & Sacred Prasadam Dispatch**: Postal dispatch tracking for overseas/remote sankalpam prasadam boxes, automated shipping labels, and devotee delivery SMS/WhatsApp alerts.
-7. **Facilities & Queue Infrastructure**: Kalyana Mandapam slot bookings, guest house room allocations, queue complex sensor integration, and maintenance tracking.
+4. **Priest Lineage & Rostering**: Priest profile management (Veda shakha, gotra, certifications), shift rosters, duty exchange workflows, and leave management.
+5. **Devotee Booking & Smart Passes**: Multi-channel booking (Counter, Online, Mobile), biometric/QR token pass generation, family member gotra grouping, and automatic receipt generation.
+6. **Finance, Hundi & Treasury**: Multi-custodian digital Hundi counting sessions, CCTV reference logs, cash/gold reconciliation, and daily temple financial ledgers.
+7. **Logistics & Sacred Prasadam Dispatch**: Postal dispatch tracking for overseas/remote sankalpam prasadam boxes, automated shipping labels, and devotee delivery SMS/WhatsApp alerts.
+8. **Facilities & Queue Infrastructure**: Kalyana Mandapam slot bookings, guest house room allocations, queue complex sensor integration, and maintenance tracking.
 
 ---
 
@@ -372,9 +411,9 @@ Whenever custom roles, permissions, or assignments change, the `policyVersions` 
 
 ---
 
-## 14. Settings & Notification Gateway Architecture
+## 14. Temple Notifications & Communication Gateway Architecture
 
-[`components/Settings.tsx`](file:///c:/Users/praha/Documents/PraGana%20Innovations%20Projects/Sankalpavani-v1/components/Settings.tsx) provides a streamlined administrative interface for temple communications:
+[`components/Settings.tsx`](file:///c:/Users/praha/Documents/PraGana%20Innovations%20Projects/Sankalpavani-v1/components/Settings.tsx) provides a streamlined administrative interface for temple communications, accessible directly via **Temple Notifications** (`Bell` icon) in the Temple Admin sidebar:
 
 1. **SMS Gateway**:
    - Primary Field: `SMS Sending Phone Number / Virtual No. *` (`smsConfig.sendingPhoneNumber`).
@@ -401,7 +440,7 @@ The entire project is verified with 10 comprehensive test suites written in Type
 | **Designations & Titles** | [`tests/governance/dynamic-designations.test.ts`](file:///c:/Users/praha/Documents/PraGana%20Innovations%20Projects/Sankalpavani-v1/tests/governance/dynamic-designations.test.ts) | 10 | ✅ PASS | Traditional titles, role auto-binding, resignation role revocation, cross-tenant title isolation. |
 | **Dynamic RBAC & Roles** | [`tests/governance/dynamic-roles.test.ts`](file:///c:/Users/praha/Documents/PraGana%20Innovations%20Projects/Sankalpavani-v1/tests/governance/dynamic-roles.test.ts) | 10 | ✅ PASS | Custom role creation, granular feature flags, scope cascading (`ALL_DESCENDANTS`), policy version increments. |
 | **Org Chart & Matrix** | [`tests/org-chart/dynamic-org-chart.test.ts`](file:///c:/Users/praha/Documents/PraGana%20Innovations%20Projects/Sankalpavani-v1/tests/org-chart/dynamic-org-chart.test.ts) | 11 | ✅ PASS | React Flow nodes/edges, dual supervisor lines, **Cycle Detection** algorithm rejecting circular loops. |
-| **Members & Directory** | [`tests/members/dynamic-members.test.ts`](file:///c:/Users/praha/Documents/PraGana%20Innovations%20Projects/Sankalpavani-v1/tests/members/dynamic-members.test.ts) | 10 | ✅ PASS | Demographic Gotra profiles, multi-temple scoping, committee linkages, status suspension, temple scope revocation. |
+| **Members & Directory** | [`tests/members/dynamic-members.test.ts`](file:///c:/Users/praha/Documents/PraGana%20Innovations%20Projects/Sankalpavani-v1/tests/members/dynamic-members.test.ts) | 10 | ✅ PASS | Demographic Gotra profiles, multi-temple scoping, preferred communication, committee linkages, status suspension. |
 | **Dynamic Departments & Scoped RBAC** | [`tests/governance/dynamic-departments-rbac.test.ts`](file:///c:/Users/praha/Documents/PraGana%20Innovations%20Projects/Sankalpavani-v1/tests/governance/dynamic-departments-rbac.test.ts) | 9 | ✅ PASS | User-generated departments, scoped admin guards (Trust Admin vs. Temple Admin), scope inheritance, audit logs. |
 | **Lifecycle & Audit Progress** | [`tests/governance/lifecycle-audit.test.ts`](file:///c:/Users/praha/Documents/PraGana%20Innovations%20Projects/Sankalpavani-v1/tests/governance/lifecycle-audit.test.ts) | 5 | ✅ PASS | Duration calculations, elapsed term percentages, active/expired badges, life term badges, board resolution tracking. |
 | **Tenant Isolation Matrix** | [`tests/tenant-isolation/isolation.test.ts`](file:///c:/Users/praha/Documents/PraGana%20Innovations%20Projects/Sankalpavani-v1/tests/tenant-isolation/isolation.test.ts) | 15 | ✅ PASS | Complete stakeholder persona RBAC matrix and cross-tenant data isolation. |
@@ -451,10 +490,15 @@ The entire project is verified with 10 comprehensive test suites written in Type
 - `app/trusts/[trustId]/governance/designations/page.tsx`
 - `app/trusts/[trustId]/governance/members/page.tsx`
 - `app/trusts/[trustId]/governance/roles/page.tsx`
+- `components/Sidebar.tsx` *(Role-based Dynamic Trust Admin & Temple Admin Sidebars)*
 - `components/DashboardPortal.tsx` *(Temple Operational Analytics & Bento Grid)*
 - `components/CalendarView.tsx` *(Seva Calendar & Dynamic UPI / Gateway Booking)*
-- `components/Settings.tsx` *(Notification Gateways & Security Settings)*
-- `components/CommitteesGovernance.tsx` *(Committees & Dynamic Modal)*
+- `components/Settings.tsx` *(Temple Notifications & Communication Gateways)*
+- `components/CommitteesGovernance.tsx` *(Committees & Dynamic Creation Modal)*
+- `components/DesignationsGovernance.tsx` *(Designation Titles, Appointee Badges & Modal Launchers)*
+- `components/MembersGovernance.tsx` *(Members Directory, Multi-Temple Scoping & Preferred Channels)*
+- `components/SevaMaster.tsx` *(Seva Offerings Setup & Trust Resolution Timestamps)*
+- `components/governance/GovernanceMastersModal.tsx` *(Dynamic Category Masters Creation & Preview Modal)*
 - `components/governance/TrusteeCard.tsx`
 - `components/governance/MemberCard.tsx`
 - `components/governance/AppointTrusteeModal.tsx`
@@ -467,3 +511,4 @@ The entire project is verified with 10 comprehensive test suites written in Type
 ## Conclusion
 
 The SankalpVani platform stands as a **complete, production-ready, 100% dynamic multi-tenant hierarchy and temple governance operating system**. Every administrative entity (temples, trustees, committees, members, designations, custom roles, category masters, matrix reporting trees, operational analytics dashboards, and dynamic departments) is dynamically configurable through intuitive, sacred-aesthetic UI interfaces and protected by rigorous database schemas, RLS guards, and automated test suites with zero TypeScript errors.
+

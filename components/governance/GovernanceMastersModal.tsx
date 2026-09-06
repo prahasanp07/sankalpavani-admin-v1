@@ -22,6 +22,7 @@ interface GovernanceMastersModalProps {
   isOpen: boolean;
   onClose: () => void;
   trustId: string;
+  trustName?: string;
   initialTab?: MasterType;
   onMasterUpdated?: () => void;
 }
@@ -30,9 +31,16 @@ export default function GovernanceMastersModal({
   isOpen,
   onClose,
   trustId,
+  trustName,
   initialTab = 'TRUSTEE_CATEGORY',
   onMasterUpdated
 }: GovernanceMastersModalProps) {
+  const resolvedTrustName =
+    trustName ||
+    (trustId === 'trust_ahobila'
+      ? 'Sri Ahobila Matha Devasthanam Trust'
+      : 'Sri Sringeri Sharada Dharma Trust');
+
   const [activeTab, setActiveTab] = useState<MasterType>(initialTab);
   const [masters, setMasters] = useState<MasterCategoryItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -136,7 +144,7 @@ export default function GovernanceMastersModal({
   return (
     <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
       <div className="bg-surface-container rounded-3xl border border-outline-variant/50 max-w-2xl w-full p-6 shadow-sacred max-h-[90vh] overflow-y-auto space-y-5 animate-in fade-in zoom-in-95 duration-200">
-        
+
         {/* Header */}
         <div className="flex items-center justify-between pb-3 border-b divider-gold">
           <div className="flex items-center gap-2.5">
@@ -144,7 +152,9 @@ export default function GovernanceMastersModal({
               <Bookmark size={20} />
             </div>
             <div>
-              <h3 className="font-serif text-lg font-bold text-primary">Governance Masters Management</h3>
+              <h3 className="font-serif text-lg font-bold text-primary">
+                Governance Management — <span className="text-on-surface font-sans font-bold text-base">{resolvedTrustName}</span>
+              </h3>
               <p className="text-xs text-on-surface-variant">Configure Trust, Membership & Committee Master Taxonomies</p>
             </div>
           </div>
@@ -161,11 +171,10 @@ export default function GovernanceMastersModal({
           <button
             type="button"
             onClick={() => setActiveTab('TRUSTEE_CATEGORY')}
-            className={`py-2 px-3 rounded-xl flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
-              activeTab === 'TRUSTEE_CATEGORY'
-                ? 'bg-primary text-on-primary shadow-xs'
-                : 'text-on-surface-variant hover:text-on-surface'
-            }`}
+            className={`py-2 px-3 rounded-xl flex items-center justify-center gap-1.5 transition-all cursor-pointer ${activeTab === 'TRUSTEE_CATEGORY'
+              ? 'bg-primary text-on-primary shadow-xs'
+              : 'text-on-surface-variant hover:text-on-surface'
+              }`}
           >
             <Crown size={14} />
             <span>Trust Categories</span>
@@ -174,11 +183,10 @@ export default function GovernanceMastersModal({
           <button
             type="button"
             onClick={() => setActiveTab('MEMBERSHIP_TYPE')}
-            className={`py-2 px-3 rounded-xl flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
-              activeTab === 'MEMBERSHIP_TYPE'
-                ? 'bg-primary text-on-primary shadow-xs'
-                : 'text-on-surface-variant hover:text-on-surface'
-            }`}
+            className={`py-2 px-3 rounded-xl flex items-center justify-center gap-1.5 transition-all cursor-pointer ${activeTab === 'MEMBERSHIP_TYPE'
+              ? 'bg-primary text-on-primary shadow-xs'
+              : 'text-on-surface-variant hover:text-on-surface'
+              }`}
           >
             <Users size={14} />
             <span>Membership Types</span>
@@ -187,11 +195,10 @@ export default function GovernanceMastersModal({
           <button
             type="button"
             onClick={() => setActiveTab('COMMITTEE_CATEGORY')}
-            className={`py-2 px-3 rounded-xl flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
-              activeTab === 'COMMITTEE_CATEGORY'
-                ? 'bg-primary text-on-primary shadow-xs'
-                : 'text-on-surface-variant hover:text-on-surface'
-            }`}
+            className={`py-2 px-3 rounded-xl flex items-center justify-center gap-1.5 transition-all cursor-pointer ${activeTab === 'COMMITTEE_CATEGORY'
+              ? 'bg-primary text-on-primary shadow-xs'
+              : 'text-on-surface-variant hover:text-on-surface'
+              }`}
           >
             <Layers size={14} />
             <span>Committee Categories</span>
@@ -216,12 +223,18 @@ export default function GovernanceMastersModal({
         {/* Add New Category Form */}
         <form onSubmit={handleCreate} className="p-4 rounded-2xl bg-surface-container-low border border-outline-variant/40 space-y-3">
           <h4 className="font-serif text-xs font-bold text-primary flex items-center gap-1.5">
-            <Plus size={14} /> Add New Master Category
+            {activeTab === 'TRUSTEE_CATEGORY' && 'New Trust Category'}
+            {activeTab === 'MEMBERSHIP_TYPE' && 'New Membership Type Category'}
+            {activeTab === 'COMMITTEE_CATEGORY' && 'New Committee Category'}
           </h4>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="space-y-1">
-              <label className="text-[11px] font-bold text-on-surface">Category Name *</label>
+              <label className="text-[11px] font-bold text-on-surface">
+                {activeTab === 'TRUSTEE_CATEGORY' && 'Trust Category Name *'}
+                {activeTab === 'MEMBERSHIP_TYPE' && 'Membership Type Name *'}
+                {activeTab === 'COMMITTEE_CATEGORY' && 'Committee Category Name *'}
+              </label>
               <input
                 type="text"
                 required

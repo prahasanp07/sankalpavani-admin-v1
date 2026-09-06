@@ -25,9 +25,6 @@ import {
   UserCheck,
   Tag,
   ChevronDown,
-  UserPlus,
-  CalendarClock,
-  BookOpen,
   FolderTree
 } from 'lucide-react';
 import GovernanceMastersModal from '@/components/governance/GovernanceMastersModal';
@@ -48,6 +45,7 @@ interface TempleItem {
   contactJson?: any;
   activeSevas?: number;
   activePriests?: number;
+  todayCollections?: string | number;
 }
 
 export default function TrustDashboardPage() {
@@ -100,6 +98,7 @@ export default function TrustDashboardPage() {
             tagline: 'Sanctum of Lord Vidyashankara',
             hotline: '+91 82652 50123',
             officialEmail: 'info@vidyashankara.org',
+            todayCollections: '₹ 4,80,000',
             activeSevas: 18,
             activePriests: 5
           },
@@ -112,6 +111,7 @@ export default function TrustDashboardPage() {
             tagline: 'Sanctum of Goddess Sharadamba',
             hotline: '+91 82652 50555',
             officialEmail: 'contact@sharadamba.org',
+            todayCollections: '₹ 3,45,000',
             activeSevas: 24,
             activePriests: 8
           }
@@ -130,6 +130,7 @@ export default function TrustDashboardPage() {
             tagline: 'Sanctum of Lord Vidyashankara',
             hotline: '+91 82652 50123',
             officialEmail: 'info@vidyashankara.org',
+            todayCollections: '₹ 4,80,000',
             activeSevas: 18,
             activePriests: 5
           },
@@ -142,6 +143,7 @@ export default function TrustDashboardPage() {
             tagline: 'Sanctum of Goddess Sharadamba',
             hotline: '+91 82652 50555',
             officialEmail: 'contact@sharadamba.org',
+            todayCollections: '₹ 3,45,000',
             activeSevas: 24,
             activePriests: 8
           }
@@ -319,31 +321,6 @@ export default function TrustDashboardPage() {
               <UserCheck size={14} />
               <span>Members</span>
             </button>
-
-            {/* 8. Assign members to committee (optional) */}
-            <button
-              onClick={() => {
-                router.push(`/trusts/${trustId}/governance/committees`);
-                showToast('Directing to Committees to assign members...');
-              }}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-surface-container hover:bg-surface-container-high border border-primary/30 text-primary font-sans text-xs font-bold transition-all cursor-pointer shadow-xs"
-            >
-              <UserPlus size={14} />
-              <span>Assign Members to Committee</span>
-            </button>
-
-            {/* 9. Archakas registry & duty roster */}
-            <button
-              onClick={() => {
-                const targetTemple = temples[0]?.id || 'temple_vidyashankara';
-                router.push(`/trusts/${trustId}/temples/${targetTemple}/dashboard`);
-                showToast('Opening Archakas registry & duty roster in Temple Workplace...');
-              }}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-surface-container hover:bg-surface-container-high border border-primary/30 text-primary font-sans text-xs font-bold transition-all cursor-pointer shadow-xs"
-            >
-              <CalendarClock size={14} />
-              <span>Archakas Registry & Duty Roster</span>
-            </button>
           </div>
         </div>
 
@@ -503,14 +480,18 @@ export default function TrustDashboardPage() {
                       )}
                     </div>
 
-                    <div className="grid grid-cols-2 gap-2 mt-4 pt-3 border-t border-outline-variant/30 text-center">
-                      <div className="bg-surface-container/60 p-2 rounded-xl">
-                        <p className="text-[9px] font-bold text-on-surface-variant uppercase">Sevas Configured</p>
-                        <p className="text-xs font-bold text-primary mt-0.5">{temple.activeSevas || 0} Offerings</p>
+                    <div className="grid grid-cols-3 gap-1.5 mt-4 pt-3 border-t border-outline-variant/30 text-center">
+                      <div className="bg-surface-container/60 p-2 rounded-xl flex flex-col justify-center">
+                        <p className="text-[9px] font-bold text-on-surface-variant uppercase tracking-tight">Today's Collections</p>
+                        <p className="text-xs font-bold text-amber-700 dark:text-amber-500 mt-0.5">{temple.todayCollections || '₹ 4,80,000'}</p>
                       </div>
-                      <div className="bg-surface-container/60 p-2 rounded-xl">
-                        <p className="text-[9px] font-bold text-on-surface-variant uppercase">Priest Cadre</p>
-                        <p className="text-xs font-bold text-on-surface mt-0.5">{temple.activePriests || 0} Staff</p>
+                      <div className="bg-surface-container/60 p-2 rounded-xl flex flex-col justify-center">
+                        <p className="text-[9px] font-bold text-on-surface-variant uppercase tracking-tight">Sevas Configured</p>
+                        <p className="text-xs font-bold text-primary mt-0.5">{temple.activeSevas || 18} Offerings</p>
+                      </div>
+                      <div className="bg-surface-container/60 p-2 rounded-xl flex flex-col justify-center">
+                        <p className="text-[9px] font-bold text-on-surface-variant uppercase tracking-tight">Priest Cadre</p>
+                        <p className="text-xs font-bold text-emerald-700 dark:text-emerald-500 mt-0.5">{temple.activePriests || 5} Staff</p>
                       </div>
                     </div>
                   </div>

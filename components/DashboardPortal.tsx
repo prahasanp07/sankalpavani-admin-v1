@@ -1073,7 +1073,7 @@ export default function DashboardPortal({ onNavigate }: DashboardPortalProps) {
               >
                 <div className="flex items-center">
                   <Send className="mr-3 text-primary group-hover:text-on-primary" size={18} />
-                  <span className="font-semibold text-sm">Configure Push Notifications</span>
+                  <span className="font-semibold text-sm">Temple Notifications & Configuration</span>
                 </div>
                 <ArrowRight size={14} className="opacity-0 group-hover:opacity-100 transition-opacity" />
               </button>
