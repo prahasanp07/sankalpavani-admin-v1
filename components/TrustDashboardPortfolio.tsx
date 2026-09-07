@@ -196,11 +196,8 @@ export default function TrustDashboardPortfolio({
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-outline-variant/20 pb-4">
           <div>
             <h2 className="font-serif text-xl font-bold text-primary flex items-center gap-2">
-              <Landmark size={20} /> Dynamic Temple Portfolio
+              <Landmark size={20} /> Temples Governed by {trustName}
             </h2>
-            <p className="font-sans text-xs text-on-surface-variant mt-0.5">
-              Launch individual temple operational workplaces or dynamically administer child shrines under this Trust.
-            </p>
           </div>
 
           {/* Search and Filters */}
@@ -325,7 +322,7 @@ export default function TrustDashboardPortfolio({
                 </div>
 
                 <div className="mt-5 pt-3 border-t border-outline-variant/30 flex items-center justify-between text-xs font-bold text-primary group-hover:translate-x-0.5 transition-transform">
-                  <span>Enter Operational Workplace</span>
+                  <span>Click here to launch Temple administration Activities</span>
                   <ArrowRight size={14} />
                 </div>
               </div>

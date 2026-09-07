@@ -376,7 +376,7 @@ export default function TrustDashboardPage() {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <h2 className="font-serif text-xl font-bold text-primary flex items-center gap-2">
-                <Landmark size={20} /> Dynamic Temple Portfolio
+                <Landmark size={20} /> Temples Governed by {trustName}
               </h2>
               <p className="font-sans text-xs text-on-surface-variant mt-0.5">
                 Launch individual temple operational workplaces or dynamically administer child shrines under this Trust.

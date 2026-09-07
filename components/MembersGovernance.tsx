@@ -359,7 +359,6 @@ export default function MembersGovernance({
           <div>
             <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">Total Members</p>
             <h3 className="font-serif text-2xl font-bold text-on-surface mt-1">{totalMembersCount} Registered</h3>
-            <p className="text-[10px] text-emerald-700 font-bold mt-0.5">Trust Umbrella Roster</p>
           </div>
           <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
             <Users size={22} />
@@ -370,7 +369,6 @@ export default function MembersGovernance({
           <div>
             <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">Trustees & Governance</p>
             <h3 className="font-serif text-2xl font-bold text-on-surface mt-1">{trusteesCount} Trustees</h3>
-            <p className="text-[10px] text-amber-700 font-bold mt-0.5">Apex Trust Board</p>
           </div>
           <div className="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-700 flex items-center justify-center">
             <Crown size={22} />
@@ -381,7 +379,6 @@ export default function MembersGovernance({
           <div>
             <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">Archakas & Priests</p>
             <h3 className="font-serif text-2xl font-bold text-on-surface mt-1">{priestsCount} Acharyas</h3>
-            <p className="text-[10px] text-emerald-700 font-bold mt-0.5">Sanctum Pooja Duties</p>
           </div>
           <div className="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-700 flex items-center justify-center">
             <Flame size={22} />
@@ -392,7 +389,6 @@ export default function MembersGovernance({
           <div>
             <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">Committee Appointees</p>
             <h3 className="font-serif text-2xl font-bold text-on-surface mt-1">{committeeAppointeesCount} Active</h3>
-            <p className="text-[10px] text-purple-700 font-bold mt-0.5">Jeernodharana & Festival Wings</p>
           </div>
           <div className="w-12 h-12 rounded-xl bg-purple-500/10 text-purple-700 flex items-center justify-center">
             <Layers size={22} />
@@ -640,11 +636,10 @@ export default function MembersGovernance({
                 </label>
                 <div className="flex flex-wrap gap-2 pt-1">
                   <label
-                    className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl border text-xs cursor-pointer transition-all ${
-                      formData.preferredCommEmail
-                        ? 'bg-primary-container/20 border-primary text-primary font-bold shadow-xs'
-                        : 'bg-surface-container-low border-outline-variant/40 text-on-surface hover:bg-surface-container'
-                    }`}
+                    className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl border text-xs cursor-pointer transition-all ${formData.preferredCommEmail
+                      ? 'bg-primary-container/20 border-primary text-primary font-bold shadow-xs'
+                      : 'bg-surface-container-low border-outline-variant/40 text-on-surface hover:bg-surface-container'
+                      }`}
                   >
                     <input
                       type="checkbox"
@@ -656,11 +651,10 @@ export default function MembersGovernance({
                   </label>
 
                   <label
-                    className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl border text-xs cursor-pointer transition-all ${
-                      formData.preferredCommWhatsAppSms
-                        ? 'bg-primary-container/20 border-primary text-primary font-bold shadow-xs'
-                        : 'bg-surface-container-low border-outline-variant/40 text-on-surface hover:bg-surface-container'
-                    }`}
+                    className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl border text-xs cursor-pointer transition-all ${formData.preferredCommWhatsAppSms
+                      ? 'bg-primary-container/20 border-primary text-primary font-bold shadow-xs'
+                      : 'bg-surface-container-low border-outline-variant/40 text-on-surface hover:bg-surface-container'
+                      }`}
                   >
                     <input
                       type="checkbox"

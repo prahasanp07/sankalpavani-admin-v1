@@ -8,7 +8,7 @@ import {
   Calendar,
   Activity,
   Download,
-  DollarSign,
+  IndianRupee,
   Briefcase,
   Layers,
   ChevronDown,
@@ -352,14 +352,11 @@ export default function SystemOverview() {
             <span className="font-sans text-xs font-bold text-on-surface-variant uppercase tracking-wider">
               Total Collections
             </span>
-            <DollarSign size={18} className="text-green-600" />
+            <IndianRupee size={18} className="text-green-600" />
           </div>
           <h3 className="font-mono text-3xl font-bold text-on-surface">
             ₹{totalRevenue.toLocaleString()}
           </h3>
-          <p className="font-sans text-xs text-on-surface-variant font-semibold mt-1">
-            Settled bank payouts
-          </p>
         </div>
 
         {/* Total Bookings */}
@@ -373,9 +370,6 @@ export default function SystemOverview() {
           <h3 className="font-mono text-3xl font-bold text-on-surface">
             {totalBookings} tickets
           </h3>
-          <p className="font-sans text-xs text-on-surface-variant font-semibold mt-1">
-            Seva offerings registered
-          </p>
         </div>
 
         {/* ATV */}
@@ -389,9 +383,6 @@ export default function SystemOverview() {
           <h3 className="font-mono text-3xl font-bold text-on-surface">
             ₹{averageTicket.toLocaleString()}
           </h3>
-          <p className="font-sans text-xs text-on-surface-variant font-semibold mt-1">
-            Avg spending per pilgrim
-          </p>
         </div>
 
         {/* Prasads fulfilled */}

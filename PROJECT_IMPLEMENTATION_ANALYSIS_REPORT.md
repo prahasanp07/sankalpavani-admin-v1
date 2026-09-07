@@ -51,7 +51,7 @@ The codebase has been engineered such that **every entity across the organizatio
 - **Separation of Title and Role**: Ceremonial designations (*Pradhana Archaka, Bhandari*) exist independently of software roles, with optional auto-binding.
 - **Granular Dynamic RBAC/ABAC**: Custom roles with namespace-resource-action permission strings, interactive modal capability toggling, and cache-invalidating policy versions.
 - **Dynamic Departments**: Dynamic department generation per trust and temple, with inline on-the-fly creation within drawers.
-- **Persistent Scoped Context Switcher**: Real-time visual indicator distinguishing Global Trust Operations (Crimson) from Specific Temple Operations (Saffron).
+- **Persistent Scoped Context Switcher**: Real-time visual indicator distinguishing Temple Trusts Operations (Crimson) from Specific Temple Operations (Saffron).
 - **Dynamic Temple Portfolio & Real-time Metrics**: Dynamic child temple cards displaying 3 essential operational metrics: Today's Collections (e.g. `₹ 4,80,000`), Sevas Configured (e.g. `18 Offerings`), and Priest Cadre (e.g. `5 Staff`).
 - **Executive Operational Analytics**: Re-engineered Temple Dashboard featuring dual-bar Seva vs Donation comparative trends, dynamic Seva Popularity Doughnut charts with rise/fall metrics, and quick action bento grids.
 - **Streamlined Notification Gateways**: Dedicated SMS, WhatsApp Business, and Email (SMTP) sender configurations with clean direct-entry fields and persistent storage.
@@ -288,7 +288,7 @@ On Screen 1 ([`app/trusts/[trustId]/dashboard/page.tsx`](file:///c:/Users/praha/
      - **Trust Categories**: Launches category master on Trust Categories tab.
      - **Membership Type**: Launches category master on Membership Types tab.
      - **Committee Category**: Launches category master on Committee Categories tab.
-     - **Appoint Office Bearer**: Launches office bearer appointment modal.
+     - **Appointing Trustees**: Launches office bearer appointment modal.
    - Simplified appointee badge on designation cards: `👤 Appointed Member: [Avatar] [Name]`.
    - Bold uppercase trust branding in the header.
 2. **Dynamic RBAC & Roles** (`ShieldCheck` icon): Direct navigation to `/governance/roles`.
@@ -303,7 +303,10 @@ On Screen 1 ([`app/trusts/[trustId]/dashboard/page.tsx`](file:///c:/Users/praha/
 5. **Trustees & Board** (`Users` icon): Direct navigation to `/governance/trustees`.
 6. **Committees** (`Layers` icon): Direct navigation to `/governance/committees`. Form modal features optional category, simplified Start Date / End Date timeline.
 7. **Members** (`UserCheck` icon): Direct navigation to `/governance/members`.
-8. **Bidirectional Navigation (`← Dashboard`)**: Smooth 1-click return to the main operational counter and temple workplace (`/`).
+8. **Dynamic Temple Portfolio Grid** ([`components/TrustDashboardPortfolio.tsx`](file:///c:/Users/praha/Documents/PraGana%20Innovations%20Projects/Sankalpavani-v1/components/TrustDashboardPortfolio.tsx)):
+   - Contextual section header: `Temples Governed by <Trust Name>`.
+   - 1-click operational launcher button: `"Click here to launch Temple administration Activities"`.
+9. **Bidirectional Navigation (`← Dashboard`)**: Smooth 1-click return to the main operational counter and temple workplace (`/`).
 
 ---
 
@@ -357,7 +360,7 @@ graph LR
 
 ### A. Persistent Scoped Context Switcher
 A persistent visual pill is positioned at the top of the header navigation:
-- **Global Trust Scope**: Crimson background (`bg-red-800 text-white`) reading **"Viewing: Global Trust Operations"**.
+- **Trust Scope**: Crimson background (`bg-red-800 text-white`) reading **"Viewing: Temple Trusts Operations"**.
 - **Temple Scope**: Saffron background (`bg-orange-600 text-white`) reading **"Viewing: [Temple Name]"**.
 - All data dropdowns strictly filter options based on the active session scope.
 
@@ -391,8 +394,8 @@ Whenever custom roles, permissions, or assignments change, the `policyVersions` 
 ---
 
 ## 13. Modern Temple Dashboard & Operational Analytics
-
-[`components/DashboardPortal.tsx`](file:///c:/Users/praha/Documents/PraGana%20Innovations%20Projects/Sankalpavani-v1/components/DashboardPortal.tsx) has been architected with a high-conversion, executive 2-column layout:
+ 
+[`components/DashboardPortal.tsx`](file:///c:/Users/praha/Documents/PraGana%20Innovations%20Projects/Sankalpavani-v1/components/DashboardPortal.tsx) and [`components/SystemOverview.tsx`](file:///c:/Users/praha/Documents/PraGana%20Innovations%20Projects/Sankalpavani-v1/components/SystemOverview.tsx) provide an executive intelligence and reporting suite:
 
 ```
 ┌──────────────────────────────────────────────────────────┬─────────────────────────────┐
@@ -408,6 +411,10 @@ Whenever custom roles, permissions, or assignments change, the `policyVersions` 
 - **Dual-Bar Revenue Trends**: Separate color-coded bars on every day's X-axis comparison (Saffron for Sevas, Amber/Gold for Donations) with interactive tooltips.
 - **Seva Popularity Doughnut Chart**: Visual percentage distribution across Archana, Rudrabhishekam, Kalyanam, and Special Pujas with net growth and decline indicator tags.
 - **Quick Actions Bento Grid**: Instant 1-click launchers for Seva Booking, Hundi Counting, Priest Rostering, and Devotee Receipt generation.
+- **System Overview & Operational Reports ([`components/SystemOverview.tsx`](file:///c:/Users/praha/Documents/PraGana%20Innovations%20Projects/Sankalpavani-v1/components/SystemOverview.tsx))**:
+  - Full Indian Rupee (`IndianRupee`) symbology and currency formatting for all financial ledgers.
+  - Streamlined, high-contrast KPI cards displaying **Total Collections**, **Total Bookings**, **Average Ticket Value**, and **Prasadam Delivery Rate** without redundant UI clutter.
+  - CSV export capabilities for accounting reconciliation and trustee audit meetings.
 
 ---
 
@@ -490,8 +497,11 @@ The entire project is verified with 10 comprehensive test suites written in Type
 - `app/trusts/[trustId]/governance/designations/page.tsx`
 - `app/trusts/[trustId]/governance/members/page.tsx`
 - `app/trusts/[trustId]/governance/roles/page.tsx`
+- `components/Header.tsx` *(Scoped Access Context Switcher & Temple Trusts Operations)*
 - `components/Sidebar.tsx` *(Role-based Dynamic Trust Admin & Temple Admin Sidebars)*
+- `components/TrustDashboardPortfolio.tsx` *(Temples Governed by Trust & Activity Launchers)*
 - `components/DashboardPortal.tsx` *(Temple Operational Analytics & Bento Grid)*
+- `components/SystemOverview.tsx` *(Operational Reports, Rupee Currency Format & Export Suite)*
 - `components/CalendarView.tsx` *(Seva Calendar & Dynamic UPI / Gateway Booking)*
 - `components/Settings.tsx` *(Temple Notifications & Communication Gateways)*
 - `components/CommitteesGovernance.tsx` *(Committees & Dynamic Creation Modal)*

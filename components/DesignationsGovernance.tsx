@@ -388,8 +388,7 @@ export default function DesignationsGovernance({
           className="p-5 rounded-2xl bg-surface-container/60 hover:bg-surface-container border border-outline-variant/30 hover:border-amber-500/50 shadow-xs hover:shadow-md transition-all cursor-pointer group flex items-center justify-between"
         >
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-wider text-amber-800 dark:text-amber-400">Master Taxonomy</p>
-            <h3 className="font-serif text-lg font-bold text-on-surface group-hover:text-primary transition-colors mt-0.5">Trust Categories - Master</h3>
+            <h3 className="font-serif text-lg font-bold text-on-surface group-hover:text-primary transition-colors mt-0.5">Trust Categories</h3>
             <p className="text-[10px] text-amber-700 dark:text-amber-500 font-bold mt-0.5 flex items-center gap-1">Open Category Master →</p>
           </div>
           <div className="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-700 flex items-center justify-center group-hover:scale-105 transition-transform shrink-0">
@@ -406,8 +405,7 @@ export default function DesignationsGovernance({
           className="p-5 rounded-2xl bg-surface-container/60 hover:bg-surface-container border border-outline-variant/30 hover:border-primary/50 shadow-xs hover:shadow-md transition-all cursor-pointer group flex items-center justify-between"
         >
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-wider text-primary">Master Taxonomy</p>
-            <h3 className="font-serif text-lg font-bold text-on-surface group-hover:text-primary transition-colors mt-0.5">Membership Type - Master</h3>
+            <h3 className="font-serif text-lg font-bold text-on-surface group-hover:text-primary transition-colors mt-0.5">Membership Type</h3>
             <p className="text-[10px] text-primary font-bold mt-0.5 flex items-center gap-1">Open Membership Master →</p>
           </div>
           <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center group-hover:scale-105 transition-transform shrink-0">
@@ -424,8 +422,7 @@ export default function DesignationsGovernance({
           className="p-5 rounded-2xl bg-surface-container/60 hover:bg-surface-container border border-outline-variant/30 hover:border-purple-500/50 shadow-xs hover:shadow-md transition-all cursor-pointer group flex items-center justify-between"
         >
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-wider text-purple-800 dark:text-purple-400">Master Taxonomy</p>
-            <h3 className="font-serif text-lg font-bold text-on-surface group-hover:text-primary transition-colors mt-0.5">Committee Category - Master</h3>
+            <h3 className="font-serif text-lg font-bold text-on-surface group-hover:text-primary transition-colors mt-0.5">Committee Category</h3>
             <p className="text-[10px] text-purple-700 dark:text-purple-400 font-bold mt-0.5 flex items-center gap-1">Open Committee Master →</p>
           </div>
           <div className="w-12 h-12 rounded-xl bg-purple-500/10 text-purple-700 flex items-center justify-center group-hover:scale-105 transition-transform shrink-0">
@@ -440,7 +437,7 @@ export default function DesignationsGovernance({
         >
           <div>
             <p className="text-[11px] font-bold uppercase tracking-wider text-emerald-800 dark:text-emerald-400">Sanctum &amp; Board</p>
-            <h3 className="font-serif text-lg font-bold text-on-surface group-hover:text-primary transition-colors mt-0.5">Trustees Appointment</h3>
+            <h3 className="font-serif text-lg font-bold text-on-surface group-hover:text-primary transition-colors mt-0.5">Appointing Trustees</h3>
             <p className="text-[10px] text-emerald-700 dark:text-emerald-500 font-bold mt-0.5 flex items-center gap-1">Launch Appointment Form →</p>
           </div>
           <div className="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-700 flex items-center justify-center group-hover:scale-105 transition-transform shrink-0">

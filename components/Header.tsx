@@ -102,7 +102,7 @@ export default function Header({
                 ? 'bg-red-800 hover:bg-red-900 text-white border border-red-700/60'
                 : 'bg-orange-600 hover:bg-orange-700 text-white border border-orange-500/60'
             }`}
-            title={`Active Scope: ${activeScope === 'TRUST' ? 'Global Trust Operations' : (activeTempleName || 'Specific Temple')}. Click to switch context.`}
+            title={`Active Scope: ${activeScope === 'TRUST' ? 'Temple Trusts Operations' : (activeTempleName || 'Specific Temple')}. Click to switch context.`}
           >
             {activeScope === 'TRUST' ? (
               <Landmark size={14} className="text-red-200 shrink-0" />
@@ -112,7 +112,7 @@ export default function Header({
 
             <span className="truncate max-w-[170px] sm:max-w-[240px]">
               {activeScope === 'TRUST'
-                ? 'Viewing: Global Trust Operations'
+                ? 'Viewing: Temple Trusts Operations'
                 : `Viewing: ${activeTempleName || 'Sri Vidyashankara Temple'}`}
             </span>
 
@@ -155,7 +155,7 @@ export default function Header({
                         <Landmark size={14} />
                       </div>
                       <div className="min-w-0">
-                        <p className="text-xs font-bold truncate">Global Trust Operations</p>
+                        <p className="text-xs font-bold truncate">Temple Trusts Operations</p>
                         <p className="text-[10px] text-on-surface-variant opacity-80 truncate">Apex portfolio & all sanctums</p>
                       </div>
                     </div>

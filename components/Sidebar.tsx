@@ -181,7 +181,7 @@ export default function Sidebar({
               : 'bg-orange-600 text-white'
               }`}>
               {activeScope === 'TRUST'
-                ? 'Viewing: Global Trust Operations'
+                ? 'Viewing: Temple Trusts Operations'
                 : `Viewing: ${activeTempleName || 'Sri Vidyashankara Temple'}`}
             </span>
           </div>
