@@ -93,12 +93,12 @@ export async function GET(
           updatedAt: new Date().toISOString()
         },
         {
-          id: 'desig_yajnadhikari',
+          id: 'desig_yagnadhikari',
           trustId,
           scopeType: 'TRUST',
           scopeId: trustId,
           scopeName: 'Trust Umbrella',
-          name: 'Yajnadhikari & Agama Advisor',
+          name: 'Yagnadhikari & Agama Advisor',
           description: 'Supervision of Maha Yagnas, Kumbhabhishekam, and Veda Parayanam',
           status: 'ACTIVE',
           activeAppointeesCount: 0,

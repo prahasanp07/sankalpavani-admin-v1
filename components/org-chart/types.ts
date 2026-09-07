@@ -201,7 +201,7 @@ export const DEFAULT_STAFF_MEMBERS: StaffMember[] = [
   {
     id: 'staff-4',
     name: 'Sunder Raman Dikshidar',
-    role: 'Senior Archaka & Yajnadhikari',
+    role: 'Senior Archaka & Yagnadhikari',
     department: 'Spiritual',
     reportsTo: 'staff-2',
     secondaryReports: [],

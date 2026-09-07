@@ -84,7 +84,7 @@ export class DesignationRepository {
         { name: 'Dharmadhikari & Managing Trustee', scopeType: 'TRUST' as const, desc: 'Apex custodian of spiritual, agamic, and administrative trust governance' },
         { name: 'Bhandari & Chief Treasurer', scopeType: 'TRUST' as const, desc: 'Chief custodian of sacred jewellery, treasury, and financial endowments' },
         { name: 'Pradhana Archaka (Chief Priest)', scopeType: 'TEMPLE' as const, desc: 'Sanctum leadership, nitya pooja scheduling, and archaka shifts' },
-        { name: 'Yajnadhikari & Agama Advisor', scopeType: 'TRUST' as const, desc: 'Supervision of Maha Yagnas, Kumbhabhishekam, and Veda Parayanam' },
+        { name: 'Yagnadhikari & Agama Advisor', scopeType: 'TRUST' as const, desc: 'Supervision of Maha Yagnas, Kumbhabhishekam, and Veda Parayanam' },
         { name: 'Paricharakar (Sanctum Attendant)', scopeType: 'TEMPLE' as const, desc: 'Daily sanctum preparation, holy water collection, and floral offerings' },
         { name: 'Madi Kitchen & Annadanam Superintendent', scopeType: 'TEMPLE' as const, desc: 'Strict madi prasadam preparation and large-scale annadanam services' }
       ];

@@ -377,7 +377,7 @@ export default function DesignationsGovernance({
           className="p-5 rounded-2xl bg-surface-container/60 hover:bg-surface-container border border-outline-variant/30 hover:border-amber-500/50 shadow-xs hover:shadow-md transition-all cursor-pointer group flex items-center justify-between"
         >
           <div>
-            <h3 className="font-serif text-lg font-bold text-on-surface group-hover:text-primary transition-colors mt-0.5">Trust Categories</h3>
+            <h3 className="font-serif text-lg font-bold text-on-surface group-hover:text-primary transition-colors mt-0.5">Trustee Categories</h3>
             <p className="text-[10px] text-amber-700 dark:text-amber-500 font-bold mt-0.5 flex items-center gap-1">Open Category Master →</p>
           </div>
           <div className="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-700 flex items-center justify-center group-hover:scale-105 transition-transform shrink-0">
@@ -476,8 +476,8 @@ export default function DesignationsGovernance({
               className="px-3 py-2 rounded-xl bg-surface-container-low border border-outline-variant/40 text-xs text-on-surface focus:outline-none focus:border-primary"
             >
               <option value="ALL">All Scopes</option>
-              <option value="TRUST">Trust Umbrella</option>
-              <option value="TEMPLE">Temple Specific</option>
+              <option value="TRUST">Trust</option>
+              <option value="TEMPLE">Temple</option>
             </select>
           )}
         </div>
@@ -494,7 +494,7 @@ export default function DesignationsGovernance({
               <div className="space-y-2">
                 <div className="flex items-center justify-between gap-2">
                   <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-primary px-2 py-0.5 rounded bg-primary/10">
-                    {d.scopeType === 'TRUST' ? 'Trust Umbrella' : `Temple: ${d.scopeName}`}
+                    {d.scopeType === 'TRUST' ? 'Trustee' : `Temple: ${d.scopeName}`}
                   </span>
                   <span className="text-[10px] font-bold text-emerald-700 bg-emerald-500/10 px-2 py-0.5 rounded">
                     {d.activeAppointeesCount} Appointees
@@ -551,7 +551,9 @@ export default function DesignationsGovernance({
               </div>
 
               <div className="pt-4 mt-4 border-t border-outline-variant/20 flex items-center justify-between">
-                <span className="text-[10px] text-on-surface-variant font-mono">ID: {d.id}</span>
+                <span className="text-xs font-medium text-on-surface-variant truncate max-w-[210px]" title={d.name}>
+                  {d.name}
+                </span>
                 <button
                   onClick={() => {
                     setAppointFormData(prev => ({ ...prev, designationId: d.id, scopeId: d.scopeId }));
@@ -643,7 +645,9 @@ export default function DesignationsGovernance({
                   </div>
 
                   <div className="mt-3 pt-2 border-t border-outline-variant/20 flex items-center justify-between text-[11px]">
-                    <span className="text-on-surface-variant font-mono text-[9px]">{ob.id}</span>
+                    <span className="text-on-surface-variant font-medium text-[10px] truncate max-w-[170px]" title={ob.designationName}>
+                      {ob.designationName}
+                    </span>
                     {ob.appointmentStatus === 'ACTIVE' ? (
                       <div className="flex items-center gap-2">
                         <button
@@ -676,7 +680,7 @@ export default function DesignationsGovernance({
       )}
 
       {/* Governance KPI Analytics */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <div className="p-5 rounded-2xl bg-surface-container/60 border border-outline-variant/30 shadow-xs flex items-center justify-between">
           <div>
             <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">Designations Catalog</p>
@@ -710,7 +714,7 @@ export default function DesignationsGovernance({
           </div>
         </div>
 
-        <div className="p-5 rounded-2xl bg-surface-container/60 border border-outline-variant/30 shadow-xs flex items-center justify-between">
+        {/* <div className="p-5 rounded-2xl bg-surface-container/60 border border-outline-variant/30 shadow-xs flex items-center justify-between">
           <div>
             <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">PRD Architectural Law</p>
             <h3 className="font-serif text-sm font-bold text-primary mt-1">Designation ≠ Role</h3>
@@ -719,7 +723,7 @@ export default function DesignationsGovernance({
           <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
             <ShieldCheck size={24} />
           </div>
-        </div>
+        </div> */}
       </div>
 
       {/* CREATE DESIGNATION MODAL */}
