@@ -96,15 +96,23 @@ const COMMITTEE_CATEGORIES = [
 
 interface CommitteesGovernanceProps {
   trustId?: string;
+  trustName?: string;
   onBack?: () => void;
   onNavigate?: (tab: string) => void;
 }
 
 export default function CommitteesGovernance({
   trustId = 'trust_sringeri',
+  trustName,
   onBack,
   onNavigate
 }: CommitteesGovernanceProps) {
+  const currentTrustName = (
+    trustName ||
+    (trustId === 'trust_ahobila'
+      ? 'Sri Ahobila Matha Devasthanam Trust'
+      : 'Sri Sringeri Sharada Dharma Trust')
+  ).toUpperCase();
   const [committees, setCommittees] = useState<CommitteeItem[]>([]);
   const [temples, setTemples] = useState<TempleOption[]>([]);
   const [committeeCategories, setCommitteeCategories] = useState<any[]>(DEFAULT_COMMITTEE_CATEGORIES);
@@ -350,11 +358,11 @@ export default function CommitteesGovernance({
   };
 
   const filteredCommittees = committees.filter(c => {
-    const matchesQuery = 
+    const matchesQuery =
       c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       c.code.toLowerCase().includes(searchQuery.toLowerCase()) ||
       c.mandate.toLowerCase().includes(searchQuery.toLowerCase());
-    
+
     const matchesCategory = categoryFilter === 'ALL' || c.category === categoryFilter;
     const matchesScope = scopeFilter === 'ALL' || c.scopeType === scopeFilter;
     return matchesQuery && matchesCategory && matchesScope;
@@ -379,20 +387,12 @@ export default function CommitteesGovernance({
       <div className="bg-surface-container/60 backdrop-blur-md rounded-3xl border border-outline-variant/40 p-6 md:p-8 shadow-sacred flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="space-y-1.5">
           <div className="flex items-center gap-2">
-            {onBack && (
-              <button
-                type="button"
-                onClick={onBack}
-                className="p-1.5 rounded-xl bg-surface-container hover:bg-surface-container-high border border-outline-variant/30 text-on-surface-variant hover:text-primary transition-colors cursor-pointer mr-1"
-                title="Back to Trust Dashboard"
-              >
-                <ArrowLeft size={16} />
-              </button>
-            )}
             <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-primary px-2.5 py-1 rounded-full bg-primary/10 border border-primary/20">
               Governance Committees & Wings
             </span>
-            <span className="text-xs text-on-surface-variant font-mono">/ {trustId}</span>
+            <span className="text-xs font-bold font-sans text-on-surface uppercase tracking-wide">
+              {currentTrustName}
+            </span>
           </div>
           <h1 className="font-serif text-2xl md:text-3xl font-bold text-primary">
             Committees & Sub-Committees Management
@@ -405,20 +405,20 @@ export default function CommitteesGovernance({
         <div className="flex flex-wrap items-center gap-3">
           <button
             type="button"
+            onClick={fetchData}
+            className="p-2.5 rounded-2xl bg-surface-container hover:bg-surface-container-high border border-outline-variant/30 text-on-surface-variant hover:text-primary transition-colors cursor-pointer shadow-xs"
+            title="Refresh Committee Data"
+          >
+            <RefreshCw size={15} className={isLoading ? 'animate-spin' : ''} />
+          </button>
+          <button
+            type="button"
             onClick={() => setIsMastersModalOpen(true)}
             className="px-3 py-2 rounded-2xl bg-surface-container hover:bg-surface-container-high border border-outline-variant/30 text-on-surface font-sans text-xs font-bold transition-colors cursor-pointer shadow-xs flex items-center gap-1.5"
             title="Configure Committee Category Masters"
           >
             <Bookmark size={14} className="text-primary" />
             <span>Committee Masters</span>
-          </button>
-          <button
-            type="button"
-            onClick={fetchData}
-            className="p-2.5 rounded-2xl bg-surface-container hover:bg-surface-container-high border border-outline-variant/30 text-on-surface-variant hover:text-primary transition-colors cursor-pointer shadow-xs"
-            title="Refresh Committee Data"
-          >
-            <RefreshCw size={15} className={isLoading ? 'animate-spin' : ''} />
           </button>
           <button
             type="button"
@@ -483,17 +483,15 @@ export default function CommitteesGovernance({
         <button
           type="button"
           onClick={() => setCategoryFilter('ALL')}
-          className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-            categoryFilter === 'ALL'
+          className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${categoryFilter === 'ALL'
               ? 'bg-primary text-on-primary shadow-sacred scale-102'
               : 'bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface border border-outline-variant/30'
-          }`}
+            }`}
         >
           <Layers size={14} />
           <span>All Categories</span>
-          <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${
-            categoryFilter === 'ALL' ? 'bg-white/20 text-on-primary' : 'bg-surface-container-high text-on-surface-variant'
-          }`}>
+          <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${categoryFilter === 'ALL' ? 'bg-white/20 text-on-primary' : 'bg-surface-container-high text-on-surface-variant'
+            }`}>
             {committees.length}
           </span>
         </button>
@@ -506,17 +504,15 @@ export default function CommitteesGovernance({
               key={cat.id || cat.code}
               type="button"
               onClick={() => setCategoryFilter(cat.code)}
-              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                isSelected
+              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${isSelected
                   ? 'bg-primary text-on-primary shadow-sacred scale-102'
                   : 'bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface border border-outline-variant/30'
-              }`}
+                }`}
             >
               <Sparkles size={14} />
               <span>{cat.name}</span>
-              <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${
-                isSelected ? 'bg-white/20 text-on-primary' : 'bg-surface-container-high text-on-surface-variant'
-              }`}>
+              <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${isSelected ? 'bg-white/20 text-on-primary' : 'bg-surface-container-high text-on-surface-variant'
+                }`}>
                 {count}
               </span>
             </button>
@@ -601,13 +597,12 @@ export default function CommitteesGovernance({
                             Sub-Committee
                           </span>
                         )}
-                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${
-                          c.status === 'ACTIVE'
+                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${c.status === 'ACTIVE'
                             ? 'text-emerald-700 bg-emerald-500/10'
                             : c.status === 'DISSOLVED'
-                            ? 'text-on-surface-variant bg-surface-container'
-                            : 'text-error bg-error/10'
-                        }`}>
+                              ? 'text-on-surface-variant bg-surface-container'
+                              : 'text-error bg-error/10'
+                          }`}>
                           {c.status}
                         </span>
                       </div>
@@ -695,9 +690,8 @@ export default function CommitteesGovernance({
                                   <span className="text-[10px] font-mono font-bold text-primary px-1.5 py-0.5 rounded bg-primary/10">
                                     {m.committeeRole}
                                   </span>
-                                  <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${
-                                    m.status === 'ACTIVE' ? 'text-emerald-700 bg-emerald-500/10' : 'text-on-surface-variant bg-surface-container'
-                                  }`}>
+                                  <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${m.status === 'ACTIVE' ? 'text-emerald-700 bg-emerald-500/10' : 'text-on-surface-variant bg-surface-container'
+                                    }`}>
                                     {m.status}
                                   </span>
                                 </div>

@@ -325,29 +325,18 @@ export default function DesignationsGovernance({
     <div className="space-y-6 animate-[fadeIn_0.4s_ease-out]">
       {/* Top Header Controls */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-outline-variant/20 pb-4">
-        <div className="flex items-center gap-3">
-          {onBack && (
-            <button
-              onClick={onBack}
-              className="p-2 rounded-xl bg-surface-container hover:bg-surface-container-high border border-outline-variant/30 text-on-surface-variant hover:text-primary transition-colors cursor-pointer"
-              title="Return to Dashboard"
-            >
-              <ArrowLeft size={16} />
-            </button>
-          )}
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-primary px-2 py-0.5 rounded bg-primary/10">
-                Trust Governance & Designations
-              </span>
-              <span className="text-xs font-bold font-sans text-on-surface uppercase tracking-wide">
-                {currentTrustName}
-              </span>
-            </div>
-            <h2 className="font-serif text-2xl md:text-3xl font-bold text-primary tracking-tight mt-0.5">
-              Designations & Office Bearers
-            </h2>
+        <div>
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-primary px-2 py-0.5 rounded bg-primary/10">
+              Trust Governance & Designations
+            </span>
+            <span className="text-xs font-bold font-sans text-on-surface uppercase tracking-wide">
+              {currentTrustName}
+            </span>
           </div>
+          <h2 className="font-serif text-2xl md:text-3xl font-bold text-primary tracking-tight mt-0.5">
+            Designations & Office Bearers
+          </h2>
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5">
@@ -361,7 +350,7 @@ export default function DesignationsGovernance({
 
           <button
             onClick={() => setIsCreateDesigOpen(true)}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-surface-container hover:bg-surface-container-high border border-primary/30 text-primary font-sans text-xs font-bold transition-all cursor-pointer shadow-xs"
+            className="px-4 py-2.5 bg-primary hover:bg-on-primary-container text-on-primary rounded-2xl font-sans text-xs font-bold shadow-sacred hover:shadow-lg transition-all cursor-pointer flex items-center gap-2"
           >
             <Plus size={14} />
             <span>Create Designation</span>
@@ -436,7 +425,6 @@ export default function DesignationsGovernance({
           className="p-5 rounded-2xl bg-surface-container/60 hover:bg-surface-container border border-outline-variant/30 hover:border-emerald-500/50 shadow-xs hover:shadow-md transition-all cursor-pointer group flex items-center justify-between"
         >
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-wider text-emerald-800 dark:text-emerald-400">Sanctum &amp; Board</p>
             <h3 className="font-serif text-lg font-bold text-on-surface group-hover:text-primary transition-colors mt-0.5">Appointing Trustees</h3>
             <p className="text-[10px] text-emerald-700 dark:text-emerald-500 font-bold mt-0.5 flex items-center gap-1">Launch Appointment Form →</p>
           </div>

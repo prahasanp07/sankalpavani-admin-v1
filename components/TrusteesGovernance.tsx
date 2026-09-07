@@ -135,15 +135,23 @@ export const STANDARD_NAKSHATRAS = [
 
 interface TrusteesGovernanceProps {
   trustId?: string;
+  trustName?: string;
   onBack?: () => void;
   onNavigate?: (tab: string) => void;
 }
 
 export default function TrusteesGovernance({
   trustId = 'trust_sringeri',
+  trustName,
   onBack,
   onNavigate
 }: TrusteesGovernanceProps) {
+  const currentTrustName = (
+    trustName ||
+    (trustId === 'trust_ahobila'
+      ? 'Sri Ahobila Matha Devasthanam Trust'
+      : 'Sri Sringeri Sharada Dharma Trust')
+  ).toUpperCase();
   const [trustees, setTrustees] = useState<TrusteeItem[]>([]);
   const [designations, setDesignations] = useState<DesignationOption[]>([]);
   const [temples, setTemples] = useState<TempleOption[]>([]);
@@ -352,20 +360,12 @@ export default function TrusteesGovernance({
       <div className="bg-surface-container/60 backdrop-blur-md rounded-3xl border border-outline-variant/40 p-6 md:p-8 shadow-sacred flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="space-y-1.5">
           <div className="flex items-center gap-2">
-            {onBack && (
-              <button
-                type="button"
-                onClick={onBack}
-                className="p-1.5 rounded-xl bg-surface-container hover:bg-surface-container-high border border-outline-variant/30 text-on-surface-variant hover:text-primary transition-colors cursor-pointer mr-1"
-                title="Back to Trust Dashboard"
-              >
-                <ArrowLeft size={16} />
-              </button>
-            )}
             <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-primary px-2.5 py-1 rounded-full bg-primary/10 border border-primary/20">
               Apex Board Governance
             </span>
-            <span className="text-xs text-on-surface-variant font-mono">/ {trustId}</span>
+            <span className="text-xs font-bold font-sans text-on-surface uppercase tracking-wide">
+              {currentTrustName}
+            </span>
           </div>
           <h1 className="font-serif text-2xl md:text-3xl font-bold text-primary">
             Trustees & Board of Management
@@ -378,20 +378,20 @@ export default function TrusteesGovernance({
         <div className="flex flex-wrap items-center gap-3">
           <button
             type="button"
+            onClick={fetchData}
+            className="p-2.5 rounded-2xl bg-surface-container hover:bg-surface-container-high border border-outline-variant/30 text-on-surface-variant hover:text-primary transition-colors cursor-pointer shadow-xs"
+            title="Refresh Board Data"
+          >
+            <RefreshCw size={15} className={isLoading ? 'animate-spin' : ''} />
+          </button>
+          <button
+            type="button"
             onClick={() => setIsMastersModalOpen(true)}
             className="px-3 py-2 rounded-2xl bg-surface-container hover:bg-surface-container-high border border-outline-variant/30 text-on-surface font-sans text-xs font-bold transition-colors cursor-pointer shadow-xs flex items-center gap-1.5"
             title="Configure Governance & Trustee Categories"
           >
             <Bookmark size={14} className="text-primary" />
             <span>Master Categories</span>
-          </button>
-          <button
-            type="button"
-            onClick={fetchData}
-            className="p-2.5 rounded-2xl bg-surface-container hover:bg-surface-container-high border border-outline-variant/30 text-on-surface-variant hover:text-primary transition-colors cursor-pointer shadow-xs"
-            title="Refresh Board Data"
-          >
-            <RefreshCw size={15} className={isLoading ? 'animate-spin' : ''} />
           </button>
           <button
             type="button"
@@ -497,8 +497,8 @@ export default function TrusteesGovernance({
                   type="button"
                   onClick={() => setStatusFilter(st)}
                   className={`px-2.5 py-1 rounded-lg transition-colors cursor-pointer ${statusFilter === st
-                      ? 'bg-primary text-on-primary shadow-xs'
-                      : 'text-on-surface-variant hover:text-on-surface'
+                    ? 'bg-primary text-on-primary shadow-xs'
+                    : 'text-on-surface-variant hover:text-on-surface'
                     }`}
                 >
                   {st === 'ALL' ? 'All' : st}
@@ -553,8 +553,8 @@ export default function TrusteesGovernance({
                           {trustee.name}
                         </h3>
                         <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0 ${trustee.appointmentStatus === 'ACTIVE'
-                            ? 'bg-emerald-500/10 text-emerald-700 border border-emerald-500/20'
-                            : 'bg-on-surface-variant/10 text-on-surface-variant'
+                          ? 'bg-emerald-500/10 text-emerald-700 border border-emerald-500/20'
+                          : 'bg-on-surface-variant/10 text-on-surface-variant'
                           }`}>
                           {trustee.appointmentStatus}
                         </span>
@@ -840,8 +840,8 @@ export default function TrusteesGovernance({
                       <label
                         key={temple.id}
                         className={`flex items-center gap-2.5 px-3.5 py-2 rounded-xl border text-xs cursor-pointer transition-all ${isChecked
-                            ? 'bg-primary-container/20 border-primary text-primary font-bold shadow-xs'
-                            : 'bg-surface-container-low border-outline-variant/40 text-on-surface hover:bg-surface-container'
+                          ? 'bg-primary-container/20 border-primary text-primary font-bold shadow-xs'
+                          : 'bg-surface-container-low border-outline-variant/40 text-on-surface hover:bg-surface-container'
                           }`}
                       >
                         <input

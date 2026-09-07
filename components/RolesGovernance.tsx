@@ -46,15 +46,23 @@ export interface PermissionDef {
 
 interface RolesGovernanceProps {
   trustId?: string;
+  trustName?: string;
   onBack?: () => void;
   onNavigate?: (tab: string) => void;
 }
 
 export default function RolesGovernance({
   trustId = 'trust_sringeri',
+  trustName,
   onBack,
   onNavigate
 }: RolesGovernanceProps) {
+  const currentTrustName = (
+    trustName ||
+    (trustId === 'trust_ahobila'
+      ? 'Sri Ahobila Matha Devasthanam Trust'
+      : 'Sri Sringeri Sharada Dharma Trust')
+  ).toUpperCase();
   const [roles, setRoles] = useState<RoleItem[]>([]);
   const [permissions, setPermissions] = useState<PermissionDef[]>([]);
   const [activeSubTab, setActiveSubTab] = useState<'roles' | 'simulator'>('roles');
@@ -283,20 +291,12 @@ export default function RolesGovernance({
       <div className="bg-surface-container/60 backdrop-blur-md rounded-3xl border border-outline-variant/40 p-6 md:p-8 shadow-sacred flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="space-y-1.5">
           <div className="flex items-center gap-2">
-            {onBack && (
-              <button
-                type="button"
-                onClick={onBack}
-                className="p-1.5 rounded-xl bg-surface-container hover:bg-surface-container-high border border-outline-variant/30 text-on-surface-variant hover:text-primary transition-colors cursor-pointer mr-1"
-                title="Back to Trust Dashboard"
-              >
-                <ArrowLeft size={16} />
-              </button>
-            )}
             <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-primary px-2.5 py-1 rounded-full bg-primary/10 border border-primary/20">
               Trust Governance & RBAC
             </span>
-            <span className="text-xs text-on-surface-variant font-mono">/ {trustId}</span>
+            <span className="text-xs font-bold font-sans text-on-surface uppercase tracking-wide">
+              {currentTrustName}
+            </span>
           </div>
           <h1 className="font-serif text-2xl md:text-3xl font-bold text-primary">
             Dynamic Roles & Access Control
