@@ -29,6 +29,7 @@ import {
 import { STANDARD_GOTRAS, STANDARD_NAKSHATRAS } from './TrusteesGovernance';
 import GovernanceMastersModal from '@/components/governance/GovernanceMastersModal';
 import { MasterType } from '@/lib/types/masters';
+import { useLanguage } from '../contexts/LanguageContext';
 
 export interface DesignationItem {
   id: string;
@@ -97,6 +98,7 @@ export default function DesignationsGovernance({
       ? 'Sri Ahobila Matha Devasthanam Trust'
       : 'Sri Sringeri Sharada Dharma Trust')
   ).toUpperCase();
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState<'DESIGNATIONS' | 'OFFICE_BEARERS'>('DESIGNATIONS');
   const [designations, setDesignations] = useState<DesignationItem[]>([]);
   const [officeBearers, setOfficeBearers] = useState<OfficeBearerItem[]>([]);
@@ -328,14 +330,14 @@ export default function DesignationsGovernance({
         <div>
           <div className="flex items-center gap-2">
             <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-primary px-2 py-0.5 rounded bg-primary/10">
-              Trust Governance & Designations
+              {t('designations.badgeTrust', 'Trust Governance & Designations')}
             </span>
             <span className="text-xs font-bold font-sans text-on-surface uppercase tracking-wide">
               {currentTrustName}
             </span>
           </div>
           <h2 className="font-serif text-2xl md:text-3xl font-bold text-primary tracking-tight mt-0.5">
-            Designations & Office Bearers
+            {t('designations.headerTitle', 'Designations & Office Bearers')}
           </h2>
         </div>
 
@@ -343,7 +345,7 @@ export default function DesignationsGovernance({
           <button
             onClick={fetchData}
             className="p-2 rounded-xl bg-surface-container hover:bg-surface-container-high border border-outline-variant/30 text-on-surface-variant hover:text-primary transition-colors cursor-pointer"
-            title="Refresh Registry"
+            title={t('common.refresh', 'Refresh')}
           >
             <RefreshCw size={15} className={isLoading ? 'animate-spin' : ''} />
           </button>
@@ -353,16 +355,8 @@ export default function DesignationsGovernance({
             className="px-4 py-2.5 bg-primary hover:bg-on-primary-container text-on-primary rounded-2xl font-sans text-xs font-bold shadow-sacred hover:shadow-lg transition-all cursor-pointer flex items-center gap-2"
           >
             <Plus size={14} />
-            <span>Create Designation</span>
+            <span>{t('designations.createDesignation', 'Create Designation')}</span>
           </button>
-
-          {/* <button
-            onClick={() => setIsAppointOpen(true)}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-primary hover:bg-primary/90 text-on-primary font-sans text-xs font-bold shadow-sacred transition-all cursor-pointer"
-          >
-            <Award size={14} />
-            <span>Appoint Office Bearer</span>
-          </button> */}
         </div>
       </div>
 
@@ -377,8 +371,8 @@ export default function DesignationsGovernance({
           className="p-5 rounded-2xl bg-surface-container/60 hover:bg-surface-container border border-outline-variant/30 hover:border-amber-500/50 shadow-xs hover:shadow-md transition-all cursor-pointer group flex items-center justify-between"
         >
           <div>
-            <h3 className="font-serif text-lg font-bold text-on-surface group-hover:text-primary transition-colors mt-0.5">Trustee Categories</h3>
-            <p className="text-[10px] text-amber-700 dark:text-amber-500 font-bold mt-0.5 flex items-center gap-1">Open Category Master →</p>
+            <h3 className="font-serif text-lg font-bold text-on-surface group-hover:text-primary transition-colors mt-0.5">{t('designations.trusteeCategories', 'Trustee Categories')}</h3>
+            <p className="text-[10px] text-amber-700 dark:text-amber-500 font-bold mt-0.5 flex items-center gap-1">{t('designations.openCategoryMaster', 'Open Category Master')} →</p>
           </div>
           <div className="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-700 flex items-center justify-center group-hover:scale-105 transition-transform shrink-0">
             <Tag size={24} />
@@ -394,8 +388,8 @@ export default function DesignationsGovernance({
           className="p-5 rounded-2xl bg-surface-container/60 hover:bg-surface-container border border-outline-variant/30 hover:border-primary/50 shadow-xs hover:shadow-md transition-all cursor-pointer group flex items-center justify-between"
         >
           <div>
-            <h3 className="font-serif text-lg font-bold text-on-surface group-hover:text-primary transition-colors mt-0.5">Membership Type</h3>
-            <p className="text-[10px] text-primary font-bold mt-0.5 flex items-center gap-1">Open Membership Master →</p>
+            <h3 className="font-serif text-lg font-bold text-on-surface group-hover:text-primary transition-colors mt-0.5">{t('designations.membershipType', 'Membership Type')}</h3>
+            <p className="text-[10px] text-primary font-bold mt-0.5 flex items-center gap-1">{t('designations.openMembershipMaster', 'Open Membership Master')} →</p>
           </div>
           <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center group-hover:scale-105 transition-transform shrink-0">
             <Users size={24} />
@@ -411,8 +405,8 @@ export default function DesignationsGovernance({
           className="p-5 rounded-2xl bg-surface-container/60 hover:bg-surface-container border border-outline-variant/30 hover:border-purple-500/50 shadow-xs hover:shadow-md transition-all cursor-pointer group flex items-center justify-between"
         >
           <div>
-            <h3 className="font-serif text-lg font-bold text-on-surface group-hover:text-primary transition-colors mt-0.5">Committee Category</h3>
-            <p className="text-[10px] text-purple-700 dark:text-purple-400 font-bold mt-0.5 flex items-center gap-1">Open Committee Master →</p>
+            <h3 className="font-serif text-lg font-bold text-on-surface group-hover:text-primary transition-colors mt-0.5">{t('designations.committeeCategory', 'Committee Category')}</h3>
+            <p className="text-[10px] text-purple-700 dark:text-purple-400 font-bold mt-0.5 flex items-center gap-1">{t('designations.openCommitteeMaster', 'Open Committee Master')} →</p>
           </div>
           <div className="w-12 h-12 rounded-xl bg-purple-500/10 text-purple-700 flex items-center justify-center group-hover:scale-105 transition-transform shrink-0">
             <Layers size={24} />
@@ -425,8 +419,8 @@ export default function DesignationsGovernance({
           className="p-5 rounded-2xl bg-surface-container/60 hover:bg-surface-container border border-outline-variant/30 hover:border-emerald-500/50 shadow-xs hover:shadow-md transition-all cursor-pointer group flex items-center justify-between"
         >
           <div>
-            <h3 className="font-serif text-lg font-bold text-on-surface group-hover:text-primary transition-colors mt-0.5">Appointing Trustees</h3>
-            <p className="text-[10px] text-emerald-700 dark:text-emerald-500 font-bold mt-0.5 flex items-center gap-1">Launch Appointment Form →</p>
+            <h3 className="font-serif text-lg font-bold text-on-surface group-hover:text-primary transition-colors mt-0.5">{t('designations.appointingTrustees', 'Appointing Trustees')}</h3>
+            <p className="text-[10px] text-emerald-700 dark:text-emerald-500 font-bold mt-0.5 flex items-center gap-1">{t('designations.launchAppointmentForm', 'Launch Appointment Form')} →</p>
           </div>
           <div className="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-700 flex items-center justify-center group-hover:scale-105 transition-transform shrink-0">
             <Award size={24} />
@@ -444,7 +438,7 @@ export default function DesignationsGovernance({
               : 'text-on-surface-variant hover:text-primary'
               }`}
           >
-            Designations Catalog ({designations.length})
+            {t('designations.tabCatalog', 'Designations Catalog')} ({designations.length})
           </button>
           <button
             onClick={() => setActiveTab('OFFICE_BEARERS')}
@@ -453,7 +447,7 @@ export default function DesignationsGovernance({
               : 'text-on-surface-variant hover:text-primary'
               }`}
           >
-            Active Office Bearers ({officeBearers.length})
+            {t('designations.tabOfficeBearers', 'Active Office Bearers')} ({officeBearers.length})
           </button>
         </div>
 
@@ -462,7 +456,7 @@ export default function DesignationsGovernance({
             <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant" />
             <input
               type="text"
-              placeholder={activeTab === 'DESIGNATIONS' ? "Search title name, description..." : "Search appointee, resolution..."}
+              placeholder={activeTab === 'DESIGNATIONS' ? t('designations.searchPlaceholderCatalog', "Search title name, description...") : t('designations.searchPlaceholderAppointee', "Search appointee, resolution...")}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-9 pr-3 py-2 rounded-xl bg-surface-container-low border border-outline-variant/40 text-xs text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:border-primary"
@@ -475,9 +469,9 @@ export default function DesignationsGovernance({
               onChange={(e) => setScopeFilter(e.target.value as any)}
               className="px-3 py-2 rounded-xl bg-surface-container-low border border-outline-variant/40 text-xs text-on-surface focus:outline-none focus:border-primary"
             >
-              <option value="ALL">All Scopes</option>
-              <option value="TRUST">Trust</option>
-              <option value="TEMPLE">Temple</option>
+              <option value="ALL">{t('designations.scopeAll', 'All Scopes')}</option>
+              <option value="TRUST">{t('designations.scopeTrust', 'Trust')}</option>
+              <option value="TEMPLE">{t('designations.scopeTemple', 'Temple')}</option>
             </select>
           )}
         </div>
@@ -494,10 +488,10 @@ export default function DesignationsGovernance({
               <div className="space-y-2">
                 <div className="flex items-center justify-between gap-2">
                   <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-primary px-2 py-0.5 rounded bg-primary/10">
-                    {d.scopeType === 'TRUST' ? 'Trustee' : `Temple: ${d.scopeName}`}
+                    {d.scopeType === 'TRUST' ? t('designations.scopeTrust', 'Trustee') : `${t('designations.scopeTemple', 'Temple')}: ${d.scopeName}`}
                   </span>
                   <span className="text-[10px] font-bold text-emerald-700 bg-emerald-500/10 px-2 py-0.5 rounded">
-                    {d.activeAppointeesCount} Appointees
+                    {d.activeAppointeesCount} {t('designations.appointees', 'Appointees')}
                   </span>
                 </div>
 
@@ -517,7 +511,7 @@ export default function DesignationsGovernance({
                     <div className="p-2.5 rounded-xl bg-surface-container border border-outline-variant/30 text-xs text-on-surface mt-2 flex items-center justify-between gap-2">
                       <div className="flex items-center gap-1.5 font-bold text-on-surface-variant text-[11px] shrink-0">
                         <Users size={13} className="text-primary" />
-                        <span>Appointed Member:</span>
+                        <span>{t('designations.appointedMember', 'Appointed Member:')}</span>
                       </div>
 
                       <div className="flex items-center gap-1.5 min-w-0">
@@ -542,7 +536,7 @@ export default function DesignationsGovernance({
                             </span>
                           </div>
                         ) : (
-                          <span className="text-[11px] text-on-surface-variant italic">None appointed yet</span>
+                          <span className="text-[11px] text-on-surface-variant italic">{t('designations.noneAppointed', 'None appointed yet')}</span>
                         )}
                       </div>
                     </div>
@@ -561,7 +555,7 @@ export default function DesignationsGovernance({
                   }}
                   className="text-xs text-primary font-bold hover:underline flex items-center gap-1 cursor-pointer"
                 >
-                  <span>Appoint Person</span>
+                  <span>{t('designations.appointPerson', 'Appoint Person')}</span>
                   <ChevronRight size={14} />
                 </button>
               </div>
@@ -576,17 +570,17 @@ export default function DesignationsGovernance({
           <div className="flex items-center justify-between pb-4 border-b divider-gold">
             <div>
               <h3 className="font-serif text-lg font-bold text-primary flex items-center gap-2">
-                <Award size={20} /> Current Board & Temple Office Bearers
+                <Award size={20} /> {t('designations.boardAndTempleOfficeBearers', 'Current Board & Temple Office Bearers')}
               </h3>
-              <p className="text-xs text-on-surface-variant">Time-bound legal and traditional appointees with resolution references</p>
+              <p className="text-xs text-on-surface-variant">{t('designations.boardSubtitle', 'Time-bound legal and traditional appointees with resolution references')}</p>
             </div>
           </div>
 
           {filteredOfficeBearers.length === 0 ? (
             <div className="p-12 text-center border-2 border-dashed border-outline-variant/40 rounded-2xl">
               <Users size={36} className="mx-auto text-primary/40 mb-2" />
-              <h4 className="font-serif text-base font-bold text-on-surface">No Office Bearers Found</h4>
-              <p className="text-xs text-on-surface-variant mt-1">Click "Appoint Office Bearer" to register your first appointee.</p>
+              <h4 className="font-serif text-base font-bold text-on-surface">{t('designations.noOfficeBearers', 'No Office Bearers Found')}</h4>
+              <p className="text-xs text-on-surface-variant mt-1">{t('designations.noOfficeBearersDesc', 'Click "Appoint Office Bearer" to register your first appointee.')}</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -627,7 +621,7 @@ export default function DesignationsGovernance({
                       {(ob.gotra || ob.nakshatra) && (
                         <p className="flex items-center gap-1.5 text-[11px] text-amber-900 font-medium">
                           <Compass size={12} className="text-amber-700" />
-                          <span>{[ob.gotra ? `${ob.gotra} Gotra` : null, ob.nakshatra].filter(Boolean).join(' • ')}</span>
+                          <span>{[ob.gotra ? `${ob.gotra} ${t('designations.gotram', 'Gotram')}` : null, ob.nakshatra].filter(Boolean).join(' • ')}</span>
                         </p>
                       )}
                       {ob.resolutionNo && (
@@ -638,7 +632,7 @@ export default function DesignationsGovernance({
                       <p className="flex items-center gap-1.5">
                         <Calendar size={12} className="text-primary/70" />
                         <span>
-                          {new Date(ob.termStart).toLocaleDateString()} ➔ {ob.isLifeTerm ? 'Indefinite (Life Term)' : ob.termEnd ? new Date(ob.termEnd).toLocaleDateString() : 'N/A'}
+                          {new Date(ob.termStart).toLocaleDateString()} ➔ {ob.isLifeTerm ? t('designations.indefiniteLifeTerm', 'Indefinite (Life Term)') : ob.termEnd ? new Date(ob.termEnd).toLocaleDateString() : 'N/A'}
                         </span>
                       </p>
                     </div>
@@ -654,13 +648,13 @@ export default function DesignationsGovernance({
                           onClick={() => handleStatusChange(ob.id, 'RESIGNED')}
                           className="text-error hover:underline font-bold cursor-pointer"
                         >
-                          Mark Resigned
+                          {t('designations.markResigned', 'Mark Resigned')}
                         </button>
                         <button
                           onClick={() => handleStatusChange(ob.id, 'EXPIRED')}
                           className="text-amber-700 hover:underline font-bold cursor-pointer"
                         >
-                          Expire Term
+                          {t('designations.expireTerm', 'Expire Term')}
                         </button>
                       </div>
                     ) : (
@@ -668,7 +662,7 @@ export default function DesignationsGovernance({
                         onClick={() => handleStatusChange(ob.id, 'ACTIVE')}
                         className="text-primary hover:underline font-bold cursor-pointer"
                       >
-                        Re-activate Term
+                        {t('designations.reactivateTerm', 'Re-activate Term')}
                       </button>
                     )}
                   </div>
@@ -683,9 +677,9 @@ export default function DesignationsGovernance({
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <div className="p-5 rounded-2xl bg-surface-container/60 border border-outline-variant/30 shadow-xs flex items-center justify-between">
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">Designations Catalog</p>
-            <h3 className="font-serif text-2xl font-bold text-on-surface mt-1">{designations.length} Titles</h3>
-            <p className="text-[10px] text-emerald-700 font-bold mt-0.5">{trustTitlesCount} Trust / {templeTitlesCount} Temple</p>
+            <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">{t('designations.tabCatalog', 'Designations Catalog')}</p>
+            <h3 className="font-serif text-2xl font-bold text-on-surface mt-1">{designations.length} {t('designations.kpiTitles', 'Titles')}</h3>
+            <p className="text-[10px] text-emerald-700 font-bold mt-0.5">{trustTitlesCount} {t('designations.kpiTrust', 'Trust')} / {templeTitlesCount} {t('designations.kpiTemple', 'Temple')}</p>
           </div>
           <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
             <Crown size={24} />
@@ -694,9 +688,9 @@ export default function DesignationsGovernance({
 
         <div className="p-5 rounded-2xl bg-surface-container/60 border border-outline-variant/30 shadow-xs flex items-center justify-between">
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">Active Office Bearers</p>
-            <h3 className="font-serif text-2xl font-bold text-on-surface mt-1">{activeOfficeBearersCount} Appointees</h3>
-            <p className="text-[10px] text-amber-700 font-bold mt-0.5">Term-Bound Appointees</p>
+            <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">{t('designations.kpiActiveOfficeBearers', 'Active Office Bearers')}</p>
+            <h3 className="font-serif text-2xl font-bold text-on-surface mt-1">{activeOfficeBearersCount} {t('designations.appointees', 'Appointees')}</h3>
+            <p className="text-[10px] text-amber-700 font-bold mt-0.5">{t('designations.boardSubtitle', 'Term-Bound Appointees')}</p>
           </div>
           <div className="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-700 flex items-center justify-center">
             <Users size={24} />
@@ -705,9 +699,9 @@ export default function DesignationsGovernance({
 
         <div className="p-5 rounded-2xl bg-surface-container/60 border border-outline-variant/30 shadow-xs flex items-center justify-between">
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">Role-Bound Titles</p>
-            <h3 className="font-serif text-2xl font-bold text-on-surface mt-1">{titlesWithRolesCount} Linked</h3>
-            <p className="text-[10px] text-purple-700 font-bold mt-0.5">Auto Software Permissions</p>
+            <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">{t('designations.kpiRoleBoundTitles', 'Role-Bound Titles')}</p>
+            <h3 className="font-serif text-2xl font-bold text-on-surface mt-1">{titlesWithRolesCount} {t('designations.kpiLinked', 'Linked')}</h3>
+            <p className="text-[10px] text-purple-700 font-bold mt-0.5">{t('designations.kpiAutoPermissions', 'Auto Software Permissions')}</p>
           </div>
           <div className="w-12 h-12 rounded-xl bg-purple-500/10 text-purple-700 flex items-center justify-center">
             <Link size={24} />
@@ -733,7 +727,7 @@ export default function DesignationsGovernance({
             <div className="flex items-center justify-between pb-3 border-b divider-gold">
               <div className="flex items-center gap-2">
                 <Crown size={20} className="text-primary" />
-                <h3 className="font-serif text-lg font-bold text-primary">Define New Designation Title</h3>
+                <h3 className="font-serif text-lg font-bold text-primary">{t('designations.defineNewTitle', 'Define New Designation Title')}</h3>
               </div>
               <button
                 onClick={() => setIsCreateDesigOpen(false)}
@@ -752,7 +746,7 @@ export default function DesignationsGovernance({
 
             <form onSubmit={handleCreateDesignation} className="space-y-4 text-xs font-sans">
               <div className="space-y-1">
-                <label className="font-bold text-on-surface">Designation Title Name *</label>
+                <label className="font-bold text-on-surface">{t('designations.titleName', 'Designation Title Name')} *</label>
                 <input
                   type="text"
                   required
@@ -764,7 +758,7 @@ export default function DesignationsGovernance({
               </div>
 
               <div className="space-y-1">
-                <label className="font-bold text-on-surface">Description / Traditional Responsibilities</label>
+                <label className="font-bold text-on-surface">{t('designations.descriptionResponsibilities', 'Description / Traditional Responsibilities')}</label>
                 <textarea
                   rows={2}
                   placeholder="Describe legal authority or honorary traditions..."
@@ -776,20 +770,20 @@ export default function DesignationsGovernance({
 
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="font-bold text-on-surface">Designation for</label>
+                  <label className="font-bold text-on-surface">{t('designations.designationFor', 'Designation for')}</label>
                   <select
                     value={desigFormData.scopeType}
                     onChange={(e) => setDesigFormData({ ...desigFormData, scopeType: e.target.value as any })}
                     className="w-full p-2.5 rounded-xl bg-surface-container-low border border-outline-variant/40 text-on-surface focus:outline-none focus:border-primary"
                   >
-                    <option value="TRUST">Trust</option>
-                    <option value="TEMPLE">Temple</option>
+                    <option value="TRUST">{t('designations.scopeTrust', 'Trust')}</option>
+                    <option value="TEMPLE">{t('designations.scopeTemple', 'Temple')}</option>
                   </select>
                 </div>
 
                 {desigFormData.scopeType === 'TEMPLE' && (
                   <div className="space-y-1">
-                    <label className="font-bold text-on-surface">For Temple</label>
+                    <label className="font-bold text-on-surface">{t('designations.forTemple', 'For Temple')}</label>
                     <select
                       value={desigFormData.scopeId}
                       onChange={(e) => setDesigFormData({ ...desigFormData, scopeId: e.target.value })}
@@ -804,41 +798,20 @@ export default function DesignationsGovernance({
                 )}
               </div>
 
-              {/* Role Binding */}
-              {/* <div className="p-3.5 rounded-2xl bg-surface-container-low border border-outline-variant/30 space-y-2">
-                <div className="flex items-center gap-1.5 font-bold text-primary">
-                  <Link size={14} />
-                  <span>Optional Software Role Binding</span>
-                </div>
-                <p className="text-[11px] text-on-surface-variant">
-                  Automatically grants administrative system permissions whenever a person is appointed to this title.
-                </p>
-                <select
-                  value={desigFormData.roleId}
-                  onChange={(e) => setDesigFormData({ ...desigFormData, roleId: e.target.value })}
-                  className="w-full p-2 rounded-xl bg-surface-container border border-outline-variant/40 text-xs text-on-surface"
-                >
-                  <option value="">No Automatic Software Role</option>
-                  {roles.map((r) => (
-                    <option key={r.id} value={r.id}>{r.name} ({r.roleKey})</option>
-                  ))}
-                </select>
-              </div> */}
-
               <div className="flex justify-end gap-2 pt-2 border-t border-outline-variant/20">
                 <button
                   type="button"
                   onClick={() => setIsCreateDesigOpen(false)}
                   className="px-4 py-2 rounded-xl border border-outline-variant/40 text-on-surface font-bold hover:bg-surface-container cursor-pointer"
                 >
-                  Cancel
+                  {t('common.cancel', 'Cancel')}
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmittingDesig}
                   className="px-5 py-2 rounded-xl bg-primary text-on-primary font-bold shadow-sacred hover:bg-primary/90 disabled:opacity-50 cursor-pointer"
                 >
-                  {isSubmittingDesig ? 'Creating...' : 'Save Designation'}
+                  {isSubmittingDesig ? `${t('common.loading', 'Loading...')}` : t('designations.saveDesignation', 'Save Designation')}
                 </button>
               </div>
             </form>
@@ -853,7 +826,7 @@ export default function DesignationsGovernance({
             <div className="flex items-center justify-between pb-3 border-b divider-gold">
               <div className="flex items-center gap-2">
                 <Award size={20} className="text-primary" />
-                <h3 className="font-serif text-lg font-bold text-primary">Formal Office Bearer Appointment</h3>
+                <h3 className="font-serif text-lg font-bold text-primary">{t('designations.formalAppointment', 'Formal Office Bearer Appointment')}</h3>
               </div>
               <button
                 onClick={() => setIsAppointOpen(false)}
@@ -872,7 +845,7 @@ export default function DesignationsGovernance({
 
             <form onSubmit={handleAppointOfficeBearer} className="space-y-4 text-xs font-sans">
               <div className="space-y-1">
-                <label className="font-bold text-on-surface">Trust Designation *</label>
+                <label className="font-bold text-on-surface">{t('designations.trustDesignation', 'Trust Designation')} *</label>
                 <select
                   required
                   value={appointFormData.designationId}
@@ -888,14 +861,14 @@ export default function DesignationsGovernance({
                 >
                   <option value="">Select Designation...</option>
                   {designations.map((d) => (
-                    <option key={d.id} value={d.id}>{d.name} ({d.scopeType === 'TRUST' ? 'Trust' : d.scopeName})</option>
+                    <option key={d.id} value={d.id}>{d.name} ({d.scopeType === 'TRUST' ? t('designations.scopeTrust', 'Trust') : d.scopeName})</option>
                   ))}
                 </select>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="font-bold text-on-surface">Member Name *</label>
+                  <label className="font-bold text-on-surface">{t('designations.memberName', 'Member Name')} *</label>
                   <input
                     type="text"
                     required
@@ -906,7 +879,7 @@ export default function DesignationsGovernance({
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="font-bold text-on-surface">Official Email *</label>
+                  <label className="font-bold text-on-surface">{t('designations.officialEmail', 'Official Email')} *</label>
                   <input
                     type="email"
                     required
@@ -920,7 +893,7 @@ export default function DesignationsGovernance({
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div className="space-y-1">
-                  <label className="font-bold text-on-surface">Phone Number *</label>
+                  <label className="font-bold text-on-surface">{t('designations.phoneNumber', 'Phone Number')} *</label>
                   <input
                     type="text"
                     required
@@ -932,7 +905,7 @@ export default function DesignationsGovernance({
                 </div>
                 <div className="space-y-1">
                   <label className="font-bold text-on-surface flex items-center gap-1">
-                    <Compass size={12} className="text-amber-700" /> Gotram
+                    <Compass size={12} className="text-amber-700" /> {t('designations.gotram', 'Gotram')}
                   </label>
                   <select
                     value={appointFormData.gotra}
@@ -947,7 +920,7 @@ export default function DesignationsGovernance({
                 </div>
                 <div className="space-y-1">
                   <label className="font-bold text-on-surface flex items-center gap-1">
-                    <Moon size={12} className="text-amber-700" /> Nakshatra
+                    <Moon size={12} className="text-amber-700" /> {t('designations.nakshatra', 'Nakshatra')}
                   </label>
                   <select
                     value={appointFormData.nakshatra}
@@ -963,7 +936,7 @@ export default function DesignationsGovernance({
               </div>
 
               <div className="space-y-1">
-                <label className="font-bold text-on-surface">Board Resolution / Order Number *</label>
+                <label className="font-bold text-on-surface">{t('designations.resolutionNo', 'Board Resolution / Order Number')} *</label>
                 <input
                   type="text"
                   required
@@ -977,7 +950,7 @@ export default function DesignationsGovernance({
               {/* Term Duration */}
               <div className="p-3.5 rounded-2xl bg-surface-container-low border border-outline-variant/30 space-y-3">
                 <div className="flex items-center justify-between">
-                  <label className="font-bold text-on-surface">Term Duration</label>
+                  <label className="font-bold text-on-surface">{t('designations.termDuration', 'Term Duration')}</label>
                   <label className="flex items-center gap-1.5 cursor-pointer text-[11px] font-bold text-primary">
                     <input
                       type="checkbox"
@@ -985,13 +958,13 @@ export default function DesignationsGovernance({
                       onChange={(e) => setAppointFormData({ ...appointFormData, isLifeTerm: e.target.checked })}
                       className="rounded text-primary focus:ring-0"
                     />
-                    <span>Indefinite / Life Term</span>
+                    <span>{t('designations.indefiniteLifeTerm', 'Indefinite / Life Term')}</span>
                   </label>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1">
-                    <span className="text-[10px] text-on-surface-variant font-bold uppercase">Term Start Date</span>
+                    <span className="text-[10px] text-on-surface-variant font-bold uppercase">{t('designations.termStartDate', 'Term Start Date')}</span>
                     <input
                       type="date"
                       required
@@ -1002,7 +975,7 @@ export default function DesignationsGovernance({
                   </div>
                   {!appointFormData.isLifeTerm && (
                     <div className="space-y-1">
-                      <span className="text-[10px] text-on-surface-variant font-bold uppercase">Term End Date</span>
+                      <span className="text-[10px] text-on-surface-variant font-bold uppercase">{t('designations.termEndDate', 'Term End Date')}</span>
                       <input
                         type="date"
                         required={!appointFormData.isLifeTerm}
@@ -1021,14 +994,14 @@ export default function DesignationsGovernance({
                   onClick={() => setIsAppointOpen(false)}
                   className="px-4 py-2 rounded-xl border border-outline-variant/40 text-on-surface font-bold hover:bg-surface-container cursor-pointer"
                 >
-                  Cancel
+                  {t('common.cancel', 'Cancel')}
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmittingAppoint}
                   className="px-5 py-2 rounded-xl bg-primary text-on-primary font-bold shadow-sacred hover:bg-primary/90 disabled:opacity-50 cursor-pointer"
                 >
-                  {isSubmittingAppoint ? 'Appointing...' : 'Confirm Appointment'}
+                  {isSubmittingAppoint ? `${t('common.loading', 'Loading...')}` : t('designations.confirmAppointment', 'Confirm Appointment')}
                 </button>
               </div>
             </form>

@@ -32,6 +32,7 @@ import MemberCard, { MemberCardData } from './governance/MemberCard';
 import { STANDARD_GOTRAS, STANDARD_NAKSHATRAS } from './TrusteesGovernance';
 import GovernanceMastersModal from './governance/GovernanceMastersModal';
 import { DEFAULT_MEMBERSHIP_TYPES } from '@/lib/types/masters';
+import { useLanguage } from '../contexts/LanguageContext';
 
 export interface MemberItem {
   id: string;
@@ -109,6 +110,7 @@ export default function MembersGovernance({
       ? 'Sri Ahobila Matha Devasthanam Trust'
       : 'Sri Sringeri Sharada Dharma Trust')
   ).toUpperCase();
+  const { t } = useLanguage();
   const [members, setMembers] = useState<MemberItem[]>([]);
   const [temples, setTemples] = useState<TempleOption[]>([]);
   const [committees, setCommittees] = useState<CommitteeOption[]>([]);
@@ -284,7 +286,7 @@ export default function MembersGovernance({
 
     const matchesType = typeFilter === 'ALL' || m.membershipType === typeFilter;
     const matchesStatus = statusFilter === 'ALL' || m.status === statusFilter;
-    const matchesTemple = templeFilter === 'ALL' || m.assignedTemples.some(t => t.templeId === templeFilter);
+    const matchesTemple = templeFilter === 'ALL' || m.assignedTemples.some(tm => tm.templeId === templeFilter);
 
     return matchesQuery && matchesType && matchesStatus && matchesTemple;
   });
@@ -310,14 +312,14 @@ export default function MembersGovernance({
         <div className="space-y-1.5">
           <div className="flex items-center gap-2">
             <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-primary px-2.5 py-1 rounded-full bg-primary/10 border border-primary/20">
-              Trust & Temple Hierarchy Roster
+              {t('members.badge', 'Trust & Temple Hierarchy Roster')}
             </span>
             <span className="text-xs font-bold font-sans text-on-surface uppercase tracking-wide">
               {currentTrustName}
             </span>
           </div>
           <h1 className="font-serif text-2xl md:text-3xl font-bold text-primary">
-            Members, Staff & Committee Appointees
+            {t('members.title', 'Members, Staff & Committee Appointees')}
           </h1>
           <p className="font-sans text-xs text-on-surface-variant max-w-2xl leading-relaxed">
             Administer temple staff, Acharyas, volunteers, patrons, and governance appointees across all associated temples.
@@ -329,7 +331,7 @@ export default function MembersGovernance({
             type="button"
             onClick={fetchData}
             className="p-2.5 rounded-2xl bg-surface-container hover:bg-surface-container-high border border-outline-variant/30 text-on-surface-variant hover:text-primary transition-colors cursor-pointer shadow-xs"
-            title="Refresh Members Roster"
+            title={t('common.refresh', 'Refresh Members Roster')}
           >
             <RefreshCw size={15} className={isLoading ? 'animate-spin' : ''} />
           </button>
@@ -340,7 +342,7 @@ export default function MembersGovernance({
             title="Configure Membership Type Masters"
           >
             <Bookmark size={14} className="text-primary" />
-            <span>Membership Masters</span>
+            <span>{t('designations.membershipType', 'Membership Masters')}</span>
           </button>
           <button
             type="button"
@@ -348,7 +350,7 @@ export default function MembersGovernance({
             className="px-4 py-2.5 bg-primary hover:bg-on-primary-container text-on-primary rounded-2xl font-sans text-xs font-bold shadow-sacred hover:shadow-lg transition-all cursor-pointer flex items-center gap-2"
           >
             <UserPlus size={15} />
-            <span>Add Member</span>
+            <span>{t('members.addMember', 'Add Member')}</span>
           </button>
         </div>
       </div>
@@ -357,8 +359,8 @@ export default function MembersGovernance({
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="p-5 rounded-2xl bg-surface-container/60 border border-outline-variant/30 shadow-xs flex items-center justify-between transition-transform hover:-translate-y-0.5">
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">Total Members</p>
-            <h3 className="font-serif text-2xl font-bold text-on-surface mt-1">{totalMembersCount} Registered</h3>
+            <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">{t('dashboard.kpiStaffPriests', 'Total Members')}</p>
+            <h3 className="font-serif text-2xl font-bold text-on-surface mt-1">{totalMembersCount} {t('dashboard.kpiRegistered', 'Registered')}</h3>
           </div>
           <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
             <Users size={22} />
@@ -367,8 +369,8 @@ export default function MembersGovernance({
 
         <div className="p-5 rounded-2xl bg-surface-container/60 border border-outline-variant/30 shadow-xs flex items-center justify-between transition-transform hover:-translate-y-0.5">
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">Trustees & Governance</p>
-            <h3 className="font-serif text-2xl font-bold text-on-surface mt-1">{trusteesCount} Trustees</h3>
+            <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">{t('sidebar.governance', 'Trustees & Governance')}</p>
+            <h3 className="font-serif text-2xl font-bold text-on-surface mt-1">{trusteesCount} {t('designations.appointingTrustees', 'Trustees')}</h3>
           </div>
           <div className="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-700 flex items-center justify-center">
             <Crown size={22} />
@@ -377,8 +379,8 @@ export default function MembersGovernance({
 
         <div className="p-5 rounded-2xl bg-surface-container/60 border border-outline-variant/30 shadow-xs flex items-center justify-between transition-transform hover:-translate-y-0.5">
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">Archakas & Priests</p>
-            <h3 className="font-serif text-2xl font-bold text-on-surface mt-1">{priestsCount} Acharyas</h3>
+            <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">{t('dashboard.kpiPriests', 'Archakas & Priests')}</p>
+            <h3 className="font-serif text-2xl font-bold text-on-surface mt-1">{priestsCount} {t('dashboard.cardPriestCadre', 'Acharyas')}</h3>
           </div>
           <div className="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-700 flex items-center justify-center">
             <Flame size={22} />
@@ -387,8 +389,8 @@ export default function MembersGovernance({
 
         <div className="p-5 rounded-2xl bg-surface-container/60 border border-outline-variant/30 shadow-xs flex items-center justify-between transition-transform hover:-translate-y-0.5">
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">Committee Appointees</p>
-            <h3 className="font-serif text-2xl font-bold text-on-surface mt-1">{committeeAppointeesCount} Active</h3>
+            <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">{t('sidebar.committees', 'Committee Appointees')}</p>
+            <h3 className="font-serif text-2xl font-bold text-on-surface mt-1">{committeeAppointeesCount} {t('common.active', 'Active')}</h3>
           </div>
           <div className="w-12 h-12 rounded-xl bg-purple-500/10 text-purple-700 flex items-center justify-center">
             <Layers size={22} />
@@ -406,7 +408,7 @@ export default function MembersGovernance({
             : 'bg-surface-container/60 hover:bg-surface-container border border-outline-variant/30 text-on-surface-variant'
             }`}
         >
-          <span>All Members</span>
+          <span>{t('common.all', 'All Members')}</span>
           <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${typeFilter === 'ALL' ? 'bg-white/20 text-on-primary' : 'bg-surface-container-high text-on-surface-variant'
             }`}>
             {members.length}
@@ -440,7 +442,7 @@ export default function MembersGovernance({
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <h2 className="font-serif text-xl font-bold text-primary flex items-center gap-2">
-              <Users size={20} /> Member Directory & Multi-Temple Assignments
+              <Users size={20} /> {t('members.title', 'Member Directory & Multi-Temple Assignments')}
             </h2>
             <p className="font-sans text-xs text-on-surface-variant mt-0.5">
               Manage personal profiles, Gotras, multi-temple operational assignments, and committee roles.
@@ -453,7 +455,7 @@ export default function MembersGovernance({
               <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant" />
               <input
                 type="text"
-                placeholder="Search name, gotra, email, phone..."
+                placeholder={t('members.searchPlaceholder', "Search name, gotra, email, phone...")}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-9 pr-3 py-2 rounded-xl bg-surface-container-low border border-outline-variant/40 text-xs text-on-surface placeholder:text-on-surface-variant/60 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
@@ -465,9 +467,9 @@ export default function MembersGovernance({
               onChange={(e) => setTempleFilter(e.target.value)}
               className="px-3 py-2 rounded-xl bg-surface-container-low border border-outline-variant/40 text-xs text-on-surface focus:outline-none focus:border-primary cursor-pointer font-medium"
             >
-              <option value="ALL">All Temples</option>
-              {temples.map((t) => (
-                <option key={t.id} value={t.id}>{t.name}</option>
+              <option value="ALL">{t('designations.scopeAll', 'All Temples')}</option>
+              {temples.map((temp) => (
+                <option key={temp.id} value={temp.id}>{temp.name}</option>
               ))}
             </select>
 
@@ -476,10 +478,10 @@ export default function MembersGovernance({
               onChange={(e) => setStatusFilter(e.target.value)}
               className="px-3 py-2 rounded-xl bg-surface-container-low border border-outline-variant/40 text-xs text-on-surface focus:outline-none focus:border-primary cursor-pointer font-medium"
             >
-              <option value="ALL">All Statuses</option>
-              <option value="ACTIVE">Active</option>
-              <option value="SUSPENDED">Suspended</option>
-              <option value="REVOKED">Revoked</option>
+              <option value="ALL">{t('common.status', 'All Statuses')}</option>
+              <option value="ACTIVE">{t('common.active', 'Active')}</option>
+              <option value="SUSPENDED">{t('dashboard.filterSuspended', 'Suspended')}</option>
+              <option value="REVOKED">{t('designations.markResigned', 'Revoked')}</option>
             </select>
           </div>
         </div>
@@ -488,11 +490,11 @@ export default function MembersGovernance({
         {filteredMembers.length === 0 ? (
           <div className="p-12 text-center border-2 border-dashed border-outline-variant/40 rounded-2xl">
             <Users size={40} className="mx-auto text-primary/40 mb-3" />
-            <h3 className="font-serif text-lg font-bold text-on-surface">No Members Found</h3>
+            <h3 className="font-serif text-lg font-bold text-on-surface">{t('members.emptyState', 'No Members Found')}</h3>
             <p className="text-xs text-on-surface-variant mt-1 max-w-md mx-auto">
               {searchQuery || typeFilter !== 'ALL' || templeFilter !== 'ALL'
-                ? 'No members match your current filters.'
-                : 'No members have been registered yet. Click "+ Add / Invite Member" to register your first member.'}
+                ? t('members.emptyState', 'No members match your current filters.')
+                : t('members.emptyState', 'No members have been registered yet. Click "+ Add Member" to register your first member.')}
             </p>
           </div>
         ) : (
@@ -512,10 +514,10 @@ export default function MembersGovernance({
                   termStart: m.validFrom,
                   termEnd: m.validUntil,
                   resolutionNo: m.activeDesignations[0]?.resolutionNo,
-                  templeAssignments: m.assignedTemples.map(t => ({
-                    templeId: t.templeId,
-                    templeName: t.templeName,
-                    roleName: t.status || 'Assigned',
+                  templeAssignments: m.assignedTemples.map(at => ({
+                    templeId: at.templeId,
+                    templeName: at.templeName,
+                    roleName: at.status || 'Assigned',
                     isPrimary: true
                   })),
                   committeeMemberships: m.assignedCommittees.map(c => ({

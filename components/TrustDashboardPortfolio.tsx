@@ -17,6 +17,7 @@ import {
   ExternalLink
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { useLanguage } from '../contexts/LanguageContext';
 
 export interface TempleItem {
   id: string;
@@ -80,6 +81,7 @@ export default function TrustDashboardPortfolio({
 }: TrustDashboardPortfolioProps) {
   const router = useRouter();
   const { switchScope } = useAuth();
+  const { t } = useLanguage();
 
   const [temples, setTemples] = useState<TempleItem[]>(DEFAULT_TEMPLES);
   const [isLoading, setIsLoading] = useState(true);
@@ -108,12 +110,12 @@ export default function TrustDashboardPortfolio({
     fetchTemples();
   }, [trustId]);
 
-  const filteredTemples = temples.filter(t => {
+  const filteredTemples = temples.filter(item => {
     const matchesSearch =
-      t.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      t.code.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (t.tagline && t.tagline.toLowerCase().includes(searchQuery.toLowerCase()));
-    const matchesStatus = statusFilter === 'ALL' || t.status === statusFilter;
+      item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.code.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (item.tagline && item.tagline.toLowerCase().includes(searchQuery.toLowerCase()));
+    const matchesStatus = statusFilter === 'ALL' || item.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
 
@@ -145,9 +147,9 @@ export default function TrustDashboardPortfolio({
         {/* Card 1: Temples */}
         <div className="p-5 rounded-2xl bg-surface-container/60 border border-outline-variant/30 shadow-xs flex items-center justify-between transition-transform hover:-translate-y-0.5">
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">Temples</p>
-            <h3 className="font-serif text-2xl font-bold text-on-surface mt-1">{temples.length} Registered</h3>
-            <p className="text-[10px] text-emerald-700 font-bold mt-0.5">{activeCount} Active / Operational</p>
+            <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">{t('dashboard.kpiTemples', 'Temples')}</p>
+            <h3 className="font-serif text-2xl font-bold text-on-surface mt-1">{temples.length} {t('dashboard.kpiRegistered', 'Registered')}</h3>
+            <p className="text-[10px] text-emerald-700 font-bold mt-0.5">{activeCount} {t('dashboard.kpiActiveOperational', 'Active / Operational')}</p>
           </div>
           <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
             <Landmark size={24} />
@@ -157,9 +159,9 @@ export default function TrustDashboardPortfolio({
         {/* Card 2: Staff & Priests */}
         <div className="p-5 rounded-2xl bg-surface-container/60 border border-outline-variant/30 shadow-xs flex items-center justify-between transition-transform hover:-translate-y-0.5">
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">Staff & Priests</p>
-            <h3 className="font-serif text-2xl font-bold text-on-surface mt-1">{totalPriests} Priests</h3>
-            <p className="text-[10px] text-emerald-700 font-bold mt-0.5">Across all branch shrines</p>
+            <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">{t('dashboard.kpiStaffPriests', 'Staff & Priests')}</p>
+            <h3 className="font-serif text-2xl font-bold text-on-surface mt-1">{totalPriests} {t('dashboard.kpiPriests', 'Priests')}</h3>
+            <p className="text-[10px] text-emerald-700 font-bold mt-0.5">{t('dashboard.kpiAcrossShrines', 'Across all branch shrines')}</p>
           </div>
           <div className="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-700 flex items-center justify-center">
             <Users size={24} />
@@ -169,9 +171,9 @@ export default function TrustDashboardPortfolio({
         {/* Card 3: Today's Collections */}
         <div className="p-5 rounded-2xl bg-surface-container/60 border border-outline-variant/30 shadow-xs flex items-center justify-between transition-transform hover:-translate-y-0.5">
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">Today's Collections</p>
+            <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">{t('dashboard.kpiTodaysCollections', "Today's Collections")}</p>
             <h3 className="font-serif text-2xl font-bold text-on-surface mt-1">₹ 8,25,000</h3>
-            <p className="text-[10px] text-primary font-bold mt-0.5">Consolidated Ledger</p>
+            <p className="text-[10px] text-primary font-bold mt-0.5">{t('dashboard.kpiConsolidatedLedger', 'Consolidated Ledger')}</p>
           </div>
           <div className="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-700 flex items-center justify-center">
             <Receipt size={24} />
@@ -181,9 +183,9 @@ export default function TrustDashboardPortfolio({
         {/* Card 4: Active Sevas */}
         <div className="p-5 rounded-2xl bg-surface-container/60 border border-outline-variant/30 shadow-xs flex items-center justify-between transition-transform hover:-translate-y-0.5">
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">Active Sevas</p>
-            <h3 className="font-serif text-2xl font-bold text-on-surface mt-1">{totalSevas} Offerings</h3>
-            <p className="text-[10px] text-on-surface-variant mt-0.5">Available for Devotees</p>
+            <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">{t('dashboard.kpiActiveSevas', 'Active Sevas')}</p>
+            <h3 className="font-serif text-2xl font-bold text-on-surface mt-1">{totalSevas} {t('dashboard.kpiOfferings', 'Offerings')}</h3>
+            <p className="text-[10px] text-on-surface-variant mt-0.5">{t('dashboard.kpiAvailableDevotees', 'Available for Devotees')}</p>
           </div>
           <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
             <Sparkles size={24} />
@@ -196,7 +198,7 @@ export default function TrustDashboardPortfolio({
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-outline-variant/20 pb-4">
           <div>
             <h2 className="font-serif text-xl font-bold text-primary flex items-center gap-2">
-              <Landmark size={20} /> Temples Governed by {trustName}
+              <Landmark size={20} /> {t('dashboard.templesGovernedBy', 'Temples Governed by')} {trustName}
             </h2>
           </div>
 
@@ -206,7 +208,7 @@ export default function TrustDashboardPortfolio({
               <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant" />
               <input
                 type="text"
-                placeholder="Search temples..."
+                placeholder={t('dashboard.searchTemplesPlaceholder', 'Search temples...')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-9 pr-3 py-2 rounded-xl bg-surface-container-low border border-outline-variant/40 text-xs text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:border-primary transition-colors"
@@ -223,7 +225,13 @@ export default function TrustDashboardPortfolio({
                     : 'text-on-surface-variant hover:text-on-surface'
                     }`}
                 >
-                  {st === 'ALL' ? 'All' : st}
+                  {st === 'ALL'
+                    ? t('dashboard.filterAll', 'All')
+                    : st === 'ACTIVE'
+                    ? t('dashboard.filterActive', 'Active')
+                    : st === 'MAINTENANCE'
+                    ? t('dashboard.filterMaintenance', 'Maintenance')
+                    : t('dashboard.filterSuspended', 'Suspended')}
                 </button>
               ))}
             </div>
@@ -307,22 +315,22 @@ export default function TrustDashboardPortfolio({
 
                   <div className="grid grid-cols-3 gap-1.5 mt-4 pt-3 border-t border-outline-variant/30 text-center">
                     <div className="bg-surface-container/60 p-2 rounded-xl flex flex-col justify-center">
-                      <p className="text-[9px] font-bold text-on-surface-variant uppercase tracking-tight">Today's Collections</p>
+                      <p className="text-[9px] font-bold text-on-surface-variant uppercase tracking-tight">{t('dashboard.cardCollections', "Today's Collections")}</p>
                       <p className="text-xs font-bold text-amber-700 dark:text-amber-500 mt-0.5">{temple.todayCollections || '₹ 4,80,000'}</p>
                     </div>
                     <div className="bg-surface-container/60 p-2 rounded-xl flex flex-col justify-center">
-                      <p className="text-[9px] font-bold text-on-surface-variant uppercase tracking-tight">Sevas Configured</p>
-                      <p className="text-xs font-bold text-primary mt-0.5">{temple.activeSevas || 18} Offerings</p>
+                      <p className="text-[9px] font-bold text-on-surface-variant uppercase tracking-tight">{t('dashboard.cardSevasConfigured', 'Sevas Configured')}</p>
+                      <p className="text-xs font-bold text-primary mt-0.5">{temple.activeSevas || 18} {t('dashboard.kpiOfferings', 'Offerings')}</p>
                     </div>
                     <div className="bg-surface-container/60 p-2 rounded-xl flex flex-col justify-center">
-                      <p className="text-[9px] font-bold text-on-surface-variant uppercase tracking-tight">Priest Cadre</p>
-                      <p className="text-xs font-bold text-emerald-700 dark:text-emerald-500 mt-0.5">{temple.activePriests || 5} Staff</p>
+                      <p className="text-[9px] font-bold text-on-surface-variant uppercase tracking-tight">{t('dashboard.cardPriestCadre', 'Priest Cadre')}</p>
+                      <p className="text-xs font-bold text-emerald-700 dark:text-emerald-500 mt-0.5">{temple.activePriests || 5} {t('dashboard.kpiStaff', 'Staff')}</p>
                     </div>
                   </div>
                 </div>
 
                 <div className="mt-5 pt-3 border-t border-outline-variant/30 flex items-center justify-between text-xs font-bold text-primary group-hover:translate-x-0.5 transition-transform">
-                  <span>Click here to launch Temple administration Activities</span>
+                  <span>{t('dashboard.launchActivities', 'Click here to launch Temple administration Activities')}</span>
                   <ArrowRight size={14} />
                 </div>
               </div>

@@ -40,6 +40,7 @@ import {
 import { STANDARD_GOTRAS, STANDARD_NAKSHATRAS } from './TrusteesGovernance';
 import GovernanceMastersModal from './governance/GovernanceMastersModal';
 import { DEFAULT_COMMITTEE_CATEGORIES } from '@/lib/types/masters';
+import { useLanguage } from '../contexts/LanguageContext';
 
 export interface CommitteeItem {
   id: string;
@@ -113,6 +114,7 @@ export default function CommitteesGovernance({
       ? 'Sri Ahobila Matha Devasthanam Trust'
       : 'Sri Sringeri Sharada Dharma Trust')
   ).toUpperCase();
+  const { t } = useLanguage();
   const [committees, setCommittees] = useState<CommitteeItem[]>([]);
   const [temples, setTemples] = useState<TempleOption[]>([]);
   const [committeeCategories, setCommitteeCategories] = useState<any[]>(DEFAULT_COMMITTEE_CATEGORIES);
@@ -388,17 +390,17 @@ export default function CommitteesGovernance({
         <div className="space-y-1.5">
           <div className="flex items-center gap-2">
             <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-primary px-2.5 py-1 rounded-full bg-primary/10 border border-primary/20">
-              Governance Committees & Wings
+              {t('committees.badge', 'Governance Committees & Wings')}
             </span>
             <span className="text-xs font-bold font-sans text-on-surface uppercase tracking-wide">
               {currentTrustName}
             </span>
           </div>
           <h1 className="font-serif text-2xl md:text-3xl font-bold text-primary">
-            Committees & Sub-Committees Management
+            {t('committees.title', 'Committees & Sub-Committees Management')}
           </h1>
           <p className="font-sans text-xs text-on-surface-variant max-w-2xl leading-relaxed">
-            Charter standing, festival, renovation, and advisory samithis, appoint conveners, and administer cross-temple wings.
+            {t('committees.subtitle', 'Charter standing, festival, renovation, and advisory samithis, appoint conveners, and administer cross-temple wings.')}
           </p>
         </div>
 
@@ -407,7 +409,7 @@ export default function CommitteesGovernance({
             type="button"
             onClick={fetchData}
             className="p-2.5 rounded-2xl bg-surface-container hover:bg-surface-container-high border border-outline-variant/30 text-on-surface-variant hover:text-primary transition-colors cursor-pointer shadow-xs"
-            title="Refresh Committee Data"
+            title={t('common.refresh', 'Refresh Committee Data')}
           >
             <RefreshCw size={15} className={isLoading ? 'animate-spin' : ''} />
           </button>
@@ -418,7 +420,7 @@ export default function CommitteesGovernance({
             title="Configure Committee Category Masters"
           >
             <Bookmark size={14} className="text-primary" />
-            <span>Committee Masters</span>
+            <span>{t('committees.mastersBtn', 'Committee Masters')}</span>
           </button>
           <button
             type="button"
@@ -426,7 +428,7 @@ export default function CommitteesGovernance({
             className="px-4 py-2.5 bg-primary hover:bg-on-primary-container text-on-primary rounded-2xl font-sans text-xs font-bold shadow-sacred hover:shadow-lg transition-all cursor-pointer flex items-center gap-2"
           >
             <Plus size={15} />
-            <span>Form New Committee</span>
+            <span>{t('committees.formBtn', 'Form New Committee')}</span>
           </button>
         </div>
       </div>
@@ -435,9 +437,9 @@ export default function CommitteesGovernance({
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="p-5 rounded-2xl bg-surface-container/60 border border-outline-variant/30 shadow-xs flex items-center justify-between transition-transform hover:-translate-y-0.5">
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">Active Committees</p>
-            <h3 className="font-serif text-2xl font-bold text-on-surface mt-1">{activeCount} Active</h3>
-            <p className="text-[10px] text-emerald-700 font-bold mt-0.5">{committees.length} Total Registered</p>
+            <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">{t('committees.kpiActive', 'Active Committees')}</p>
+            <h3 className="font-serif text-2xl font-bold text-on-surface mt-1">{activeCount} {t('common.active', 'Active')}</h3>
+            <p className="text-[10px] text-emerald-700 font-bold mt-0.5">{committees.length} {t('committees.kpiActiveSub', 'Total Registered')}</p>
           </div>
           <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
             <Layers size={22} />
@@ -446,9 +448,9 @@ export default function CommitteesGovernance({
 
         <div className="p-5 rounded-2xl bg-surface-container/60 border border-outline-variant/30 shadow-xs flex items-center justify-between transition-transform hover:-translate-y-0.5">
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">Jeernodharana & Renovation</p>
+            <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">{t('committees.kpiJeernodharana', 'Jeernodharana & Renovation')}</p>
             <h3 className="font-serif text-2xl font-bold text-on-surface mt-1">{jeernodharanaCount} Samithis</h3>
-            <p className="text-[10px] text-amber-700 font-bold mt-0.5">Sanctum Restoration Projects</p>
+            <p className="text-[10px] text-amber-700 font-bold mt-0.5">{t('committees.kpiJeernodharanaSub', 'Sanctum Restoration Projects')}</p>
           </div>
           <div className="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-700 flex items-center justify-center">
             <Flame size={22} />
@@ -457,9 +459,9 @@ export default function CommitteesGovernance({
 
         <div className="p-5 rounded-2xl bg-surface-container/60 border border-outline-variant/30 shadow-xs flex items-center justify-between transition-transform hover:-translate-y-0.5">
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">Grand Utsavam Wings</p>
+            <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">{t('committees.kpiUtsavam', 'Grand Utsavam Wings')}</p>
             <h3 className="font-serif text-2xl font-bold text-on-surface mt-1">{festivalCount} Wings</h3>
-            <p className="text-[10px] text-emerald-700 font-bold mt-0.5">Brahmotsavam / Rathotsavam</p>
+            <p className="text-[10px] text-emerald-700 font-bold mt-0.5">{t('committees.kpiUtsavamSub', 'Brahmotsavam / Rathotsavam')}</p>
           </div>
           <div className="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-700 flex items-center justify-center">
             <Sparkles size={22} />
@@ -468,9 +470,9 @@ export default function CommitteesGovernance({
 
         <div className="p-5 rounded-2xl bg-surface-container/60 border border-outline-variant/30 shadow-xs flex items-center justify-between transition-transform hover:-translate-y-0.5">
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">Nested Sub-Committees</p>
+            <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">{t('committees.kpiSubCommittees', 'Nested Sub-Committees')}</p>
             <h3 className="font-serif text-2xl font-bold text-on-surface mt-1">{subCommitteeCount} Sub-Wings</h3>
-            <p className="text-[10px] text-blue-700 font-bold mt-0.5">Departmental Hierarchy</p>
+            <p className="text-[10px] text-blue-700 font-bold mt-0.5">{t('committees.kpiSubCommitteesSub', 'Departmental Hierarchy')}</p>
           </div>
           <div className="w-12 h-12 rounded-xl bg-blue-500/10 text-blue-700 flex items-center justify-center">
             <Briefcase size={22} />
@@ -489,7 +491,7 @@ export default function CommitteesGovernance({
             }`}
         >
           <Layers size={14} />
-          <span>All Categories</span>
+          <span>{t('committees.allCategories', 'All Categories')}</span>
           <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${categoryFilter === 'ALL' ? 'bg-white/20 text-on-primary' : 'bg-surface-container-high text-on-surface-variant'
             }`}>
             {committees.length}
@@ -525,10 +527,10 @@ export default function CommitteesGovernance({
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <h2 className="font-serif text-xl font-bold text-primary flex items-center gap-2">
-              <Layers size={20} /> Active Committee Charters
+              <Layers size={20} /> {t('committees.activeCharters', 'Active Committee Charters')}
             </h2>
             <p className="font-sans text-xs text-on-surface-variant mt-0.5">
-              Manage terms, member appointments, charters, and sub-committee wings across the Trust & Temple hierarchy.
+              {t('committees.activeChartersDesc', 'Manage terms, member appointments, charters, and sub-committee wings across the Trust & Temple hierarchy.')}
             </p>
           </div>
 
@@ -538,7 +540,7 @@ export default function CommitteesGovernance({
               <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant" />
               <input
                 type="text"
-                placeholder="Search committees, codes, mandates..."
+                placeholder={t('committees.searchPlaceholder', 'Search committees, codes, mandates...')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-9 pr-3 py-2 rounded-xl bg-surface-container-low border border-outline-variant/40 text-xs text-on-surface placeholder:text-on-surface-variant/60 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
@@ -550,9 +552,9 @@ export default function CommitteesGovernance({
               onChange={(e) => setScopeFilter(e.target.value as any)}
               className="px-3 py-2 rounded-xl bg-surface-container-low border border-outline-variant/40 text-xs text-on-surface focus:outline-none focus:border-primary cursor-pointer font-medium"
             >
-              <option value="ALL">All Scopes</option>
-              <option value="TRUST">Trust-Wide Committees</option>
-              <option value="TEMPLE">Temple-Specific Committees</option>
+              <option value="ALL">{t('committees.allScopes', 'All Scopes')}</option>
+              <option value="TRUST">{t('committees.trustCommittees', 'Trust-Wide Committees')}</option>
+              <option value="TEMPLE">{t('committees.templeCommittees', 'Temple-Specific Committees')}</option>
             </select>
           </div>
         </div>
@@ -561,11 +563,11 @@ export default function CommitteesGovernance({
         {filteredCommittees.length === 0 ? (
           <div className="p-12 text-center border-2 border-dashed border-outline-variant/40 rounded-2xl">
             <Layers size={40} className="mx-auto text-primary/40 mb-3" />
-            <h3 className="font-serif text-lg font-bold text-on-surface">No Committees Found</h3>
+            <h3 className="font-serif text-lg font-bold text-on-surface">{t('committees.noCommittees', 'No Committees Found')}</h3>
             <p className="text-xs text-on-surface-variant mt-1 max-w-md mx-auto">
               {searchQuery || categoryFilter !== 'ALL' || scopeFilter !== 'ALL'
-                ? 'No committees match your current filters.'
-                : 'No committees have been formed yet. Click "+ Form New Committee" to create your first committee charter.'}
+                ? t('committees.noCommitteesMatch', 'No committees match your current filters.')
+                : t('committees.noCommitteesFormed', 'No committees have been formed yet. Click "+ Form New Committee" to create your first committee charter.')}
             </p>
           </div>
         ) : (
@@ -594,7 +596,7 @@ export default function CommitteesGovernance({
                         </span>
                         {c.parentId && (
                           <span className="text-[10px] font-sans font-bold text-purple-800 px-2 py-0.5 rounded bg-purple-500/10 border border-purple-400/20">
-                            Sub-Committee
+                            {t('committees.subCommittee', 'Sub-Committee')}
                           </span>
                         )}
                         <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${c.status === 'ACTIVE'
@@ -620,20 +622,20 @@ export default function CommitteesGovernance({
                       <div className="flex flex-wrap items-center gap-4 text-[11px] text-on-surface-variant pt-1">
                         <div className="flex items-center gap-1.5">
                           <Calendar size={13} className="text-primary/70" />
-                          <span>Formed: {new Date(c.formationDate).toLocaleDateString()}</span>
+                          <span>{t('committees.formed', 'Formed')}: {new Date(c.formationDate).toLocaleDateString()}</span>
                           {c.dissolutionDate && (
-                            <span> ➔ Target Dissolution: {new Date(c.dissolutionDate).toLocaleDateString()}</span>
+                            <span> ➔ {t('committees.targetDissolution', 'Target Dissolution')}: {new Date(c.dissolutionDate).toLocaleDateString()}</span>
                           )}
                         </div>
                         {c.convenerName && (
                           <div className="flex items-center gap-1.5 font-bold text-primary">
                             <Award size={13} />
-                            <span>Lead: {c.convenerName}</span>
+                            <span>{t('committees.lead', 'Lead')}: {c.convenerName}</span>
                           </div>
                         )}
                         <div className="flex items-center gap-1.5 font-bold text-on-surface">
                           <Users size={13} className="text-primary/70" />
-                          <span>{c.memberCount} Appointed Members</span>
+                          <span>{c.memberCount} {t('committees.appointedMembers', 'Appointed Members')}</span>
                         </div>
                       </div>
                     </div>
@@ -649,7 +651,7 @@ export default function CommitteesGovernance({
                         className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-primary/10 hover:bg-primary/20 text-primary font-sans text-xs font-bold transition-colors cursor-pointer"
                       >
                         <UserPlus size={14} />
-                        <span>Appoint Member</span>
+                        <span>{t('committees.appointMember', 'Appoint Member')}</span>
                       </button>
 
                       <button
@@ -657,7 +659,7 @@ export default function CommitteesGovernance({
                         onClick={() => handleToggleExpand(c.id)}
                         className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-surface-container hover:bg-surface-container-high border border-outline-variant/30 text-on-surface font-sans text-xs font-bold transition-colors cursor-pointer"
                       >
-                        <span>{isExpanded ? 'Hide Members' : `View Roster (${c.memberCount})`}</span>
+                        <span>{isExpanded ? t('committees.hideMembers', 'Hide Members') : `${t('committees.viewRoster', 'View Roster')} (${c.memberCount})`}</span>
                         {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
                       </button>
                     </div>
@@ -667,16 +669,16 @@ export default function CommitteesGovernance({
                   {isExpanded && (
                     <div className="mt-4 pt-4 border-t border-outline-variant/30 space-y-3">
                       <h4 className="text-xs font-bold text-primary uppercase tracking-wider flex items-center gap-1.5">
-                        <Users size={14} /> Committee Roster & Portfolio Assignments
+                        <Users size={14} /> {t('committees.rosterTitle', 'Committee Roster & Portfolio Assignments')}
                       </h4>
 
                       {isMembersLoading ? (
                         <div className="p-4 text-center text-xs text-on-surface-variant animate-pulse">
-                          Loading member roster...
+                          {t('committees.loadingRoster', 'Loading member roster...')}
                         </div>
                       ) : members.length === 0 ? (
                         <div className="p-4 text-center text-xs text-on-surface-variant bg-surface-container/40 rounded-xl border border-dashed border-outline-variant/30">
-                          No members appointed to this committee yet. Click "Appoint Member" to add conveners and members.
+                          {t('committees.noMembers', 'No members appointed to this committee yet. Click "Appoint Member" to add conveners and members.')}
                         </div>
                       ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -717,7 +719,7 @@ export default function CommitteesGovernance({
 
                               <div className="mt-2.5 pt-2 border-t border-outline-variant/20 flex items-center justify-between text-[10px]">
                                 <span className="text-on-surface-variant">
-                                  Term: {new Date(m.termStart).toLocaleDateString()}
+                                  {t('committees.term', 'Term')}: {new Date(m.termStart).toLocaleDateString()}
                                 </span>
                                 {m.status === 'ACTIVE' ? (
                                   <button
@@ -725,7 +727,7 @@ export default function CommitteesGovernance({
                                     onClick={() => handleMemberStatusChange(c.id, m.id, 'RELIEVED')}
                                     className="text-error hover:underline font-bold cursor-pointer"
                                   >
-                                    Relieve
+                                    {t('committees.relieve', 'Relieve')}
                                   </button>
                                 ) : (
                                   <button
@@ -733,7 +735,7 @@ export default function CommitteesGovernance({
                                     onClick={() => handleMemberStatusChange(c.id, m.id, 'ACTIVE')}
                                     className="text-primary hover:underline font-bold cursor-pointer"
                                   >
-                                    Reactivate
+                                    {t('committees.reactivate', 'Reactivate')}
                                   </button>
                                 )}
                               </div>
@@ -760,8 +762,8 @@ export default function CommitteesGovernance({
                   <Layers size={20} />
                 </div>
                 <div>
-                  <h3 className="font-serif text-lg font-bold text-primary">Form New Committee / Sub-Committee</h3>
-                  <p className="text-xs text-on-surface-variant">Charter standing or ad-hoc temple committees</p>
+                  <h3 className="font-serif text-lg font-bold text-primary">{t('committees.createModalTitle', 'Form New Committee / Sub-Committee')}</h3>
+                  <p className="text-xs text-on-surface-variant">{t('committees.createModalDesc', 'Charter standing or ad-hoc temple committees')}</p>
                 </div>
               </div>
               <button
@@ -783,7 +785,7 @@ export default function CommitteesGovernance({
             <form onSubmit={handleCreateCommittee} className="space-y-4 mt-4 text-xs font-sans">
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div className="space-y-1">
-                  <label className="font-bold text-on-surface">Code (Unique) *</label>
+                  <label className="font-bold text-on-surface">{t('committees.codeUnique', 'Code (Unique)')} *</label>
                   <input
                     type="text"
                     required
@@ -795,7 +797,7 @@ export default function CommitteesGovernance({
                   />
                 </div>
                 <div className="sm:col-span-2 space-y-1">
-                  <label className="font-bold text-on-surface">Committee Name *</label>
+                  <label className="font-bold text-on-surface">{t('committees.committeeName', 'Committee Name')} *</label>
                   <input
                     type="text"
                     required
@@ -810,13 +812,13 @@ export default function CommitteesGovernance({
               {/* Category (Optional) */}
               <div className="space-y-1">
                 <div className="flex items-center justify-between">
-                  <label className="font-bold text-on-surface">Category (Optional)</label>
+                  <label className="font-bold text-on-surface">{t('committees.categoryOptional', 'Category (Optional)')}</label>
                   <button
                     type="button"
                     onClick={() => setIsMastersModalOpen(true)}
                     className="text-[11px] font-bold text-primary hover:underline flex items-center gap-0.5 cursor-pointer"
                   >
-                    + Manage / Add
+                    {t('committees.manageAdd', '+ Manage / Add')}
                   </button>
                 </div>
                 <select
@@ -834,7 +836,7 @@ export default function CommitteesGovernance({
               {/* Start Date & End Date */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="font-bold text-on-surface">Start Date *</label>
+                  <label className="font-bold text-on-surface">{t('committees.startDate', 'Start Date')} *</label>
                   <input
                     type="date"
                     required
@@ -844,7 +846,7 @@ export default function CommitteesGovernance({
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="font-bold text-on-surface">End Date (Optional)</label>
+                  <label className="font-bold text-on-surface">{t('committees.endDate', 'End Date (Optional)')}</label>
                   <input
                     type="date"
                     value={formData.dissolutionDate}
@@ -855,7 +857,7 @@ export default function CommitteesGovernance({
               </div>
 
               <div className="space-y-1">
-                <label className="font-bold text-on-surface">Charter / Mandate & Objectives</label>
+                <label className="font-bold text-on-surface">{t('committees.charterMandate', 'Charter / Mandate & Objectives')}</label>
                 <textarea
                   rows={2}
                   placeholder="e.g. Supervision of Rajagopuram renovation, Agama consultation, budget reconciliation..."
@@ -871,7 +873,7 @@ export default function CommitteesGovernance({
                   onClick={() => setIsCreateModalOpen(false)}
                   className="px-4 py-2.5 rounded-xl border border-outline-variant/40 text-on-surface font-bold hover:bg-surface-container cursor-pointer transition-colors"
                 >
-                  Cancel
+                  {t('common.cancel', 'Cancel')}
                 </button>
                 <button
                   type="submit"
@@ -883,7 +885,7 @@ export default function CommitteesGovernance({
                   ) : (
                     <>
                       <Plus size={16} />
-                      <span>Form Committee</span>
+                      <span>{t('committees.formBtn', 'Form Committee')}</span>
                     </>
                   )}
                 </button>
@@ -903,7 +905,7 @@ export default function CommitteesGovernance({
                   <UserPlus size={20} />
                 </div>
                 <div>
-                  <h3 className="font-serif text-lg font-bold text-primary">Appoint Member</h3>
+                  <h3 className="font-serif text-lg font-bold text-primary">{t('committees.appointModalTitle', 'Appoint Member')}</h3>
                   <p className="text-xs text-on-surface-variant">To {appointModalComm.name}</p>
                 </div>
               </div>
@@ -926,7 +928,7 @@ export default function CommitteesGovernance({
             <form onSubmit={handleAppointMember} className="space-y-4 mt-4 text-xs font-sans">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="font-bold text-on-surface">Full Name *</label>
+                  <label className="font-bold text-on-surface">{t('committees.fullName', 'Full Name')} *</label>
                   <input
                     type="text"
                     required
@@ -937,7 +939,7 @@ export default function CommitteesGovernance({
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="font-bold text-on-surface">Email Address *</label>
+                  <label className="font-bold text-on-surface">{t('committees.email', 'Email Address')} *</label>
                   <input
                     type="email"
                     required
@@ -951,7 +953,7 @@ export default function CommitteesGovernance({
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="font-bold text-on-surface">Phone Number</label>
+                  <label className="font-bold text-on-surface">{t('committees.phone', 'Phone Number')}</label>
                   <input
                     type="text"
                     placeholder="e.g. +91 98450 22334"
@@ -961,7 +963,7 @@ export default function CommitteesGovernance({
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="font-bold text-on-surface">Committee Role *</label>
+                  <label className="font-bold text-on-surface">{t('committees.role', 'Committee Role')} *</label>
                   <select
                     value={memberFormData.committeeRole}
                     onChange={(e) => setMemberFormData({ ...memberFormData, committeeRole: e.target.value })}
@@ -980,7 +982,7 @@ export default function CommitteesGovernance({
               {/* Gotra and Nakshatra */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="font-bold text-on-surface">Gotra</label>
+                  <label className="font-bold text-on-surface">{t('committees.gotra', 'Gotra')}</label>
                   <select
                     value={memberFormData.gotra}
                     onChange={(e) => setMemberFormData({ ...memberFormData, gotra: e.target.value })}
@@ -994,7 +996,7 @@ export default function CommitteesGovernance({
                 </div>
 
                 <div className="space-y-1">
-                  <label className="font-bold text-on-surface">Nakshatra</label>
+                  <label className="font-bold text-on-surface">{t('committees.nakshatra', 'Nakshatra')}</label>
                   <select
                     value={memberFormData.nakshatra}
                     onChange={(e) => setMemberFormData({ ...memberFormData, nakshatra: e.target.value })}
@@ -1010,7 +1012,7 @@ export default function CommitteesGovernance({
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="font-bold text-on-surface">Term Start Date *</label>
+                  <label className="font-bold text-on-surface">{t('committees.termStart', 'Term Start Date')} *</label>
                   <input
                     type="date"
                     required
@@ -1020,7 +1022,7 @@ export default function CommitteesGovernance({
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="font-bold text-on-surface">Term End Date (Optional)</label>
+                  <label className="font-bold text-on-surface">{t('committees.termEnd', 'Term End Date (Optional)')}</label>
                   <input
                     type="date"
                     value={memberFormData.termEnd}
@@ -1036,7 +1038,7 @@ export default function CommitteesGovernance({
                   onClick={() => setAppointModalComm(null)}
                   className="px-4 py-2.5 rounded-xl border border-outline-variant/40 text-on-surface font-bold hover:bg-surface-container cursor-pointer transition-colors"
                 >
-                  Cancel
+                  {t('common.cancel', 'Cancel')}
                 </button>
                 <button
                   type="submit"
@@ -1048,7 +1050,7 @@ export default function CommitteesGovernance({
                   ) : (
                     <>
                       <UserPlus size={16} />
-                      <span>Appoint to Committee</span>
+                      <span>{t('committees.appointModalTitle', 'Appoint Member')}</span>
                     </>
                   )}
                 </button>

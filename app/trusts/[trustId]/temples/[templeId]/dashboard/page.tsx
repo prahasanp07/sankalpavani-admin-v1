@@ -36,6 +36,7 @@ function TempleWorkspaceContent() {
 
   const [activeTab, setActiveTab] = useState('dashboard');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [currentDate, setCurrentDate] = useState('');
   const [currentTime, setCurrentTime] = useState('');
   const [dynamicTempleName, setDynamicTempleName] = useState<string>('');
 
@@ -61,17 +62,20 @@ function TempleWorkspaceContent() {
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
-      const options: Intl.DateTimeFormatOptions = {
-        weekday: 'short',
-        year: 'numeric',
-        month: 'short',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: true
-      };
-      setCurrentTime(now.toLocaleString('en-IN', options));
+      setCurrentDate(
+        now.toLocaleDateString('en-IN', {
+          weekday: 'short',
+          day: '2-digit',
+          month: 'short'
+        })
+      );
+      setCurrentTime(
+        now.toLocaleTimeString('en-IN', {
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: true
+        })
+      );
     };
 
     updateTime();
@@ -156,9 +160,12 @@ function TempleWorkspaceContent() {
 
           <div className="flex items-center gap-3 md:gap-4">
             {/* Live Clock */}
-            <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-container-low border border-outline-variant/40 text-on-surface-variant text-xs font-mono">
-              <Clock size={13} className="text-primary" />
-              <span>{currentTime || 'Loading...'}</span>
+            <div className="hidden sm:flex items-center gap-2 px-3 py-1 rounded-xl bg-surface-container-low border border-outline-variant/40 text-on-surface-variant font-mono">
+              <Clock size={13} className="text-primary shrink-0" />
+              <div className="flex flex-col text-left leading-tight">
+                <span className="text-[11px] font-medium text-on-surface-variant">{currentDate || 'Loading...'}</span>
+                <span className="text-[11px] font-bold text-on-surface">{currentTime}</span>
+              </div>
             </div>
 
             {/* Active Role Badge */}

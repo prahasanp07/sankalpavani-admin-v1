@@ -32,6 +32,7 @@ import {
   Bookmark
 } from 'lucide-react';
 import GovernanceMastersModal from './governance/GovernanceMastersModal';
+import { useLanguage } from '../contexts/LanguageContext';
 
 export interface TrusteeItem {
   id: string;
@@ -152,6 +153,7 @@ export default function TrusteesGovernance({
       ? 'Sri Ahobila Matha Devasthanam Trust'
       : 'Sri Sringeri Sharada Dharma Trust')
   ).toUpperCase();
+  const { t } = useLanguage();
   const [trustees, setTrustees] = useState<TrusteeItem[]>([]);
   const [designations, setDesignations] = useState<DesignationOption[]>([]);
   const [temples, setTemples] = useState<TempleOption[]>([]);
@@ -322,24 +324,24 @@ export default function TrusteesGovernance({
     }
   };
 
-  const filteredTrustees = trustees.filter(t => {
+  const filteredTrustees = trustees.filter(item => {
     const matchesSearch =
-      t.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      t.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (t.gotra && t.gotra.toLowerCase().includes(searchQuery.toLowerCase())) ||
-      (t.nakshatra && t.nakshatra.toLowerCase().includes(searchQuery.toLowerCase())) ||
-      (t.designationName && t.designationName.toLowerCase().includes(searchQuery.toLowerCase())) ||
-      (t.resolutionNo && t.resolutionNo.toLowerCase().includes(searchQuery.toLowerCase()));
+      item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (item.gotra && item.gotra.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (item.nakshatra && item.nakshatra.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (item.designationName && item.designationName.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (item.resolutionNo && item.resolutionNo.toLowerCase().includes(searchQuery.toLowerCase()));
 
-    const matchesType = typeFilter === 'ALL' || t.trusteeType === typeFilter;
-    const matchesStatus = statusFilter === 'ALL' || t.appointmentStatus === statusFilter;
+    const matchesType = typeFilter === 'ALL' || item.trusteeType === typeFilter;
+    const matchesStatus = statusFilter === 'ALL' || item.appointmentStatus === statusFilter;
 
     return matchesSearch && matchesType && matchesStatus;
   });
 
-  const activeCount = trustees.filter(t => t.appointmentStatus === 'ACTIVE').length;
-  const lifeCount = trustees.filter(t => t.isLifeTerm).length;
-  const electedCount = trustees.filter(t => t.trusteeType.includes('Elected')).length;
+  const activeCount = trustees.filter(item => item.appointmentStatus === 'ACTIVE').length;
+  const lifeCount = trustees.filter(item => item.isLifeTerm).length;
+  const electedCount = trustees.filter(item => item.trusteeType.includes('Elected')).length;
 
   const defaultAvailableTemples: TempleOption[] = temples.length > 0 ? temples : [
     { id: 'temple_vidyashankara', name: 'Sri Vidyashankara Temple', code: 'SVT-01' },
@@ -361,14 +363,14 @@ export default function TrusteesGovernance({
         <div className="space-y-1.5">
           <div className="flex items-center gap-2">
             <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-primary px-2.5 py-1 rounded-full bg-primary/10 border border-primary/20">
-              Apex Board Governance
+              {t('trustees.badge', 'Apex Board Governance')}
             </span>
             <span className="text-xs font-bold font-sans text-on-surface uppercase tracking-wide">
               {currentTrustName}
             </span>
           </div>
           <h1 className="font-serif text-2xl md:text-3xl font-bold text-primary">
-            Trustees & Board of Management
+            {t('trustees.title', 'Trustees & Board of Management')}
           </h1>
           <p className="font-sans text-xs text-on-surface-variant max-w-2xl leading-relaxed">
             Administer the Board of Trustees, custodial office terms, board resolutions, and hereditary appointments across the Trust umbrella.
@@ -380,7 +382,7 @@ export default function TrusteesGovernance({
             type="button"
             onClick={fetchData}
             className="p-2.5 rounded-2xl bg-surface-container hover:bg-surface-container-high border border-outline-variant/30 text-on-surface-variant hover:text-primary transition-colors cursor-pointer shadow-xs"
-            title="Refresh Board Data"
+            title={t('common.refresh', 'Refresh Board Data')}
           >
             <RefreshCw size={15} className={isLoading ? 'animate-spin' : ''} />
           </button>
@@ -391,7 +393,7 @@ export default function TrusteesGovernance({
             title="Configure Governance & Trustee Categories"
           >
             <Bookmark size={14} className="text-primary" />
-            <span>Master Categories</span>
+            <span>{t('designations.trusteeCategories', 'Master Categories')}</span>
           </button>
           <button
             type="button"
@@ -399,7 +401,7 @@ export default function TrusteesGovernance({
             className="px-4 py-2.5 bg-primary hover:bg-on-primary-container text-on-primary rounded-2xl font-sans text-xs font-bold shadow-sacred hover:shadow-lg transition-all cursor-pointer flex items-center gap-2"
           >
             <Plus size={15} />
-            <span>Appoint Board Trustee</span>
+            <span>{t('trustees.appointTrustee', 'Appoint Board Trustee')}</span>
           </button>
         </div>
       </div>
@@ -408,9 +410,9 @@ export default function TrusteesGovernance({
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="p-5 rounded-2xl bg-surface-container/60 border border-outline-variant/30 shadow-xs flex items-center justify-between transition-transform hover:-translate-y-0.5">
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">Total Board</p>
-            <h3 className="font-serif text-2xl font-bold text-on-surface mt-1">{trustees.length} Trustees</h3>
-            <p className="text-[10px] text-emerald-700 font-bold mt-0.5">{activeCount} Active / In-Office</p>
+            <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">{t('trustees.tabAll', 'Total Board')}</p>
+            <h3 className="font-serif text-2xl font-bold text-on-surface mt-1">{trustees.length} {t('designations.appointingTrustees', 'Trustees')}</h3>
+            <p className="text-[10px] text-emerald-700 font-bold mt-0.5">{activeCount} {t('common.active', 'Active')} / In-Office</p>
           </div>
           <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
             <Users size={22} />
@@ -419,9 +421,9 @@ export default function TrusteesGovernance({
 
         <div className="p-5 rounded-2xl bg-surface-container/60 border border-outline-variant/30 shadow-xs flex items-center justify-between transition-transform hover:-translate-y-0.5">
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">Permanent / Life</p>
-            <h3 className="font-serif text-2xl font-bold text-on-surface mt-1">{lifeCount} Lifetime</h3>
-            <p className="text-[10px] text-amber-700 font-bold mt-0.5">Hereditary & Spiritual</p>
+            <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">{t('trustees.lifeTerm', 'Permanent / Life')}</p>
+            <h3 className="font-serif text-2xl font-bold text-on-surface mt-1">{lifeCount} {t('trustees.lifeTerm', 'Lifetime')}</h3>
+            <p className="text-[10px] text-amber-700 font-bold mt-0.5">{t('trustees.tabHereditary', 'Hereditary & Spiritual')}</p>
           </div>
           <div className="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-700 flex items-center justify-center">
             <Award size={22} />
@@ -430,9 +432,9 @@ export default function TrusteesGovernance({
 
         <div className="p-5 rounded-2xl bg-surface-container/60 border border-outline-variant/30 shadow-xs flex items-center justify-between transition-transform hover:-translate-y-0.5">
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">Elected Cadre</p>
-            <h3 className="font-serif text-2xl font-bold text-on-surface mt-1">{electedCount} Board Members</h3>
-            <p className="text-[10px] text-primary font-bold mt-0.5">Term-bound Governance</p>
+            <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">{t('trustees.tabElected', 'Elected Cadre')}</p>
+            <h3 className="font-serif text-2xl font-bold text-on-surface mt-1">{electedCount} {t('designations.appointingTrustees', 'Board Members')}</h3>
+            <p className="text-[10px] text-primary font-bold mt-0.5">{t('designations.boardSubtitle', 'Term-bound Governance')}</p>
           </div>
           <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
             <CheckCircle2 size={22} />
@@ -457,10 +459,10 @@ export default function TrusteesGovernance({
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <h2 className="font-serif text-lg font-bold text-primary flex items-center gap-2">
-              <Users size={18} /> Board Members Registry
+              <Users size={18} /> {t('trustees.title', 'Board Members Registry')}
             </h2>
             <span className="text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary font-bold">
-              {filteredTrustees.length} showing
+              {filteredTrustees.length}
             </span>
           </div>
 
@@ -470,7 +472,7 @@ export default function TrusteesGovernance({
               <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant" />
               <input
                 type="text"
-                placeholder="Search trustee, gotra, nakshatra..."
+                placeholder={t('trustees.searchPlaceholder', "Search trustee, gotra, nakshatra...")}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-9 pr-3 py-2 rounded-xl bg-surface-container-low border border-outline-variant/40 text-xs text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:border-primary"
@@ -483,7 +485,7 @@ export default function TrusteesGovernance({
               onChange={(e) => setTypeFilter(e.target.value)}
               className="px-3 py-2 rounded-xl bg-surface-container-low border border-outline-variant/40 text-xs text-on-surface font-sans focus:outline-none focus:border-primary"
             >
-              <option value="ALL">All Board Categories</option>
+              <option value="ALL">{t('trustees.categoryFilter', 'All Board Categories')}</option>
               {trusteeCategories.map(c => (
                 <option key={c} value={c}>{c}</option>
               ))}
@@ -501,7 +503,7 @@ export default function TrusteesGovernance({
                     : 'text-on-surface-variant hover:text-on-surface'
                     }`}
                 >
-                  {st === 'ALL' ? 'All' : st}
+                  {st === 'ALL' ? t('common.all', 'All') : st === 'ACTIVE' ? t('common.active', 'Active') : t('designations.expireTerm', 'Expired')}
                 </button>
               ))}
             </div>
@@ -512,16 +514,16 @@ export default function TrusteesGovernance({
         {isLoading ? (
           <div className="p-16 text-center space-y-3">
             <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto" />
-            <p className="font-sans text-xs text-on-surface-variant font-medium">Synchronizing Board Registry...</p>
+            <p className="font-sans text-xs text-on-surface-variant font-medium">{t('common.loading', 'Loading...')}</p>
           </div>
         ) : filteredTrustees.length === 0 ? (
           <div className="p-12 text-center border-2 border-dashed border-outline-variant/40 rounded-2xl space-y-3">
             <Users size={36} className="mx-auto text-primary/40" />
-            <h3 className="font-serif text-base font-bold text-on-surface">No Board Trustees Found</h3>
+            <h3 className="font-serif text-base font-bold text-on-surface">{t('trustees.emptyState', 'No Board Trustees Found')}</h3>
             <p className="text-xs text-on-surface-variant max-w-md mx-auto">
               {searchQuery || typeFilter !== 'ALL' || statusFilter !== 'ALL'
-                ? 'Adjust your search query or filter tags to display members.'
-                : 'Click "+ Appoint Board Trustee" to register your first Board member under this Trust.'}
+                ? t('trustees.emptyState', 'Adjust your search query or filter tags to display members.')
+                : t('trustees.emptyState', 'Click "+ Appoint Board Trustee" to register your first Board member under this Trust.')}
             </p>
             <button
               type="button"
@@ -529,7 +531,7 @@ export default function TrusteesGovernance({
               className="mt-2 inline-flex items-center gap-1.5 px-4 py-2 bg-primary text-on-primary rounded-xl text-xs font-bold cursor-pointer"
             >
               <Plus size={14} />
-              <span>Appoint First Trustee</span>
+              <span>{t('trustees.appointTrustee', 'Appoint Board Trustee')}</span>
             </button>
           </div>
         ) : (
@@ -600,7 +602,7 @@ export default function TrusteesGovernance({
                   {trustee.assignedTemples && trustee.assignedTemples.length > 0 && (
                     <div className="mt-2.5 flex items-center gap-1.5 flex-wrap">
                       <span className="text-[10px] font-bold text-on-surface-variant flex items-center gap-1">
-                        <Building2 size={10} className="text-amber-700" /> Scopes:
+                        <Building2 size={10} className="text-amber-700" /> {t('designations.scopeTemple', 'Temple')}:
                       </span>
                       {trustee.assignedTemples.map((temp, i) => (
                         <span key={i} className="text-[10px] px-2 py-0.5 rounded-md bg-surface-container border border-outline-variant/40 text-on-surface font-medium">
@@ -614,11 +616,11 @@ export default function TrusteesGovernance({
                   <div className="mt-3 bg-surface-container/60 p-2.5 rounded-xl border border-outline-variant/30 space-y-1 text-[11px]">
                     <div className="flex items-center justify-between">
                       <span className="text-on-surface-variant flex items-center gap-1">
-                        <Calendar size={11} className="text-amber-700" /> Tenure:
+                        <Calendar size={11} className="text-amber-700" /> {t('designations.termDuration', 'Tenure')}:
                       </span>
                       <span className="font-bold text-on-surface">
                         {trustee.isLifeTerm ? (
-                          <span className="text-amber-700 font-serif font-bold">Lifetime Appointment</span>
+                          <span className="text-amber-700 font-serif font-bold">{t('trustees.lifeTerm', 'Lifetime Appointment')}</span>
                         ) : (
                           `${new Date(trustee.termStart).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' })} - ${trustee.termEnd ? new Date(trustee.termEnd).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' }) : 'Indefinite'
                           }`
@@ -629,7 +631,7 @@ export default function TrusteesGovernance({
                     {trustee.resolutionNo && (
                       <div className="flex items-center justify-between text-[10px]">
                         <span className="text-on-surface-variant flex items-center gap-1">
-                          <FileText size={10} className="text-primary" /> Resolution:
+                          <FileText size={10} className="text-primary" /> {t('trustees.resolution', 'Resolution')}:
                         </span>
                         <span className="font-mono font-semibold text-primary">{trustee.resolutionNo}</span>
                       </div>
@@ -649,7 +651,7 @@ export default function TrusteesGovernance({
                 <div className="pt-2 border-t border-outline-variant/20 flex items-center justify-between text-[10px] text-on-surface-variant">
                   <span className="font-mono">{trustee.cadreRank || 'Trust Board'}</span>
                   <span className="flex items-center gap-1 text-primary font-bold">
-                    <Check size={11} /> Verified Custodian
+                    <Check size={11} /> {t('trustees.badge', 'Verified Custodian')}
                   </span>
                 </div>
               </div>
@@ -669,7 +671,7 @@ export default function TrusteesGovernance({
                   <Crown size={22} />
                 </div>
                 <div>
-                  <h3 className="font-serif text-lg font-bold text-primary">Appoint Trustee / Board Member</h3>
+                  <h3 className="font-serif text-lg font-bold text-primary">{t('trustees.appointTrustee', 'Appoint Trustee / Board Member')}</h3>
                   <p className="font-sans text-xs text-on-surface-variant">Formalize tenure appointments & legal board resolutions</p>
                 </div>
               </div>
@@ -694,7 +696,7 @@ export default function TrusteesGovernance({
               {/* Row 1: Full Legal Name & Designation / Title */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-on-surface">Full Legal Name *</label>
+                  <label className="text-xs font-bold text-on-surface">{t('designations.memberName', 'Full Legal Name')} *</label>
                   <input
                     type="text"
                     required
@@ -707,7 +709,7 @@ export default function TrusteesGovernance({
 
                 <div className="space-y-1.5">
                   <div className="flex items-center justify-between">
-                    <label className="text-xs font-bold text-on-surface">Designation / Title *</label>
+                    <label className="text-xs font-bold text-on-surface">{t('designations.titleName', 'Designation / Title')} *</label>
                     <button
                       type="button"
                       onClick={() => setIsCustomDesigMode(!isCustomDesigMode)}
@@ -743,7 +745,7 @@ export default function TrusteesGovernance({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
                   <div className="flex items-center justify-between">
-                    <label className="text-xs font-bold text-on-surface">Trustee Category *</label>
+                    <label className="text-xs font-bold text-on-surface">{t('designations.trusteeCategories', 'Trustee Category')} *</label>
                     <button
                       type="button"
                       onClick={() => setIsMastersModalOpen(true)}
@@ -764,7 +766,7 @@ export default function TrusteesGovernance({
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-on-surface">Email Address *</label>
+                  <label className="text-xs font-bold text-on-surface">{t('designations.officialEmail', 'Email Address')} *</label>
                   <input
                     type="email"
                     required
@@ -779,7 +781,7 @@ export default function TrusteesGovernance({
               {/* Row 3: Phone Number, Gotra, Nakshatra */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-on-surface">Phone Number</label>
+                  <label className="text-xs font-bold text-on-surface">{t('designations.phoneNumber', 'Phone Number')}</label>
                   <input
                     type="tel"
                     placeholder="+91 98450 00000"
@@ -792,7 +794,7 @@ export default function TrusteesGovernance({
                 {/* Gotra Dropdown */}
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold text-on-surface flex items-center gap-1">
-                    <Compass size={12} className="text-amber-700" /> Gotra
+                    <Compass size={12} className="text-amber-700" /> {t('designations.gotram', 'Gotra')}
                   </label>
                   <select
                     value={formData.gotra}
@@ -809,7 +811,7 @@ export default function TrusteesGovernance({
                 {/* Nakshatra Dropdown */}
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold text-on-surface flex items-center gap-1">
-                    <Moon size={12} className="text-amber-700" /> Nakshatra
+                    <Moon size={12} className="text-amber-700" /> {t('designations.nakshatra', 'Nakshatra')}
                   </label>
                   <select
                     value={formData.nakshatra}
@@ -864,7 +866,7 @@ export default function TrusteesGovernance({
                   <div className="flex items-center gap-2 text-amber-800">
                     <Calendar size={15} />
                     <span className="font-bold text-[11px] uppercase tracking-wider font-sans">
-                      TENURE & TERM LIMITS
+                      {t('designations.termDuration', 'TENURE & TERM LIMITS')}
                     </span>
                   </div>
 
@@ -881,7 +883,7 @@ export default function TrusteesGovernance({
                       className="w-4 h-4 rounded text-primary focus:ring-primary cursor-pointer border-outline-variant/40"
                     />
                     <label htmlFor="lifeTrusteeCheckbox" className="text-xs font-semibold text-on-surface cursor-pointer">
-                      Life Trustee (Permanent)
+                      {t('trustees.lifeTerm', 'Life Trustee (Permanent)')}
                     </label>
                   </div>
                 </div>
@@ -889,7 +891,7 @@ export default function TrusteesGovernance({
                 {/* Dates Row */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-on-surface">Appointment Start Date *</label>
+                    <label className="text-xs font-bold text-on-surface">{t('designations.termStartDate', 'Appointment Start Date')} *</label>
                     <input
                       type="date"
                       required
@@ -900,7 +902,7 @@ export default function TrusteesGovernance({
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-on-surface">Appointment End Date</label>
+                    <label className="text-xs font-bold text-on-surface">{t('designations.termEndDate', 'Appointment End Date')}</label>
                     <input
                       type="date"
                       disabled={formData.isLifeTerm}
@@ -915,7 +917,7 @@ export default function TrusteesGovernance({
                 <div className="space-y-1.5 pt-1">
                   <div className="flex items-center gap-1.5 text-amber-800 text-xs font-bold">
                     <FileText size={14} />
-                    <span>Board Resolution / Order Number (Optional)</span>
+                    <span>{t('designations.resolutionNo', 'Board Resolution / Order Number (Optional)')}</span>
                   </div>
                   <input
                     type="text"
@@ -949,7 +951,7 @@ export default function TrusteesGovernance({
                   onClick={() => setIsAppointModalOpen(false)}
                   className="px-5 py-2.5 rounded-xl border border-outline-variant/40 text-xs font-bold text-on-surface-variant hover:bg-surface-container transition-colors cursor-pointer"
                 >
-                  Cancel
+                  {t('common.cancel', 'Cancel')}
                 </button>
                 <button
                   type="submit"
@@ -957,7 +959,7 @@ export default function TrusteesGovernance({
                   className="px-6 py-2.5 bg-primary hover:bg-on-primary-container text-on-primary rounded-xl text-xs font-bold shadow-sacred hover:shadow-lg transition-all cursor-pointer flex items-center gap-1.5 disabled:opacity-50"
                 >
                   {isSubmitting ? <RefreshCw size={14} className="animate-spin" /> : <Check size={14} />}
-                  <span>{isSubmitting ? 'Formalizing...' : 'Formalize Appointment'}</span>
+                  <span>{isSubmitting ? `${t('common.loading', 'Formalizing...')}` : t('designations.confirmAppointment', 'Formalize Appointment')}</span>
                 </button>
               </div>
             </form>

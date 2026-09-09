@@ -16,6 +16,8 @@ import {
   Layers
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { useLanguage } from '../contexts/LanguageContext';
+import LanguageSwitcher from './LanguageSwitcher';
 
 interface HeaderProps {
   title?: string;
@@ -37,26 +39,29 @@ export default function Header({
     switchScope, 
     resetToSuperAdmin 
   } = useAuth();
+  const { t } = useLanguage();
 
   const [contextDropdownOpen, setContextDropdownOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  const [currentDate, setCurrentDate] = useState('');
   const [currentTime, setCurrentTime] = useState('');
 
   // Clock live update
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
-      const options: Intl.DateTimeFormatOptions = { 
+      const dateOptions: Intl.DateTimeFormatOptions = { 
         weekday: 'short', 
-        year: 'numeric', 
-        month: 'short', 
         day: '2-digit', 
+        month: 'short' 
+      };
+      const timeOptions: Intl.DateTimeFormatOptions = { 
         hour: '2-digit', 
         minute: '2-digit', 
-        second: '2-digit',
         hour12: true 
       };
-      setCurrentTime(now.toLocaleString('en-IN', options));
+      setCurrentDate(now.toLocaleDateString('en-IN', dateOptions));
+      setCurrentTime(now.toLocaleTimeString('en-IN', timeOptions));
     };
 
     updateTime();
@@ -112,7 +117,7 @@ export default function Header({
 
             <span className="truncate max-w-[170px] sm:max-w-[240px]">
               {activeScope === 'TRUST'
-                ? 'Viewing: Temple Trusts Operations'
+                ? t('header.scopeTitle', 'Viewing: Temple Trusts Operations')
                 : `Viewing: ${activeTempleName || 'Sri Vidyashankara Temple'}`}
             </span>
 
@@ -129,10 +134,10 @@ export default function Header({
               <div className="absolute right-0 mt-2 w-72 bg-surface-container-lowest rounded-2xl shadow-2xl border border-outline-variant/30 py-2 z-40 animate-[slideDown_0.2s_ease-out]">
                 <div className="px-4 py-2 border-b border-outline-variant/20 bg-surface-container-low/60">
                   <p className="text-[10px] font-mono font-bold uppercase tracking-wider text-on-surface-variant">
-                    Operating Zone & RLS Scope
+                    {t('header.operatingZone', 'Operating Zone & RLS Scope')}
                   </p>
                   <p className="text-xs font-semibold text-on-surface mt-0.5">
-                    Select scope boundary for permissions & data filtering
+                    {t('header.operatingZoneDesc', 'Select scope boundary for permissions & data filtering')}
                   </p>
                 </div>
 
@@ -155,8 +160,8 @@ export default function Header({
                         <Landmark size={14} />
                       </div>
                       <div className="min-w-0">
-                        <p className="text-xs font-bold truncate">Temple Trusts Operations</p>
-                        <p className="text-[10px] text-on-surface-variant opacity-80 truncate">Apex portfolio & all sanctums</p>
+                        <p className="text-xs font-bold truncate">{t('header.scopeTitle', 'Temple Trusts Operations')}</p>
+                        <p className="text-[10px] text-on-surface-variant opacity-80 truncate">{t('header.scopeSubtitle', 'Apex portfolio & all sanctums')}</p>
                       </div>
                     </div>
                     {activeScope === 'TRUST' && <Check size={15} className="text-red-800 shrink-0" />}
@@ -203,10 +208,16 @@ export default function Header({
         </div>
 
         {/* Live Clock Pill */}
-        <div className="hidden xl:flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-container-low border border-outline-variant/40 text-on-surface-variant text-xs font-mono">
-          <Clock size={13} className="text-primary" />
-          <span>{currentTime || 'Loading...'}</span>
+        <div className="hidden xl:flex items-center gap-2 px-3 py-1 rounded-xl bg-surface-container-low border border-outline-variant/40 text-on-surface-variant font-mono">
+          <Clock size={13} className="text-primary shrink-0" />
+          <div className="flex flex-col text-left leading-tight">
+            <span className="text-[11px] font-medium text-on-surface-variant">{currentDate || 'Loading...'}</span>
+            <span className="text-[11px] font-bold text-on-surface">{currentTime}</span>
+          </div>
         </div>
+
+        {/* Multilingual Language Switcher Dropdown */}
+        <LanguageSwitcher />
 
         {/* Dynamic RBAC Active Designation Badge */}
         <div 

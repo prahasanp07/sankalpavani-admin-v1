@@ -107,12 +107,10 @@ function AdminPortalContent() {
       const now = new Date();
       const options: Intl.DateTimeFormatOptions = {
         weekday: 'short',
-        year: 'numeric',
-        month: 'short',
         day: '2-digit',
+        month: 'short',
         hour: '2-digit',
         minute: '2-digit',
-        second: '2-digit',
         hour12: true
       };
       setCurrentTime(now.toLocaleString('en-IN', options));

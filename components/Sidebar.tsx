@@ -28,6 +28,7 @@ import {
 } from 'lucide-react';
 
 import { useAuth, STAKEHOLDER_PERSONAS } from '../contexts/AuthContext';
+import { useLanguage } from '../contexts/LanguageContext';
 import { PermissionKey } from '../utils/permissions';
 import GovernanceMastersModal from './governance/GovernanceMastersModal';
 import { MasterType } from '@/lib/types/masters';
@@ -82,6 +83,7 @@ export default function Sidebar({
     updateSession,
     switchScope
   } = useAuth();
+  const { t } = useLanguage();
   const router = useRouter();
   const [templeLogo, setTempleLogo] = useState('https://lh3.googleusercontent.com/aida-public/AB6AXuANcPfzsfum8zGj2STDpP_Eds0xOoXxtm_OjHwVkP2MZOW3999u6oVf8P-7GeIMQA1hFSnmMM-gxsed4iDD-ruqP0OJKhI0LBMl2OTllKr3RJspedpV9pOsdDyz43dF_teOB1cC39MQgm579_rgeQq4Evh6iDEqE4aFi5LR5E3SLkqyCjsFrlyNnt_YF1ph80p1i-M4ec2yFc2A9oBE9U3sOA8W64XAiqtD-IxdDQLuoEYwwIz6gU1SePMjmWX2QVVSn1bT8aiesII');
   const [personaMenuOpen, setPersonaMenuOpen] = useState(false);
@@ -228,7 +230,7 @@ export default function Sidebar({
                 title="Open Trust Dashboard & Portfolio"
               >
                 <Landmark size={16} />
-                <span>Trust Dashboard</span>
+                <span>{t('sidebar.dashboard', 'Trust Dashboard')}</span>
               </button>
 
               {/* Items displayed in Trust Dashboard (Governance & Masters) */}
@@ -243,7 +245,7 @@ export default function Sidebar({
                     }`}
                 >
                   <Crown size={13} className="shrink-0 text-amber-700" />
-                  <span className="truncate">Designation & Titles</span>
+                  <span className="truncate">{t('sidebar.designations', 'Designation & Titles')}</span>
                 </button>
 
                 {/* 2. Add new temple */}
@@ -256,7 +258,7 @@ export default function Sidebar({
                     }`}
                 >
                   <Plus size={13} className="shrink-0 text-primary" />
-                  <span className="truncate">Add new temple</span>
+                  <span className="truncate">{t('sidebar.addTemple', 'Add new temple')}</span>
                 </button>
 
                 {/* 3. Members */}
@@ -269,7 +271,7 @@ export default function Sidebar({
                     }`}
                 >
                   <UserCheck size={13} className="shrink-0 text-primary" />
-                  <span className="truncate">Members</span>
+                  <span className="truncate">{t('sidebar.members', 'Members')}</span>
                 </button>
 
                 {/* 4. Trustees & Board */}
@@ -282,7 +284,7 @@ export default function Sidebar({
                     }`}
                 >
                   <Users size={13} className="shrink-0 text-primary" />
-                  <span className="truncate">Trustees & Board</span>
+                  <span className="truncate">{t('sidebar.trustees', 'Trustees & Board')}</span>
                 </button>
 
                 {/* 5. Committees */}
@@ -295,7 +297,7 @@ export default function Sidebar({
                     }`}
                 >
                   <Layers size={13} className="shrink-0 text-primary" />
-                  <span className="truncate">Committees</span>
+                  <span className="truncate">{t('sidebar.committees', 'Committees')}</span>
                 </button>
 
                 {/* 6. Dynamic RBAC...(opt.) */}
@@ -308,7 +310,7 @@ export default function Sidebar({
                     }`}
                 >
                   <ShieldCheck size={13} className="shrink-0 text-primary" />
-                  <span className="truncate">Dynamic RBAC... <span className="italic font-normal text-[10px] text-on-surface-variant/80">(opt.)</span></span>
+                  <span className="truncate">{t('sidebar.roles', 'Dynamic Roles & RBAC')}</span>
                 </button>
               </div>
             </div>
@@ -437,7 +439,7 @@ export default function Sidebar({
             className="w-full flex items-center justify-center px-3 py-1.5 rounded-xl border border-outline-variant/40 font-sans text-xs font-bold text-error hover:bg-error-container hover:text-on-error-container transition-all duration-150 cursor-pointer"
           >
             <LogOut size={13} className="mr-1.5" />
-            <span>Logout</span>
+            <span>{t('sidebar.logout', 'Logout')}</span>
           </button>
         </div>
       </aside>
