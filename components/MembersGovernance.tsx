@@ -242,7 +242,7 @@ export default function MembersGovernance({
         validUntil: ''
       });
       await fetchData();
-      showToast(`Member "${payload.name}" registered successfully!`);
+      showToast(t('members.registerSuccess', `Member "${payload.name}" registered successfully!`));
     } catch (err: any) {
       setModalError(err.message || 'Error adding member');
     } finally {
@@ -259,7 +259,7 @@ export default function MembersGovernance({
       });
       if (res.ok) {
         await fetchData();
-        showToast(`Member status updated to ${newStatus}`);
+        showToast(t('members.statusUpdated', `Member status updated to ${newStatus}`));
       }
     } catch (err) {
       console.error('Failed to update member status:', err);
@@ -278,51 +278,47 @@ export default function MembersGovernance({
   };
 
   const filteredMembers = members.filter(m => {
-    const matchesQuery =
+    const matchesSearch =
       m.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       m.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      m.phone.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      m.gotra.toLowerCase().includes(searchQuery.toLowerCase());
+      (m.gotra && m.gotra.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (m.phone && m.phone.includes(searchQuery));
 
     const matchesType = typeFilter === 'ALL' || m.membershipType === typeFilter;
     const matchesStatus = statusFilter === 'ALL' || m.status === statusFilter;
-    const matchesTemple = templeFilter === 'ALL' || m.assignedTemples.some(tm => tm.templeId === templeFilter);
+    const matchesTemple = templeFilter === 'ALL' || m.assignedTemples.some(t => t.templeId === templeFilter);
 
-    return matchesQuery && matchesType && matchesStatus && matchesTemple;
+    return matchesSearch && matchesType && matchesStatus && matchesTemple;
   });
 
+  // KPI Metrics Calculation
   const totalMembersCount = members.length;
   const trusteesCount = members.filter(m => m.membershipType === 'TRUSTEE' || m.membershipType === 'GOVERNANCE_HEAD').length;
   const priestsCount = members.filter(m => m.membershipType === 'PRIEST').length;
-  const staffCount = members.filter(m => m.membershipType === 'STAFF').length;
-  const committeeAppointeesCount = members.filter(m => m.assignedCommittees.length > 0).length;
+  const committeeAppointeesCount = members.filter(m => m.assignedCommittees && m.assignedCommittees.length > 0).length;
 
   return (
-    <div className="space-y-6 animate-[fadeIn_0.3s_ease-out]">
+    <div className="p-6 md:p-10 space-y-8 max-w-7xl mx-auto">
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed top-6 right-6 z-50 bg-primary-container text-on-primary-container border border-primary/20 px-5 py-3.5 rounded-2xl shadow-xl flex items-center gap-3 animate-[slideIn_0.3s_ease-out]">
-          <Sparkles size={18} className="text-amber-300" />
+        <div className="fixed bottom-6 right-6 z-50 p-4 rounded-2xl bg-surface-container-highest border border-primary/40 text-on-surface shadow-sacred flex items-center gap-3 animate-[slideUp_0.3s_ease-out]">
+          <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
           <span className="font-sans text-xs font-bold">{toastMessage}</span>
         </div>
       )}
 
-      {/* Header Banner */}
-      <div className="bg-surface-container/60 backdrop-blur-md rounded-3xl border border-outline-variant/40 p-6 md:p-8 shadow-sacred flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div className="space-y-1.5">
-          <div className="flex items-center gap-2">
-            <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-primary px-2.5 py-1 rounded-full bg-primary/10 border border-primary/20">
-              {t('members.badge', 'Trust & Temple Hierarchy Roster')}
-            </span>
-            <span className="text-xs font-bold font-sans text-on-surface uppercase tracking-wide">
-              {currentTrustName}
-            </span>
+      {/* Header & Page Subtitle */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b divider-gold">
+        <div>
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary font-serif text-xs font-bold tracking-wide uppercase mb-2">
+            <Users size={13} />
+            <span>{currentTrustName}</span>
           </div>
           <h1 className="font-serif text-2xl md:text-3xl font-bold text-primary">
             {t('members.title', 'Members, Staff & Committee Appointees')}
           </h1>
           <p className="font-sans text-xs text-on-surface-variant max-w-2xl leading-relaxed">
-            Administer temple staff, Acharyas, volunteers, patrons, and governance appointees across all associated temples.
+            {t('members.description', 'Administer temple staff, Acharyas, volunteers, patrons, and governance appointees across all associated temples.')}
           </p>
         </div>
 
@@ -445,7 +441,7 @@ export default function MembersGovernance({
               <Users size={20} /> {t('members.title', 'Member Directory & Multi-Temple Assignments')}
             </h2>
             <p className="font-sans text-xs text-on-surface-variant mt-0.5">
-              Manage personal profiles, Gotras, multi-temple operational assignments, and committee roles.
+              {t('members.directorySubtitle', 'Manage personal profiles, Gotras, multi-temple operational assignments, and committee roles.')}
             </p>
           </div>
 
@@ -493,8 +489,8 @@ export default function MembersGovernance({
             <h3 className="font-serif text-lg font-bold text-on-surface">{t('members.emptyState', 'No Members Found')}</h3>
             <p className="text-xs text-on-surface-variant mt-1 max-w-md mx-auto">
               {searchQuery || typeFilter !== 'ALL' || templeFilter !== 'ALL'
-                ? t('members.emptyState', 'No members match your current filters.')
-                : t('members.emptyState', 'No members have been registered yet. Click "+ Add Member" to register your first member.')}
+                ? t('members.noFilterMatch', 'No members match your current filters.')
+                : t('members.noMembersRegistered', 'No members have been registered yet. Click "+ Add Member" to register your first member.')}
             </p>
           </div>
         ) : (
@@ -544,8 +540,8 @@ export default function MembersGovernance({
                   <UserPlus size={20} />
                 </div>
                 <div>
-                  <h3 className="font-serif text-lg font-bold text-primary">Add Member</h3>
-                  <p className="text-xs text-on-surface-variant">Register person, assign temples & committees</p>
+                  <h3 className="font-serif text-lg font-bold text-primary">{t('members.modalTitle', 'Add Member')}</h3>
+                  <p className="text-xs text-on-surface-variant">{t('members.modalSubtitle', 'Register person, assign temples & committees')}</p>
                 </div>
               </div>
               <button
@@ -567,22 +563,22 @@ export default function MembersGovernance({
             <form onSubmit={handleAddMember} className="space-y-4 mt-4 text-xs font-sans">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="font-bold text-on-surface">Full Name *</label>
+                  <label className="font-bold text-on-surface">{t('members.fullName', 'Full Name *')}</label>
                   <input
                     type="text"
                     required
-                    placeholder="e.g. Sri Ramanatha Dikshidar"
+                    placeholder={t('members.namePlaceholder', 'e.g. Sri Ramanatha Dikshidar')}
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     className="w-full p-2.5 rounded-xl bg-surface-container-low border border-outline-variant/40 text-on-surface placeholder:text-on-surface-variant/60 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="font-bold text-on-surface">Email Address *</label>
+                  <label className="font-bold text-on-surface">{t('members.emailAddress', 'Email Address *')}</label>
                   <input
                     type="email"
                     required
-                    placeholder="e.g. member@sringeri.org"
+                    placeholder={t('members.emailPlaceholder', 'e.g. member@sringeri.org')}
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     className="w-full p-2.5 rounded-xl bg-surface-container-low border border-outline-variant/40 text-on-surface placeholder:text-on-surface-variant/60 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
@@ -593,36 +589,36 @@ export default function MembersGovernance({
               {/* Row 2: Phone Number, Gotra, Nakshatra */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div className="space-y-1">
-                  <label className="font-bold text-on-surface">Phone Number</label>
+                  <label className="font-bold text-on-surface">{t('members.phoneNumber', 'Phone Number')}</label>
                   <input
                     type="text"
-                    placeholder="e.g. +91 98450 11223"
+                    placeholder={t('members.phonePlaceholder', 'e.g. +91 98450 11223')}
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     className="w-full p-2.5 rounded-xl bg-surface-container-low border border-outline-variant/40 text-on-surface placeholder:text-on-surface-variant/60 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="font-bold text-on-surface">Gotra</label>
+                  <label className="font-bold text-on-surface">{t('members.gotra', 'Gotra')}</label>
                   <select
                     value={formData.gotra}
                     onChange={(e) => setFormData({ ...formData, gotra: e.target.value })}
                     className="w-full p-2.5 rounded-xl bg-surface-container-low border border-outline-variant/40 text-on-surface focus:outline-none focus:border-primary cursor-pointer"
                   >
-                    <option value="">Select Gotra...</option>
+                    <option value="">{t('members.selectGotra', 'Select Gotra...')}</option>
                     {STANDARD_GOTRAS.map((g) => (
                       <option key={g} value={g}>{g}</option>
                     ))}
                   </select>
                 </div>
                 <div className="space-y-1">
-                  <label className="font-bold text-on-surface">Nakshatra</label>
+                  <label className="font-bold text-on-surface">{t('members.nakshatra', 'Nakshatra')}</label>
                   <select
                     value={formData.nakshatra}
                     onChange={(e) => setFormData({ ...formData, nakshatra: e.target.value })}
                     className="w-full p-2.5 rounded-xl bg-surface-container-low border border-outline-variant/40 text-on-surface focus:outline-none focus:border-primary cursor-pointer"
                   >
-                    <option value="">Select Nakshatra...</option>
+                    <option value="">{t('members.selectNakshatra', 'Select Nakshatra...')}</option>
                     {STANDARD_NAKSHATRAS.map((n) => (
                       <option key={n} value={n}>{n}</option>
                     ))}
@@ -634,7 +630,7 @@ export default function MembersGovernance({
               <div className="p-3.5 rounded-2xl bg-surface-container/60 border border-outline-variant/30 space-y-2">
                 <label className="font-bold text-on-surface flex items-center gap-1.5">
                   <Mail size={14} className="text-primary" />
-                  <span>Preferred Communication</span>
+                  <span>{t('members.preferredComm', 'Preferred Communication')}</span>
                 </label>
                 <div className="flex flex-wrap gap-2 pt-1">
                   <label
@@ -649,7 +645,7 @@ export default function MembersGovernance({
                       onChange={(e) => setFormData({ ...formData, preferredCommEmail: e.target.checked })}
                       className="rounded text-primary focus:ring-primary accent-primary"
                     />
-                    <span className="truncate">Email</span>
+                    <span className="truncate">{t('members.commEmail', 'Email')}</span>
                   </label>
 
                   <label
@@ -664,7 +660,7 @@ export default function MembersGovernance({
                       onChange={(e) => setFormData({ ...formData, preferredCommWhatsAppSms: e.target.checked })}
                       className="rounded text-primary focus:ring-primary accent-primary"
                     />
-                    <span className="truncate">WhatsApp / SMS</span>
+                    <span className="truncate">{t('members.commWhatsAppSms', 'WhatsApp / SMS')}</span>
                   </label>
                 </div>
               </div>
@@ -673,13 +669,13 @@ export default function MembersGovernance({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1">
                   <div className="flex items-center justify-between">
-                    <label className="font-bold text-on-surface">Membership Type *</label>
+                    <label className="font-bold text-on-surface">{t('members.membershipType', 'Membership Type *')}</label>
                     <button
                       type="button"
                       onClick={() => setIsMastersModalOpen(true)}
                       className="text-[11px] font-bold text-primary hover:underline flex items-center gap-0.5 cursor-pointer"
                     >
-                      + Manage / Add
+                      {t('committees.manageAdd', '+ Manage / Add')}
                     </button>
                   </div>
                   <select
@@ -694,13 +690,13 @@ export default function MembersGovernance({
                 </div>
 
                 <div className="space-y-1">
-                  <label className="font-bold text-on-surface">Assign to Committee (Optional)</label>
+                  <label className="font-bold text-on-surface">{t('members.assignCommittee', 'Assign to Committee (Optional)')}</label>
                   <select
                     value={formData.committeeId}
                     onChange={(e) => setFormData({ ...formData, committeeId: e.target.value })}
                     className="w-full p-2.5 rounded-xl bg-surface-container-low border border-outline-variant/40 text-on-surface focus:outline-none focus:border-primary cursor-pointer"
                   >
-                    <option value="">None</option>
+                    <option value="">{t('common.none', 'None')}</option>
                     {committees.map((c) => (
                       <option key={c.id} value={c.id}>{c.name} ({c.code})</option>
                     ))}
@@ -710,18 +706,18 @@ export default function MembersGovernance({
 
               {formData.committeeId && (
                 <div className="space-y-1">
-                  <label className="font-bold text-on-surface">Committee Role</label>
+                  <label className="font-bold text-on-surface">{t('members.committeeRole', 'Committee Role')}</label>
                   <select
                     value={formData.committeeRole}
                     onChange={(e) => setFormData({ ...formData, committeeRole: e.target.value })}
                     className="w-full p-2.5 rounded-xl bg-surface-container-low border border-outline-variant/40 text-on-surface focus:outline-none focus:border-primary cursor-pointer"
                   >
-                    <option value="MEMBER">Executive Member</option>
-                    <option value="CONVENER">Convener / Chairman</option>
-                    <option value="SECRETARY">Secretary</option>
-                    <option value="TREASURER">Treasurer</option>
-                    <option value="TECHNICAL_EXPERT">Technical Expert / Sthapathi</option>
-                    <option value="ADVISOR">Agama Advisor</option>
+                    <option value="MEMBER">{t('members.roleExecutiveMember', 'Executive Member')}</option>
+                    <option value="CONVENER">{t('members.roleConvener', 'Convener / Chairman')}</option>
+                    <option value="SECRETARY">{t('members.roleSecretary', 'Secretary')}</option>
+                    <option value="TREASURER">{t('members.roleTreasurer', 'Treasurer')}</option>
+                    <option value="TECHNICAL_EXPERT">{t('members.roleTechnicalExpert', 'Technical Expert / Sthapathi')}</option>
+                    <option value="ADVISOR">{t('members.roleAgamaAdvisor', 'Agama Advisor')}</option>
                   </select>
                 </div>
               )}
@@ -730,14 +726,14 @@ export default function MembersGovernance({
               <div className="p-3.5 rounded-2xl bg-surface-container/60 border border-outline-variant/30 space-y-2">
                 <label className="font-bold text-on-surface flex items-center gap-1.5">
                   <Building2 size={14} className="text-primary" />
-                  <span>Assign to Temple(s) (Multi-Temple Scope)</span>
+                  <span>{t('members.assignTemples', 'Assign to Temple(s) (Multi-Temple Scope)')}</span>
                 </label>
                 <div className="flex flex-wrap gap-2 pt-1">
-                  {temples.map((t) => {
-                    const isChecked = formData.templeIds.includes(t.id);
+                  {temples.map((tItem) => {
+                    const isChecked = formData.templeIds.includes(tItem.id);
                     return (
                       <label
-                        key={t.id}
+                        key={tItem.id}
                         className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs cursor-pointer transition-all ${isChecked
                           ? 'bg-primary-container/20 border-primary text-primary font-bold shadow-xs'
                           : 'bg-surface-container-low border-outline-variant/40 text-on-surface hover:bg-surface-container'
@@ -746,10 +742,10 @@ export default function MembersGovernance({
                         <input
                           type="checkbox"
                           checked={isChecked}
-                          onChange={() => toggleTempleSelection(t.id)}
+                          onChange={() => toggleTempleSelection(tItem.id)}
                           className="rounded text-primary focus:ring-primary accent-primary"
                         />
-                        <span className="truncate">{t.name}</span>
+                        <span className="truncate">{tItem.name}</span>
                       </label>
                     );
                   })}
@@ -758,7 +754,7 @@ export default function MembersGovernance({
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="font-bold text-on-surface">Valid From *</label>
+                  <label className="font-bold text-on-surface">{t('members.validFrom', 'Valid From *')}</label>
                   <input
                     type="date"
                     required
@@ -768,7 +764,7 @@ export default function MembersGovernance({
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="font-bold text-on-surface">Valid Until (Optional)</label>
+                  <label className="font-bold text-on-surface">{t('members.validUntil', 'Valid Until (Optional)')}</label>
                   <input
                     type="date"
                     value={formData.validUntil}
@@ -784,7 +780,7 @@ export default function MembersGovernance({
                   onClick={() => setIsAddModalOpen(false)}
                   className="px-4 py-2.5 rounded-xl border border-outline-variant/40 text-on-surface font-bold hover:bg-surface-container cursor-pointer transition-colors"
                 >
-                  Cancel
+                  {t('common.cancel', 'Cancel')}
                 </button>
                 <button
                   type="submit"
@@ -792,11 +788,11 @@ export default function MembersGovernance({
                   className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-on-primary font-bold shadow-sacred hover:bg-primary/90 disabled:opacity-50 cursor-pointer transition-all active:scale-95"
                 >
                   {isSubmitting ? (
-                    <span>Registering...</span>
+                    <span>{t('members.registering', 'Registering...')}</span>
                   ) : (
                     <>
                       <UserPlus size={16} />
-                      <span>Register Member</span>
+                      <span>{t('members.registerMember', 'Register Member')}</span>
                     </>
                   )}
                 </button>
