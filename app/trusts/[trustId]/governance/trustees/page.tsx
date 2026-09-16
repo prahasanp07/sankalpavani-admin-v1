@@ -337,14 +337,14 @@ export default function TrusteesManagementPage() {
             {/* Search and Filters */}
             <div className="flex flex-wrap items-center gap-3">
               <div className="relative min-w-[220px]">
-                <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant" />
                 <input
                   type="text"
                   placeholder="Search by name, designation, resolution..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2 rounded-xl bg-surface-container-low border border-outline-variant/40 text-xs text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:border-primary"
+                  className="w-full pl-3.5 pr-9 py-2 rounded-xl bg-surface-container-low border border-outline-variant/40 text-xs text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:border-primary"
                 />
+                <Search size={15} className="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none" />
               </div>
 
               <select

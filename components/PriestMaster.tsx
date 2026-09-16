@@ -14,6 +14,7 @@ import {
   Sparkles
 } from 'lucide-react';
 import RequirePermission from './RequirePermission';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface Archaka {
   id: string;
@@ -39,6 +40,28 @@ const DEFAULT_PRIESTS: Archaka[] = [
 ];
 
 export default function PriestMaster({ onBack }: PriestMasterProps) {
+  const { t } = useLanguage();
+
+  const getRoleLabel = (role: string) => {
+    switch (role) {
+      case 'Chief Archaka': return t('priestMaster.roleChief', 'Chief Archaka');
+      case 'Senior Archaka': return t('priestMaster.roleSenior', 'Senior Archaka');
+      case 'Archaka': return t('priestMaster.roleArchaka', 'Archaka');
+      case 'Rigveda specialist': return t('priestMaster.roleRigveda', 'Rigveda specialist');
+      case 'All': return t('priestMaster.filterAll', 'All');
+      default: return role;
+    }
+  };
+
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case 'Active': return t('priestMaster.statusActive', 'Active');
+      case 'On Leave': return t('priestMaster.statusOnLeave', 'On Leave');
+      case 'Duty-Assign': return t('priestMaster.statusDutyAssign', 'Duty-Assign');
+      default: return status;
+    }
+  };
+
   const [priests, setPriests] = useState<Archaka[]>(() => {
     if (typeof window !== 'undefined') {
       const cached = localStorage.getItem('sankalpvani_priests');
@@ -216,25 +239,25 @@ export default function PriestMaster({ onBack }: PriestMasterProps) {
           </button>
           <div>
             <div className="flex items-center gap-1.5 text-xs font-bold text-primary tracking-wider uppercase mb-0.5">
-              <span>Masters</span>
+              <span>{t('priestMaster.breadcrumbMasters', 'Masters')}</span>
               <ChevronRight size={12} className="text-on-surface-variant" />
-              <span>Archakas Registry</span>
+              <span>{t('priestMaster.breadcrumbArchakas', 'Archakas Registry')}</span>
             </div>
-            <h2 className="font-serif text-3xl font-semibold text-primary">Archakas Registry</h2>
+            <h2 className="font-serif text-3xl font-semibold text-primary">{t('priestMaster.title', 'Archakas Registry')}</h2>
           </div>
         </div>
 
         <RequirePermission 
           permission="MANAGE_PRIESTS" 
           showLockedUI={true} 
-          lockedMessage="Registration Capability Locked"
+          lockedMessage={t('priestMaster.lockedMessage', 'Registration Capability Locked')}
         >
           <button
             onClick={() => setShowAddForm(!showAddForm)}
             className="bg-primary hover:bg-on-primary-container text-on-primary text-sm font-bold py-2.5 px-4 rounded-xl flex items-center gap-2 shadow-sm transition-all duration-200 active:scale-95 cursor-pointer"
           >
             <Plus size={16} />
-            <span>{showAddForm ? 'Close Registration Form' : 'Register New Archaka'}</span>
+            <span>{showAddForm ? t('priestMaster.closeForm', 'Close Registration Form') : t('priestMaster.registerNewArchaka', 'Register New Archaka')}</span>
           </button>
         </RequirePermission>
       </div>
@@ -244,16 +267,16 @@ export default function PriestMaster({ onBack }: PriestMasterProps) {
         <form onSubmit={handleAddPriest} className="bg-surface-container rounded-2xl p-6 border border-outline-variant/30 shadow-sm space-y-4 animate-[scaleIn_0.15s_ease-out]">
           <h3 className="font-serif text-xl font-bold text-primary flex items-center gap-2">
             <Sparkles size={18} className="text-primary" />
-            New Archaka Registration
+            {t('priestMaster.newProfileTitle', 'New Archaka Registration')}
           </h3>
 
           <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
             <div className="md:col-span-2">
-              <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1">Archaka Full Name *</label>
+              <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1">{t('priestMaster.fullName', 'Archaka Full Name')} *</label>
               <input
                 type="text"
                 required
-                placeholder="e.g. Madhava Dikshidar"
+                placeholder={t('priestMaster.namePlaceholder', 'e.g. Madhava Dikshidar')}
                 value={newPriest.name}
                 onChange={(e) => setNewPriest({...newPriest, name: e.target.value})}
                 className={`w-full px-3.5 py-2.5 bg-white border rounded-xl text-sm focus:outline-none focus:border-primary ${
@@ -263,28 +286,28 @@ export default function PriestMaster({ onBack }: PriestMasterProps) {
                 }`}
               />
               {newPriest.name.trim() && priests.some(p => p.name.trim().toLowerCase() === newPriest.name.trim().toLowerCase()) && (
-                <p className="text-[11px] text-error font-semibold mt-1">An Archaka with this name already exists.</p>
+                <p className="text-[11px] text-error font-semibold mt-1">{t('priestMaster.alreadyExists', 'An Archaka with this name already exists.')}</p>
               )}
             </div>
 
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1">Official Role</label>
+              <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1">{t('priestMaster.designation', 'Official Role')}</label>
               <select
                 value={newPriest.role}
                 onChange={(e) => setNewPriest({...newPriest, role: e.target.value})}
                 className="w-full px-3.5 py-2.5 bg-white border border-outline rounded-xl text-sm focus:outline-none focus:border-primary"
               >
-                <option value="Chief Archaka">Chief Archaka</option>
-                <option value="Senior Archaka">Senior Archaka</option>
-                <option value="Archaka">Archaka</option>
+                <option value="Chief Archaka">{getRoleLabel('Chief Archaka')}</option>
+                <option value="Senior Archaka">{getRoleLabel('Senior Archaka')}</option>
+                <option value="Archaka">{getRoleLabel('Archaka')}</option>
               </select>
             </div>
 
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1">Contact Mobile</label>
+              <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1">{t('priestMaster.mobile', 'Contact Mobile')}</label>
               <input
                 type="text"
-                placeholder="+91 XXXXX XXXXX"
+                placeholder={t('priestMaster.mobilePlaceholder', '+91 XXXXX XXXXX')}
                 value={newPriest.mobile}
                 onChange={(e) => setNewPriest({...newPriest, mobile: e.target.value})}
                 className="w-full px-3.5 py-2.5 bg-white border border-outline rounded-xl text-sm focus:outline-none focus:border-primary"
@@ -292,10 +315,10 @@ export default function PriestMaster({ onBack }: PriestMasterProps) {
             </div>
 
             <div className="md:col-span-2">
-              <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1">Ritual Specializations</label>
+              <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1">{t('priestMaster.specialization', 'Ritual Specializations')}</label>
               <input
                 type="text"
-                placeholder="e.g. Homam rituals, Alankara expert"
+                placeholder={t('priestMaster.specializationPlaceholder', 'e.g. Homam rituals, Alankara expert')}
                 value={newPriest.specialization}
                 onChange={(e) => setNewPriest({...newPriest, specialization: e.target.value})}
                 className="w-full px-3.5 py-2.5 bg-white border border-outline rounded-xl text-sm focus:outline-none focus:border-primary"
@@ -310,7 +333,7 @@ export default function PriestMaster({ onBack }: PriestMasterProps) {
               onClick={() => handleCreatePriest(false)}
               className="px-4 py-2.5 bg-surface-container-low hover:bg-primary-container/10 border border-outline-variant/40 text-on-surface-variant hover:text-primary text-xs font-bold rounded-xl shadow-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Save as Draft
+              {t('priestMaster.saveDraft', 'Save as Draft')}
             </button>
             <button
               type="button"
@@ -318,7 +341,7 @@ export default function PriestMaster({ onBack }: PriestMasterProps) {
               onClick={() => handleCreatePriest(true)}
               className="px-5 py-2.5 bg-primary hover:bg-on-primary-container text-on-primary text-xs font-bold rounded-xl shadow-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Save & Publish
+              {t('priestMaster.savePublish', 'Save & Publish')}
             </button>
           </div>
         </form>
@@ -327,14 +350,14 @@ export default function PriestMaster({ onBack }: PriestMasterProps) {
       {/* Search & Filter bar */}
       <div className="bg-surface-container-low p-4 rounded-2xl border border-outline-variant/30 flex flex-col md:flex-row gap-4 items-center justify-between shadow-sm">
         <div className="relative w-full md:max-w-xs">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-on-surface-variant" size={16} />
           <input
             type="text"
-            placeholder="Search name or specialty..."
+            placeholder={t('priestMaster.searchPlaceholder', 'Search name or specialty...')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 bg-white/75 border border-outline rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all"
+            className="w-full pl-4 pr-10 py-2 bg-white/75 border border-outline rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all"
           />
+          <Search className="absolute right-3.5 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none" size={16} />
         </div>
 
         {/* Custom tabs based styling */}
@@ -349,7 +372,7 @@ export default function PriestMaster({ onBack }: PriestMasterProps) {
                   : 'text-on-surface-variant hover:text-primary hover:bg-primary-container/5'
               }`}
             >
-              {role}
+              {getRoleLabel(role)}
             </button>
           ))}
         </div>
@@ -361,19 +384,19 @@ export default function PriestMaster({ onBack }: PriestMasterProps) {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-surface-container-low border-b divider-gold text-[11px] font-bold text-on-surface-variant uppercase tracking-wider">
-                <th className="py-4 px-6">Archaka / Acharya</th>
-                <th className="py-4 px-6">Official Role</th>
-                <th className="py-4 px-6">Specialized Rituals</th>
-                <th className="py-4 px-6">Contact Details</th>
-                <th className="py-4 px-6 text-center">Duty Status</th>
-                <th className="py-4 px-6 text-center">Actions</th>
+                <th className="py-4 px-6">{t('priestMaster.colProfile', 'Archaka / Acharya')}</th>
+                <th className="py-4 px-6">{t('priestMaster.colRole', 'Official Role')}</th>
+                <th className="py-4 px-6">{t('priestMaster.colSpecialization', 'Specialized Rituals')}</th>
+                <th className="py-4 px-6">{t('priestMaster.colTradition', 'Contact Details')}</th>
+                <th className="py-4 px-6 text-center">{t('priestMaster.colStatus', 'Duty Status')}</th>
+                <th className="py-4 px-6 text-center">{t('priestMaster.colActions', 'Actions')}</th>
               </tr>
             </thead>
             <tbody className="text-sm font-medium text-on-surface divide-y divide-outline-variant/10">
               {filteredPriests.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="text-center py-12 text-on-surface-variant font-sans text-sm">
-                    No active archakas matching your selected filters.
+                    {t('priestMaster.noArchakas', 'No active archakas matching your selected filters.')}
                   </td>
                 </tr>
               ) : (
@@ -394,7 +417,7 @@ export default function PriestMaster({ onBack }: PriestMasterProps) {
                     </td>
                     <td className="py-4 px-6">
                       <span className="px-2.5 py-1 bg-surface-container-high border border-outline-variant/30 text-on-surface-variant text-xs font-bold rounded-lg">
-                        {p.role}
+                        {getRoleLabel(p.role)}
                       </span>
                     </td>
                     <td className="py-4 px-6 text-on-surface-variant text-xs font-semibold leading-relaxed max-w-xs truncate">
@@ -419,11 +442,11 @@ export default function PriestMaster({ onBack }: PriestMasterProps) {
                               : 'bg-amber-50 text-amber-700 border-amber-200'
                           }`}
                         >
-                          {p.status}
+                          {getStatusLabel(p.status)}
                         </button>
                         {p.isDraft && (
                           <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/10 text-amber-700 border border-amber-500/20">
-                            Draft
+                            {t('priestMaster.statusDraft', 'Draft')}
                           </span>
                         )}
                       </div>
@@ -436,12 +459,14 @@ export default function PriestMaster({ onBack }: PriestMasterProps) {
                             setShowEditModal(true);
                           }}
                           className="p-1.5 hover:bg-primary-container/10 text-primary rounded-lg transition-colors cursor-pointer"
+                          title={t('priestMaster.edit', 'Edit')}
                         >
                           <Edit size={14} />
                         </button>
                         <button 
                           onClick={() => handleDeletePriest(p.id)}
                           className="p-1.5 hover:bg-error-container text-error rounded-lg transition-colors cursor-pointer"
+                          title={t('priestMaster.delete', 'Delete')}
                         >
                           <Trash2 size={14} />
                         </button>
@@ -473,15 +498,15 @@ export default function PriestMaster({ onBack }: PriestMasterProps) {
               <X size={18} />
             </button>
 
-            <h3 className="font-serif text-2xl text-primary font-bold mb-4">Edit Archaka details</h3>
+            <h3 className="font-serif text-2xl text-primary font-bold mb-4">{t('priestMaster.editModalTitle', 'Edit Archaka details')}</h3>
 
             <form onSubmit={handleSaveEditPriest} className="space-y-4">
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1">Archaka Full Name *</label>
+                <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1">{t('priestMaster.fullName', 'Archaka Full Name')} *</label>
                 <input
                   type="text"
                   required
-                  placeholder="e.g. Ganesha Dikshidar"
+                  placeholder={t('priestMaster.namePlaceholder', 'e.g. Ganesha Dikshidar')}
                   value={editingPriest.name}
                   onChange={(e) => setEditingPriest({...editingPriest, name: e.target.value})}
                   className="w-full px-3.5 py-2.5 bg-surface-container-low border border-outline rounded-xl text-sm focus:outline-none focus:border-primary"
@@ -490,24 +515,24 @@ export default function PriestMaster({ onBack }: PriestMasterProps) {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1">Official Role</label>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1">{t('priestMaster.designation', 'Official Role')}</label>
                   <select
                     value={editingPriest.role}
                     onChange={(e) => setEditingPriest({...editingPriest, role: e.target.value})}
                     className="w-full px-3.5 py-2.5 bg-surface-container-low border border-outline rounded-xl text-sm focus:outline-none"
                   >
-                    <option value="Chief Archaka">Chief Archaka</option>
-                    <option value="Senior Archaka">Senior Archaka</option>
-                    <option value="Archaka">Archaka</option>
-                    <option value="Rigveda specialist">Rigveda specialist</option>
+                    <option value="Chief Archaka">{getRoleLabel('Chief Archaka')}</option>
+                    <option value="Senior Archaka">{getRoleLabel('Senior Archaka')}</option>
+                    <option value="Archaka">{getRoleLabel('Archaka')}</option>
+                    <option value="Rigveda specialist">{getRoleLabel('Rigveda specialist')}</option>
                   </select>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1">Contact Mobile</label>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1">{t('priestMaster.mobile', 'Contact Mobile')}</label>
                   <input
                     type="text"
-                    placeholder="+91 XXXXX XXXXX"
+                    placeholder={t('priestMaster.mobilePlaceholder', '+91 XXXXX XXXXX')}
                     value={editingPriest.mobile}
                     onChange={(e) => setEditingPriest({...editingPriest, mobile: e.target.value})}
                     className="w-full px-3.5 py-2.5 bg-surface-container-low border border-outline rounded-xl text-sm focus:outline-none"
@@ -516,10 +541,10 @@ export default function PriestMaster({ onBack }: PriestMasterProps) {
               </div>
 
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1">Ritual Specializations</label>
+                <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1">{t('priestMaster.specialization', 'Ritual Specializations')}</label>
                 <input
                   type="text"
-                  placeholder="e.g. Homam rituals, Alankara expert"
+                  placeholder={t('priestMaster.specializationPlaceholder', 'e.g. Homam rituals, Alankara expert')}
                   value={editingPriest.specialization}
                   onChange={(e) => setEditingPriest({...editingPriest, specialization: e.target.value})}
                   className="w-full px-3.5 py-2.5 bg-surface-container-low border border-outline rounded-xl text-sm focus:outline-none"
@@ -532,13 +557,13 @@ export default function PriestMaster({ onBack }: PriestMasterProps) {
                   onClick={() => setShowEditModal(false)}
                   className="px-4 py-2 border border-outline-variant/60 hover:bg-surface-container-low text-on-surface-variant rounded-xl text-xs font-bold cursor-pointer"
                 >
-                  Cancel
+                  {t('common.cancel', 'Cancel')}
                 </button>
                 <button
                   type="submit"
                   className="px-5 py-2 bg-primary hover:bg-on-primary-container text-on-primary rounded-xl text-xs font-bold shadow-sm cursor-pointer"
                 >
-                  Save Changes
+                  {t('priestMaster.saveChanges', 'Save Changes')}
                 </button>
               </div>
             </form>

@@ -661,9 +661,9 @@ export default function DashboardPortal({ onNavigate }: DashboardPortalProps) {
       )}
 
       {/* Welcome Section Banner Card */}
-      <div className="border border-dashed border-outline-variant/70 rounded-[24px] p-4 bg-surface-container-lowest flex flex-col md:flex-row items-stretch gap-6 shadow-sm">
-        {/* Banner image covering roughly 3/4ths of the container on md+ screens */}
-        <div className="relative w-full md:w-5/6 h-64 md:h-56 rounded-2xl overflow-hidden shadow-inner shrink-0 bg-surface-container-low/40 flex items-center justify-center">
+      <div className="border border-dashed border-outline-variant/70 rounded-[24px] p-4 bg-surface-container-lowest flex flex-col md:flex-row items-stretch gap-6 shadow-sm overflow-hidden">
+        {/* Banner image covering the majority of the container on md+ screens */}
+        <div className="relative flex-1 min-w-0 h-56 md:h-56 rounded-2xl overflow-hidden shadow-inner bg-surface-container-low/40 flex items-center justify-center">
           {/* Crisp, original image covering the container */}
           <img
             src={templePhoto}
@@ -675,11 +675,15 @@ export default function DashboardPortal({ onNavigate }: DashboardPortalProps) {
         </div>
 
         {/* Welcome Text on the right side */}
-        <div className="w-full md:w-1/4 flex flex-col justify-center py-2">
-          <h2 className="font-serif text-xl font-bold text-primary tracking-tight">
+        <div className="w-full md:w-72 lg:w-80 shrink-0 flex flex-col justify-center py-2 pr-2">
+          {/* <div className="flex items-center gap-1.5 text-primary/80 font-medium text-[11px] uppercase tracking-wider mb-1">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span>{t('temple.dailyOperations', 'Daily Operations')}</span>
+          </div> */}
+          <h2 className="font-serif text-xl lg:text-2xl font-bold text-primary tracking-tight break-words">
             {t('temple.namasteAdmin', 'Namaste Admin.')}
           </h2>
-          <p className="font-sans text-xs text-on-surface-variant font-medium mt-1 leading-snug">
+          <p className="font-sans text-xs sm:text-sm text-on-surface-variant font-medium mt-1.5 leading-snug break-words">
             {t('temple.happeningToday', "Here's what's happening today at the Temple.")}
           </p>
         </div>
@@ -1231,9 +1235,6 @@ export default function DashboardPortal({ onNavigate }: DashboardPortalProps) {
                 <div className="flex flex-col md:flex-row gap-3 items-center justify-between pb-1 border-t border-outline-variant/10 pt-4">
                   {/* Search Bar */}
                   <div className="relative w-full md:w-2/5">
-                    <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant/60 text-[18px]">
-                      search
-                    </span>
                     <input
                       type="text"
                       placeholder="Search Devotee / Receipt..."
@@ -1241,8 +1242,11 @@ export default function DashboardPortal({ onNavigate }: DashboardPortalProps) {
                       onChange={(e) => {
                         setSearchTerm(e.target.value);
                       }}
-                      className="pl-9 pr-4 py-2 w-full text-xs font-semibold rounded-xl border border-outline-variant/50 bg-surface-container-low text-on-surface focus:outline-none focus:border-primary transition-all placeholder:text-on-surface-variant/50"
+                      className="pl-4 pr-9 py-2 w-full text-xs font-semibold rounded-xl border border-outline-variant/50 bg-surface-container-low text-on-surface focus:outline-none focus:border-primary transition-all placeholder:text-on-surface-variant/50"
                     />
+                    <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant/60 text-[18px] pointer-events-none">
+                      search
+                    </span>
                   </div>
 
                   {/* Filters Group */}

@@ -453,14 +453,14 @@ export default function DesignationsGovernance({
 
         <div className="flex items-center gap-3">
           <div className="relative min-w-[240px]">
-            <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant" />
             <input
               type="text"
               placeholder={activeTab === 'DESIGNATIONS' ? t('designations.searchPlaceholderCatalog', "Search title name, description...") : t('designations.searchPlaceholderAppointee', "Search appointee, resolution...")}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 rounded-xl bg-surface-container-low border border-outline-variant/40 text-xs text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:border-primary"
+              className="w-full pl-3.5 pr-9 py-2 rounded-xl bg-surface-container-low border border-outline-variant/40 text-xs text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:border-primary"
             />
+            <Search size={15} className="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none" />
           </div>
 
           {activeTab === 'DESIGNATIONS' && (
@@ -487,9 +487,9 @@ export default function DesignationsGovernance({
             >
               <div className="space-y-2">
                 <div className="flex items-center justify-between gap-2">
-                  <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-primary px-2 py-0.5 rounded bg-primary/10">
+                  {/* <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-primary px-2 py-0.5 rounded bg-primary/10">
                     {d.scopeType === 'TRUST' ? t('designations.scopeTrust', 'Trustee') : `${t('designations.scopeTemple', 'Temple')}: ${d.scopeName}`}
-                  </span>
+                  </span> */}
                   <span className="text-[10px] font-bold text-emerald-700 bg-emerald-500/10 px-2 py-0.5 rounded">
                     {d.activeAppointeesCount} {t('designations.appointees', 'Appointees')}
                   </span>
@@ -690,14 +690,14 @@ export default function DesignationsGovernance({
           <div>
             <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">{t('designations.kpiActiveOfficeBearers', 'Active Office Bearers')}</p>
             <h3 className="font-serif text-2xl font-bold text-on-surface mt-1">{activeOfficeBearersCount} {t('designations.appointees', 'Appointees')}</h3>
-            <p className="text-[10px] text-amber-700 font-bold mt-0.5">{t('designations.boardSubtitle', 'Term-Bound Appointees')}</p>
+            {/* <p className="text-[10px] text-amber-700 font-bold mt-0.5">{t('designations.boardSubtitle', 'Term-Bound Appointees')}</p> */}
           </div>
           <div className="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-700 flex items-center justify-center">
             <Users size={24} />
           </div>
         </div>
 
-        <div className="p-5 rounded-2xl bg-surface-container/60 border border-outline-variant/30 shadow-xs flex items-center justify-between">
+        {/* <div className="p-5 rounded-2xl bg-surface-container/60 border border-outline-variant/30 shadow-xs flex items-center justify-between">
           <div>
             <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">{t('designations.kpiRoleBoundTitles', 'Role-Bound Titles')}</p>
             <h3 className="font-serif text-2xl font-bold text-on-surface mt-1">{titlesWithRolesCount} {t('designations.kpiLinked', 'Linked')}</h3>
@@ -706,7 +706,7 @@ export default function DesignationsGovernance({
           <div className="w-12 h-12 rounded-xl bg-purple-500/10 text-purple-700 flex items-center justify-center">
             <Link size={24} />
           </div>
-        </div>
+        </div> */}
 
         {/* <div className="p-5 rounded-2xl bg-surface-container/60 border border-outline-variant/30 shadow-xs flex items-center justify-between">
           <div>

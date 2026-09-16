@@ -19,7 +19,9 @@
     "none": "ఏదీ లేదు",
     "status": "స్థితి",
     "previous": "మునుపటి",
-    "next": "తదుపరి"
+    "next": "తదుపరి",
+    "brandName": "సంకల్పవాణి",
+    "role": "పాత్ర"
   },
   "header": {
     "operatingZone": "కార్యనిర్వాహక జోన్ & పరిధి",
@@ -30,7 +32,14 @@
     "liveClock": "ప్రస్తుత సమయం",
     "selectLanguage": "భాషను ఎంచుకోండి",
     "activeDesignation": "క్రియాశీల హోదా",
-    "apex": "శిఖర"
+    "apex": "శిఖర",
+    "viewing": "వీక్షణ",
+    "individualSanctums": "వ్యక్తిగత ఆలయ గర్భాలయాలు",
+    "superAdminAllGranted": "సూపర్ అడ్మిన్ (అన్ని అధికారాలు)",
+    "dynamicCapabilities": "క్రియాశీల సామర్థ్యాలు",
+    "elevateSuperAdmin": "సూపర్ అడ్మిన్‌గా పెంచండి",
+    "systemSettings": "సిస్టమ్ సెట్టింగ్‌లు",
+    "rolesRbacManager": "పాత్రలు & అనుమతుల మేనేజర్"
   },
   "sidebar": {
     "brandSubtitle": "పవిత్ర ట్రస్ట్ పరిపాలన",
@@ -52,7 +61,18 @@
     "finance": "ఆర్థిక లెక్కలు",
     "settings": "పరిపాలన సెట్టింగ్‌లు",
     "logout": "లాగ్ అవుట్",
-    "permissions": "అనుమతులు"
+    "permissions": "అనుమతులు",
+    "templeDashboard": "ఆలయ డాష్‌బోర్డ్",
+    "masters": "మాస్టర్స్",
+    "devoteeBookings": "భక్తుల బుకింగ్స్",
+    "transactions": "సేవా లెక్కల పుస్తకం",
+    "prasadam": "ప్రసాద పంపిణీ",
+    "systemOverview": "ఆలయ నివేదికలు",
+    "notifications": "ఆలయ నోటిఫికేషన్‌లు",
+    "trustControlCenter": "ట్రస్ట్ నియంత్రణ కేంద్రం",
+    "trustScope": "ట్రస్ట్ పరిధి",
+    "templeScope": "ఆలయ పరిధి",
+    "switchWorkspace": "వర్క్‌స్పేస్ మార్చండి"
   },
   "dashboard": {
     "kpiTemples": "దేవాలయాలు",
@@ -311,5 +331,28 @@
     "monthGrid": "నెల గ్రిడ్",
     "agendaList": "ఎజెండా జాబితా",
     "addBooking": "బుకింగ్ జోడించండి"
+  },
+  "pageTitles": {
+    "trustDashboard": "ట్రస్ట్ పరిపాలనా డాష్‌బోర్డ్ & పోర్ట్‌ఫోలియో",
+    "templeDashboard": "ఆలయ పరిపాలనా డాష్‌బోర్డ్",
+    "designations": "హోదాలు & బిరుదుల నిర్వహణ",
+    "roles": "పాత్రలు & ప్రవేశ నియంత్రణ",
+    "trustees": "ట్రస్టీలు & నిర్వహణ బోర్డు",
+    "committees": "కమిటీలు & ఉప కమిటీల నిర్వహణ",
+    "members": "సభ్యులు, సిబ్బంది & కమిటీ నియామకాలు",
+    "addTemple": "కొత్త ఆలయ నమోదు",
+    "mastersHub": "నిర్మాణాత్మక మాస్టర్స్ హబ్",
+    "orgChart": "దేవస్థాన సంస్థాగత చార్ట్ & రిపోర్టింగ్",
+    "archakaMaster": "ఆచార్యులు & అర్చకుల రిజిస్ట్రీ",
+    "sevaMaster": "సేవా సమర్పణల అమరిక",
+    "templeInfo": "ఆలయ ప్రొఫైల్ & ముఖ్య సమయాలు",
+    "templeFacilities": "సౌకర్యాలు & అతిథి సదుపాయాలు",
+    "scheduling": "అర్చకుల డ్యూటీ రోస్టర్ & షిఫ్ట్ షెడ్యూల్",
+    "transactions": "సేవా లెక్కలు & దర్శన రసీదులు",
+    "prasadam": "రిమోట్ ప్రసాద రవాణా & పంపిణీ",
+    "systemOverview": "సిస్టమ్ పనితీరు & భద్రతా లాగ్‌లు",
+    "calendar": "భక్తుల బుకింగ్ క్యాలెండర్",
+    "settings": "ఆలయ నోటిఫికేషన్‌లు & కాన్ఫిగరేషన్",
+    "default": "ఆలయ పరిపాలనా పోర్టల్"
   }
 }

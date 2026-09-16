@@ -147,8 +147,8 @@ export default function TrustDashboardPortfolio({
         {/* Card 1: Temples */}
         <div className="p-5 rounded-2xl bg-surface-container/60 border border-outline-variant/30 shadow-xs flex items-center justify-between transition-transform hover:-translate-y-0.5">
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">{t('dashboard.kpiTemples', 'Temples')}</p>
-            <h3 className="font-serif text-2xl font-bold text-on-surface mt-1">{temples.length} {t('dashboard.kpiRegistered', 'Registered')}</h3>
+            <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">{t('dashboard.kpiRegistered', 'Registered')} {t('dashboard.kpiTemples', 'Temples')}</p>
+            <h3 className="font-serif text-2xl font-bold text-on-surface mt-1">{temples.length} </h3>
             <p className="text-[10px] text-emerald-700 font-bold mt-0.5">{activeCount} {t('dashboard.kpiActiveOperational', 'Active / Operational')}</p>
           </div>
           <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
@@ -171,7 +171,7 @@ export default function TrustDashboardPortfolio({
         {/* Card 3: Today's Collections */}
         <div className="p-5 rounded-2xl bg-surface-container/60 border border-outline-variant/30 shadow-xs flex items-center justify-between transition-transform hover:-translate-y-0.5">
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">{t('dashboard.kpiTodaysCollections', "Today's Collections")}</p>
+            <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">{t('dashboard.kpiTodaysCollections', "Today's Offerings & Donations")}</p>
             <h3 className="font-serif text-2xl font-bold text-on-surface mt-1">₹ 8,25,000</h3>
             <p className="text-[10px] text-primary font-bold mt-0.5">{t('dashboard.kpiConsolidatedLedger', 'Consolidated Ledger')}</p>
           </div>
@@ -198,21 +198,21 @@ export default function TrustDashboardPortfolio({
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-outline-variant/20 pb-4">
           <div>
             <h2 className="font-serif text-xl font-bold text-primary flex items-center gap-2">
-              <Landmark size={20} /> {t('dashboard.templesGovernedBy', 'Temples Governed by')} {trustName}
+              <Landmark size={20} /> {trustName} {t('dashboard.templesGovernedBy', 'Governed Temples')}
             </h2>
           </div>
 
           {/* Search and Filters */}
           <div className="flex flex-wrap items-center gap-3">
             <div className="relative min-w-[220px]">
-              <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant" />
               <input
                 type="text"
                 placeholder={t('dashboard.searchTemplesPlaceholder', 'Search temples...')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-3 py-2 rounded-xl bg-surface-container-low border border-outline-variant/40 text-xs text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:border-primary transition-colors"
+                className="w-full pl-3.5 pr-9 py-2 rounded-xl bg-surface-container-low border border-outline-variant/40 text-xs text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:border-primary transition-colors"
               />
+              <Search size={15} className="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none" />
             </div>
 
             <div className="flex items-center gap-1 bg-surface-container-low p-1 rounded-xl border border-outline-variant/30 text-[11px] font-bold">
@@ -228,10 +228,10 @@ export default function TrustDashboardPortfolio({
                   {st === 'ALL'
                     ? t('dashboard.filterAll', 'All')
                     : st === 'ACTIVE'
-                    ? t('dashboard.filterActive', 'Active')
-                    : st === 'MAINTENANCE'
-                    ? t('dashboard.filterMaintenance', 'Maintenance')
-                    : t('dashboard.filterSuspended', 'Suspended')}
+                      ? t('dashboard.filterActive', 'Active')
+                      : st === 'MAINTENANCE'
+                        ? t('dashboard.filterMaintenance', 'Maintenance')
+                        : t('dashboard.filterSuspended', 'Suspended')}
                 </button>
               ))}
             </div>
@@ -315,7 +315,7 @@ export default function TrustDashboardPortfolio({
 
                   <div className="grid grid-cols-3 gap-1.5 mt-4 pt-3 border-t border-outline-variant/30 text-center">
                     <div className="bg-surface-container/60 p-2 rounded-xl flex flex-col justify-center">
-                      <p className="text-[9px] font-bold text-on-surface-variant uppercase tracking-tight">{t('dashboard.cardCollections', "Today's Collections")}</p>
+                      <p className="text-[9px] font-bold text-on-surface-variant uppercase tracking-tight">{t('dashboard.cardCollections', "Today's Offerings / Donations")}</p>
                       <p className="text-xs font-bold text-amber-700 dark:text-amber-500 mt-0.5">{temple.todayCollections || '₹ 4,80,000'}</p>
                     </div>
                     <div className="bg-surface-container/60 p-2 rounded-xl flex flex-col justify-center">

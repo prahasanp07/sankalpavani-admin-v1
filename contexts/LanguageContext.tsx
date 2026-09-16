@@ -19,9 +19,9 @@ export interface LanguageOption {
 export const SUPPORTED_LANGUAGES: LanguageOption[] = [
   { code: 'en', label: 'English', nativeName: 'English', shortCode: 'EN' },
   { code: 'kn', label: 'Kannada', nativeName: 'ಕನ್ನಡ', shortCode: 'KN' },
-  { code: 'te', label: 'Telugu', nativeName: 'తెలుగు', shortCode: 'TE' },
-  { code: 'ta', label: 'Tamil', nativeName: 'தமிழ்', shortCode: 'TA' },
-  { code: 'sa', label: 'Sanskrit', nativeName: 'संस्कृतम्', shortCode: 'SA' }
+  // { code: 'te', label: 'Telugu', nativeName: 'తెలుగు', shortCode: 'TE' },
+  // { code: 'ta', label: 'Tamil', nativeName: 'தமிழ்', shortCode: 'TA' },
+  // { code: 'sa', label: 'Sanskrit', nativeName: 'संस्कृतम्', shortCode: 'SA' }
 ];
 
 interface LanguageContextType {

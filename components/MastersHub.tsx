@@ -3,6 +3,7 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { Database, Home, BookOpen, Settings, Users, Calendar, Sparkles } from 'lucide-react';
+import { useLanguage } from '../contexts/LanguageContext';
 import TempleInfo from './TempleInfo';
 import SevaMaster from './SevaMaster';
 import TempleFacilities from './TempleFacilities';
@@ -27,13 +28,15 @@ export default function MastersHub({
   onSaveSuccess,
   onBack
 }: MastersHubProps) {
+  const { t } = useLanguage();
+
   const tabs = [
-    { id: 'temple_info', title: 'General Details', icon: 'temple_hindu' },
-    { id: 'seva_master', title: 'Seva Offerings', icon: 'menu_book' },
-    { id: 'temple_facilities', title: 'Guest Facilities', icon: 'room_service' },
-    { id: 'archaka_master', title: 'Archakas Registry', icon: 'account_box' },
+    { id: 'temple_info', title: t('masters.tabGeneral', 'General Details'), icon: 'temple_hindu' },
+    { id: 'seva_master', title: t('masters.tabSevas', 'Seva Offerings'), icon: 'menu_book' },
+    { id: 'temple_facilities', title: t('masters.tabFacilities', 'Guest Facilities'), icon: 'room_service' },
+    { id: 'archaka_master', title: t('masters.tabArchakas', 'Archakas Registry'), icon: 'account_box' },
     // { id: 'org_chart', title: 'Org Chart & Matrix', icon: 'schema' }, // TEMPORARILY COMMENTED OUT FROM UI
-    { id: 'scheduling', title: 'Archakas Duty Roster', icon: 'calendar_month' }
+    { id: 'scheduling', title: t('masters.tabScheduling', 'Archakas Duty Roster'), icon: 'calendar_month' }
   ];
 
   const handleBack = onBack || (() => onNavigate('dashboard'));
@@ -45,15 +48,15 @@ export default function MastersHub({
         <div className="max-w-xl">
           <div className="flex items-center gap-2 text-xs font-bold text-primary uppercase tracking-wider mb-1">
             <Database size={14} />
-            <span>{isCreationMode ? 'New Temple Registration' : 'System Masters'}</span>
+            <span>{isCreationMode ? t('masters.newTempleRegistration', 'New Temple Registration') : t('masters.systemMasters', 'System Masters')}</span>
           </div>
           <h2 className="font-serif text-3xl md:text-4xl text-primary font-semibold tracking-tight">
-            {isCreationMode ? 'Add New Temple' : 'Masters Hub'}
+            {isCreationMode ? t('masters.addNewTemple', 'Add New Temple') : t('masters.mastersHub', 'Masters Hub')}
           </h2>
           <p className="font-sans text-sm text-on-surface-variant font-medium mt-1">
             {isCreationMode
-              ? 'Configure identity, offerings, facilities, and archakas for the new temple branch.'
-              : 'Access and configure vital temple databases, parameters, resources, and scheduling systems.'}
+              ? t('masters.newTempleDesc', 'Configure identity, offerings, facilities, and archakas for the new temple branch.')
+              : t('masters.systemMastersDesc', 'Access and configure vital temple databases, parameters, resources, and scheduling systems.')}
           </p>
         </div>
 
@@ -62,13 +65,13 @@ export default function MastersHub({
           <div className="space-y-1">
             <div className="flex items-center gap-1.5 font-bold text-primary">
               <Sparkles size={14} className="text-primary" />
-              <span>Sankalp Tier 1 (Basic)</span>
+              <span>{t('masters.tier1Basic', 'Sankalp Tier 1 (Basic)')}</span>
               <span className="px-1.5 py-0.5 rounded-full text-[8px] font-bold bg-green-50 text-green-700 border border-green-200">
-                Active
+                {t('masters.active', 'Active')}
               </span>
             </div>
             <div className="text-[10px] text-on-surface-variant font-medium">
-              Renewal: <span className="font-bold text-on-surface">31 Aug 2026</span>
+              {t('masters.renewal', 'Renewal:')} <span className="font-bold text-on-surface">31 Aug 2026</span>
             </div>
           </div>
 
@@ -76,14 +79,14 @@ export default function MastersHub({
 
           <div className="flex sm:flex-col gap-1.5 sm:gap-1 items-center sm:items-start justify-between w-full sm:w-auto pt-2.5 sm:pt-0 border-t sm:border-t-0 border-outline-variant/20">
             <div className="text-[9px] text-on-surface-variant font-semibold">
-              Upgrade to <span className="font-bold text-primary">Package 2</span>
+              {t('masters.upgradeTo', 'Upgrade to')} <span className="font-bold text-primary">{t('masters.package2', 'Package 2')}</span>
             </div>
             <button
               type="button"
               onClick={() => alert('Redirecting to secure subscription payment gateway for Package 2 Upgrade...')}
               className="bg-[#8F4E00] hover:bg-[#7a4300] text-white font-bold text-[10px] px-3 py-1.5 rounded-lg flex items-center gap-1 shadow-sm transition-all hover:scale-105 active:scale-95 cursor-pointer whitespace-nowrap"
             >
-              <span>Upgrade Plan</span>
+              <span>{t('masters.upgradePlan', 'Upgrade Plan')}</span>
             </button>
           </div>
         </div>
