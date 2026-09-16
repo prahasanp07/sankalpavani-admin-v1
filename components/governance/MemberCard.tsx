@@ -13,6 +13,7 @@ import {
   CheckCircle2,
   AlertCircle
 } from 'lucide-react';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 export interface MemberCardData {
   id: string;
@@ -52,6 +53,7 @@ export default function MemberCard({
   onAssignTemple,
   onAssignCommittee
 }: MemberCardProps) {
+  const { t } = useLanguage();
   // Calculate term progress and active/expired status based on current date
   const now = Date.now();
   const startDate = member.termStart ? new Date(member.termStart).getTime() : null;
@@ -71,10 +73,10 @@ export default function MemberCard({
 
     const startYear = new Date(member.termStart!).getFullYear();
     const endYear = new Date(member.termEnd!).getFullYear();
-    termString = `Term: ${startYear}–${endYear}`;
+    termString = `${t('members.term', 'Term')}: ${startYear}–${endYear}`;
   } else if (startDate) {
     const startYear = new Date(member.termStart!).getFullYear();
-    termString = `Term: Since ${startYear}`;
+    termString = `${t('members.term', 'Term')}: Since ${startYear}`;
     percentElapsed = 50;
   }
 
@@ -91,12 +93,12 @@ export default function MemberCard({
           {isCurrentlyActive ? (
             <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 shadow-2xs">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse" />
-              <span>Active</span>
+              <span>{t('common.active', 'Active')}</span>
             </span>
           ) : (
             <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-gray-100 text-gray-700 border border-gray-300">
               <Clock size={10} className="text-gray-500" />
-              <span>{member.status === 'SUSPENDED' ? 'Suspended' : 'Expired'}</span>
+              <span>{member.status === 'SUSPENDED' ? t('dashboard.filterSuspended', 'Suspended') : t('common.expired', 'Expired')}</span>
             </span>
           )}
         </div>
@@ -116,7 +118,7 @@ export default function MemberCard({
             </h4>
             {member.gotra && (
               <p className="text-[11px] text-on-surface-variant font-medium">
-                Gotra: {member.gotra}
+                {t('members.gotra', 'Gotra')}: {member.gotra}
               </p>
             )}
           </div>
@@ -128,10 +130,10 @@ export default function MemberCard({
             <div className="flex items-center justify-between text-[10px] font-bold">
               <span className="text-on-surface-variant flex items-center gap-1">
                 <Calendar size={11} className="text-primary" />
-                <span>Appointment Lifecycle</span>
+                <span>{t('members.appointmentLifecycle', 'Appointment Lifecycle')}</span>
               </span>
               <span className="font-mono text-primary font-bold">
-                {percentElapsed}% Elapsed
+                {percentElapsed}% {t('members.elapsed', 'Elapsed')}
               </span>
             </div>
 
@@ -160,7 +162,7 @@ export default function MemberCard({
               </span>
               {member.termEnd && (
                 <span className="text-[9px] text-on-surface-variant font-mono">
-                  Ends: {new Date(member.termEnd).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' })}
+                  {t('members.ends', 'Ends')}: {new Date(member.termEnd).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' })}
                 </span>
               )}
             </div>
@@ -184,7 +186,7 @@ export default function MemberCard({
           {member.resolutionNo && (
             <div className="flex items-center gap-1.5 font-mono text-[10px] text-amber-900 bg-amber-500/10 px-2 py-0.5 rounded-md border border-amber-500/20">
               <FileText size={11} className="text-amber-700 shrink-0" />
-              <span>Resolution: {member.resolutionNo}</span>
+              <span>{t('members.resolution', 'Resolution')}: {member.resolutionNo}</span>
             </div>
           )}
         </div>
@@ -193,7 +195,7 @@ export default function MemberCard({
         <div className="space-y-1.5 pt-1 border-t border-outline-variant/20">
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant flex items-center gap-1">
-              <Building2 size={11} /> Temple Assignments:
+              <Building2 size={11} /> {t('members.templeAssignments', 'Temple Assignments:')}
             </span>
             {onAssignTemple && (
               <button
@@ -201,7 +203,7 @@ export default function MemberCard({
                 onClick={() => onAssignTemple(member.id)}
                 className="text-[10px] font-bold text-primary hover:underline cursor-pointer"
               >
-                + Assign
+                {t('members.assignBtn', '+ Assign')}
               </button>
             )}
           </div>
@@ -224,7 +226,7 @@ export default function MemberCard({
               ))
             ) : (
               <span className="text-[10px] text-on-surface-variant italic">
-                Trust Umbrella (No localized temple assigned)
+                {t('members.trustUmbrella', 'Trust Umbrella (No localized temple assigned)')}
               </span>
             )}
           </div>
@@ -234,7 +236,7 @@ export default function MemberCard({
         <div className="space-y-1.5 pt-1 border-t border-outline-variant/20">
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant flex items-center gap-1">
-              <Layers size={11} /> Committees:
+              <Layers size={11} /> {t('members.committees', 'Committees:')}
             </span>
             {onAssignCommittee && (
               <button
@@ -242,7 +244,7 @@ export default function MemberCard({
                 onClick={() => onAssignCommittee(member.id)}
                 className="text-[10px] font-bold text-primary hover:underline cursor-pointer"
               >
-                + Add
+                {t('members.addBtn', '+ Add')}
               </button>
             )}
           </div>
@@ -261,7 +263,7 @@ export default function MemberCard({
               ))
             ) : (
               <span className="text-[10px] text-on-surface-variant italic">
-                No committee appointments
+                {t('members.noCommittees', 'No committee appointments')}
               </span>
             )}
           </div>
@@ -277,7 +279,7 @@ export default function MemberCard({
             onClick={() => onEdit(member)}
             className="px-3 py-1 text-xs font-bold text-primary hover:bg-primary/10 rounded-lg transition-colors cursor-pointer"
           >
-            Edit Profile
+            {t('members.editProfile', 'Edit Profile')}
           </button>
         </div>
       )}
