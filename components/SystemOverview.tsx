@@ -15,6 +15,7 @@ import {
   ChevronUp,
   PackageCheck
 } from 'lucide-react';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface RawBooking {
   id: string;
@@ -73,6 +74,7 @@ interface AggregatedRow {
 }
 
 export default function SystemOverview() {
+  const { t } = useLanguage();
   // Filters State
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
@@ -296,9 +298,9 @@ export default function SystemOverview() {
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h2 className="font-serif text-3xl font-semibold text-primary">Administrative Reports & Analytics</h2>
+          <h2 className="font-serif text-3xl font-semibold text-primary">{t('reports.title', 'Administrative Reports & Analytics')}</h2>
           <p className="font-sans text-sm text-on-surface-variant font-medium mt-1">
-            Analyze pilgrim booking volumes, cash collections, and prasadam logistics across custom reporting periods.
+            {t('reports.subtitle', 'Analyze pilgrim booking volumes, cash collections, and prasadam logistics across custom reporting periods.')}
           </p>
         </div>
       </div>
@@ -308,7 +310,7 @@ export default function SystemOverview() {
         <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
           <div className="flex items-center gap-1.5">
             <Calendar size={16} className="text-primary" />
-            <span className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Report Duration:</span>
+            <span className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">{t('reports.duration', 'Report Duration:')}</span>
           </div>
           <input
             type="date"
@@ -317,7 +319,7 @@ export default function SystemOverview() {
             className="px-3 py-1.5 bg-white border border-outline rounded-lg text-xs focus:outline-none focus:border-primary font-mono"
             placeholder="Start Date"
           />
-          <span className="text-xs text-on-surface-variant font-bold">to</span>
+          <span className="text-xs text-on-surface-variant font-bold">{t('reports.to', 'to')}</span>
           <input
             type="date"
             value={endDate}
@@ -330,7 +332,7 @@ export default function SystemOverview() {
               onClick={() => { setStartDate(''); setEndDate(''); }}
               className="text-xs font-bold text-primary hover:underline cursor-pointer"
             >
-              Clear Filters
+              {t('reports.clearFilters', 'Clear Filters')}
             </button>
           )}
         </div>
@@ -340,7 +342,7 @@ export default function SystemOverview() {
           className="w-full md:w-auto bg-primary hover:bg-on-primary-container text-on-primary text-xs font-bold py-2.5 px-4 rounded-xl flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
         >
           <Download size={14} />
-          <span>Export Summary Report</span>
+          <span>{t('reports.exportSummary', 'Export Summary Report')}</span>
         </button>
       </div>
 
@@ -350,7 +352,7 @@ export default function SystemOverview() {
         <div className="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-6 shadow-sacred">
           <div className="flex justify-between items-start mb-4">
             <span className="font-sans text-xs font-bold text-on-surface-variant uppercase tracking-wider">
-              Total Collections
+              {t('reports.totalCollections', 'Total Collections')}
             </span>
             <IndianRupee size={18} className="text-green-600" />
           </div>
@@ -363,12 +365,12 @@ export default function SystemOverview() {
         <div className="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-6 shadow-sacred">
           <div className="flex justify-between items-start mb-4">
             <span className="font-sans text-xs font-bold text-on-surface-variant uppercase tracking-wider">
-              Total Bookings
+              {t('reports.totalBookings', 'Total Bookings')}
             </span>
             <Briefcase size={18} className="text-blue-600" />
           </div>
           <h3 className="font-mono text-3xl font-bold text-on-surface">
-            {totalBookings} tickets
+            {totalBookings} {t('reports.tickets', 'tickets')}
           </h3>
         </div>
 
@@ -376,7 +378,7 @@ export default function SystemOverview() {
         <div className="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-6 shadow-sacred">
           <div className="flex justify-between items-start mb-4">
             <span className="font-sans text-xs font-bold text-on-surface-variant uppercase tracking-wider">
-              Average Ticket Value
+              {t('reports.averageTicketValue', 'Average Ticket Value')}
             </span>
             <Activity size={18} className="text-primary" />
           </div>
@@ -389,7 +391,7 @@ export default function SystemOverview() {
         <div className="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-6 shadow-sacred">
           <div className="flex justify-between items-start mb-4">
             <span className="font-sans text-xs font-bold text-on-surface-variant uppercase tracking-wider">
-              Prasadam Delivery Rate
+              {t('reports.deliveryRate', 'Prasadam Delivery Rate')}
             </span>
             <Layers size={18} className="text-amber-600" />
           </div>
@@ -397,7 +399,7 @@ export default function SystemOverview() {
             {fulfillmentRate}%
           </h3>
           <p className="font-sans text-xs text-on-surface-variant font-semibold mt-1">
-            {packedPrasads + shippedPrasads} of {totalPrasads} parcels packaged
+            {packedPrasads + shippedPrasads} of {totalPrasads} {t('reports.parcelsPackaged', 'parcels packaged')}
           </p>
         </div>
       </div>
@@ -409,7 +411,7 @@ export default function SystemOverview() {
         <div className="bg-white rounded-2xl p-6 border border-outline-variant/30 shadow-sacred">
           <h3 className="font-sans text-base font-bold text-on-surface mb-6 flex items-center gap-2">
             <TrendingUp size={18} className="text-primary" />
-            Seva Revenue Contributions
+            {t('reports.sevaContributions', 'Seva Revenue Contributions')}
           </h3>
 
           <div className="space-y-4">
@@ -433,7 +435,7 @@ export default function SystemOverview() {
         <div className="bg-white rounded-2xl p-6 border border-outline-variant/30 shadow-sacred">
           <h3 className="font-sans text-base font-bold text-on-surface mb-6 flex items-center gap-2">
             <ShieldCheck size={18} className="text-green-600" />
-            Prasadam Fulfillment Pipeline
+            {t('reports.prasadamPipeline', 'Prasadam Fulfillment Pipeline')}
           </h3>
 
           <div className="space-y-6">
@@ -441,7 +443,7 @@ export default function SystemOverview() {
               <div className="flex justify-between text-xs font-bold text-on-surface mb-2">
                 <span className="flex items-center gap-1.5 text-amber-700">
                   <span className="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block"></span>
-                  Pending Packing Labels
+                  {t('reports.pendingLabels', 'Pending Packing Labels')}
                 </span>
                 <span>{pendingPrasads} Packages ({Math.round((pendingPrasads / totalPrasads) * 100)}%)</span>
               </div>
@@ -454,7 +456,7 @@ export default function SystemOverview() {
               <div className="flex justify-between text-xs font-bold text-on-surface mb-2">
                 <span className="flex items-center gap-1.5 text-blue-700">
                   <span className="w-2.5 h-2.5 rounded-full bg-blue-500 inline-block"></span>
-                  Packed & Thermal Labeled
+                  {t('reports.packedLabels', 'Packed & Thermal Labeled')}
                 </span>
                 <span>{packedPrasads} Packages ({Math.round((packedPrasads / totalPrasads) * 100)}%)</span>
               </div>
@@ -467,7 +469,7 @@ export default function SystemOverview() {
               <div className="flex justify-between text-xs font-bold text-on-surface mb-2">
                 <span className="flex items-center gap-1.5 text-green-700">
                   <span className="w-2.5 h-2.5 rounded-full bg-green-500 inline-block"></span>
-                  Shipped via India Post
+                  {t('reports.shippedPost', 'Shipped via India Post')}
                 </span>
                 <span>{shippedPrasads} Packages ({Math.round((shippedPrasads / totalPrasads) * 100)}%)</span>
               </div>
@@ -478,7 +480,7 @@ export default function SystemOverview() {
           </div>
 
           <div className="bg-surface-container-low border border-outline-variant/20 p-4 rounded-xl mt-6">
-            <h4 className="text-xs font-bold text-on-surface mb-1 uppercase tracking-wider">Logistics Status Alert</h4>
+            <h4 className="text-xs font-bold text-on-surface mb-1 uppercase tracking-wider">{t('reports.logisticsAlert', 'Logistics Status Alert')}</h4>
             <p className="text-xs text-on-surface-variant leading-relaxed">
               Prasadam deliveries have reached a <strong>{fulfillmentRate}% fulfillment rate</strong>. Ensure pending packages are labeled and dropped off at the postal branch before midnight.
             </p>
@@ -492,7 +494,7 @@ export default function SystemOverview() {
         {/* Tab switcher headers */}
         <div className="bg-surface-container-low border-b border-outline-variant/20 px-6 py-3 flex flex-col sm:flex-row justify-between items-center gap-4">
           <h3 className="font-sans text-sm font-bold text-on-surface-variant uppercase tracking-wider">
-            Aggregated Ledger Breakdown
+            {t('reports.aggregatedBreakdown', 'Aggregated Ledger Breakdown')}
           </h3>
           <div className="flex p-0.5 bg-white border border-outline-variant/30 rounded-xl gap-1">
             {(['daily', 'seva', 'monthly', 'yearly'] as const).map(tab => (
@@ -504,7 +506,7 @@ export default function SystemOverview() {
                   : 'text-on-surface-variant hover:text-primary'
                   }`}
               >
-                {tab}
+                {t(`reports.${tab}`, tab)}
               </button>
             ))}
           </div>
@@ -519,36 +521,36 @@ export default function SystemOverview() {
                   className="py-4 px-6 cursor-pointer hover:text-primary transition-colors"
                   onClick={() => handleSort('label')}
                 >
-                  {selectedTab === 'daily' ? 'Pooja Date' : selectedTab === 'seva' ? 'Seva offering' : selectedTab === 'monthly' ? 'Month' : 'Year'} {renderSortIndicator('label')}
+                  {selectedTab === 'daily' ? t('reports.poojaDate', 'Pooja Date') : selectedTab === 'seva' ? t('reports.sevaOffering', 'Seva offering') : selectedTab === 'monthly' ? t('reports.month', 'Month') : t('reports.year', 'Year')} {renderSortIndicator('label')}
                 </th>
                 <th
                   className="py-4 px-6 cursor-pointer hover:text-primary transition-colors text-center"
                   onClick={() => handleSort('bookingsCount')}
                 >
-                  Total Bookings {renderSortIndicator('bookingsCount')}
+                  {t('reports.totalBookings', 'Total Bookings')} {renderSortIndicator('bookingsCount')}
                 </th>
                 <th
                   className="py-4 px-6 cursor-pointer hover:text-primary transition-colors"
                   onClick={() => handleSort('settledRevenue')}
                 >
-                  Settled Revenue (₹) {renderSortIndicator('settledRevenue')}
+                  {t('reports.settledRevenue', 'Settled Revenue')} (₹) {renderSortIndicator('settledRevenue')}
                 </th>
 
                 {selectedTab === 'seva' ? (
-                  <th className="py-4 px-6 text-center">Simulated Slot Capacity Util</th>
+                  <th className="py-4 px-6 text-center">{t('reports.simulatedSlotCapacity', 'Simulated Slot Capacity Util')}</th>
                 ) : (
                   <>
                     <th
                       className="py-4 px-6 cursor-pointer hover:text-primary transition-colors"
                       onClick={() => handleSort('pendingAmount')}
                     >
-                      Pending (₹) {renderSortIndicator('pendingAmount')}
+                      {t('reports.pending', 'Pending')} (₹) {renderSortIndicator('pendingAmount')}
                     </th>
                     <th
                       className="py-4 px-6 cursor-pointer hover:text-primary transition-colors"
                       onClick={() => handleSort('refundedAmount')}
                     >
-                      Refunded (₹) {renderSortIndicator('refundedAmount')}
+                      {t('reports.refunded', 'Refunded')} (₹) {renderSortIndicator('refundedAmount')}
                     </th>
                   </>
                 )}
@@ -558,7 +560,7 @@ export default function SystemOverview() {
               {pageItems.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="py-8 text-center text-on-surface-variant font-medium">
-                    No transactions recorded in this period.
+                    {t('reports.noTransactions', 'No transactions recorded in this period.')}
                   </td>
                 </tr>
               ) : (
@@ -566,7 +568,7 @@ export default function SystemOverview() {
                   <tr key={idx} className="hover:bg-surface-container-low/30 transition-colors">
                     <td className="py-4 px-6 font-bold">{row.label}</td>
                     <td className="py-4 px-6 text-center font-mono text-xs font-bold text-on-surface-variant">
-                      {row.bookingsCount} bookings
+                      {row.bookingsCount} {t('reports.tickets', 'bookings')}
                     </td>
                     <td className="py-4 px-6 font-bold text-on-surface">₹{row.settledRevenue.toLocaleString()}</td>
 
@@ -604,7 +606,7 @@ export default function SystemOverview() {
                 onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                 className="px-2.5 py-1.5 rounded-lg border border-outline-variant/30 text-xs font-bold bg-white text-on-surface-variant hover:border-primary disabled:opacity-50 disabled:hover:border-outline-variant/30 disabled:bg-surface-container transition-all cursor-pointer"
               >
-                Previous
+                {t('common.previous', 'Previous')}
               </button>
               {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
                 <button
@@ -625,7 +627,7 @@ export default function SystemOverview() {
                 onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                 className="px-2.5 py-1.5 rounded-lg border border-outline-variant/30 text-xs font-bold bg-white text-on-surface-variant hover:border-primary disabled:opacity-50 disabled:hover:border-outline-variant/30 disabled:bg-surface-container transition-all cursor-pointer"
               >
-                Next
+                {t('common.next', 'Next')}
               </button>
             </div>
           )}

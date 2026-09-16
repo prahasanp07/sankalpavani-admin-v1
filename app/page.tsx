@@ -23,6 +23,7 @@ import {
   Lock
 } from 'lucide-react';
 import { AuthProvider, useAuth, UserSession } from '../contexts/AuthContext';
+import { useLanguage } from '../contexts/LanguageContext';
 import RequirePermission, { LockedViewFallback } from '../components/RequirePermission';
 import LoginScreen from '../components/LoginScreen';
 import Sidebar from '../components/Sidebar';
@@ -55,6 +56,7 @@ interface NavigationState {
 
 function AdminPortalContent() {
   const { session, isLoggedIn, isMounted, login, logout, updateSession, resetToSuperAdmin, activeScope, activeTrustId } = useAuth();
+  const { t } = useLanguage();
 
   const [navigationState, setNavigationState] = useState<NavigationState>(() => {
     if (typeof window !== 'undefined') {
@@ -107,12 +109,10 @@ function AdminPortalContent() {
       const now = new Date();
       const options: Intl.DateTimeFormatOptions = {
         weekday: 'short',
-        year: 'numeric',
-        month: 'short',
         day: '2-digit',
+        month: 'short',
         hour: '2-digit',
         minute: '2-digit',
-        second: '2-digit',
         hour12: true
       };
       setCurrentTime(now.toLocaleString('en-IN', options));
@@ -138,7 +138,7 @@ function AdminPortalContent() {
       <div className="min-h-screen bg-background flex items-center justify-center text-primary">
         <div className="flex flex-col items-center gap-2">
           <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-          <span className="font-serif text-sm font-bold tracking-widest uppercase">Sankalpvani</span>
+          <span className="font-serif text-sm font-bold tracking-widest uppercase">{t('common.brandName', 'SankalpVani')}</span>
         </div>
       </div>
     );
@@ -157,27 +157,46 @@ function AdminPortalContent() {
     switch (activeTab) {
       case 'dashboard':
         return activeScope === 'TRUST'
-          ? 'Trust Administrative Dashboard & Portfolio'
-          : 'Temple-1 Administrative Dashboard';
-      case 'designations': return 'Designations & Titles Management';
-      case 'roles': return 'Dynamic Roles & Access Control';
-      case 'trustees': return 'Trustees & Board of Management';
-      case 'committees': return 'Committees & Sub-Committees Management';
-      case 'members': return 'Members, Staff & Committee Appointees';
-      case 'add_temple': return 'New Temple Registration';
-      case 'masters_hub': return 'Structural Masters Hub';
-      case 'org_chart': return 'Devasthanam Organization Chart & Matrix Reporting';
-      case 'archaka_master': return 'Acharyas & Archakas Registry';
-      case 'seva_master': return 'Seva offerings Setup';
-      case 'temple_info': return 'Temple Profile & Core Timings';
-      case 'temple_facilities': return 'Facilities & Guest Amenities';
-      case 'scheduling': return 'Priest Rostering & Shift Scheduling';
-      case 'transactions': return 'Seva Ledger & Darshan Receipts';
-      case 'prasadam': return 'Remote Prasadam Dispatch & Logistics';
-      case 'system_overview': return 'System Performance & Security Logs';
-      case 'calendar': return 'Devotee Bookings Calendar';
-      case 'settings': return 'Temple Notifications & Configuration';
-      default: return 'Temple Administration Portal';
+          ? t('pageTitles.trustDashboard', 'Trust Administrative Overview')
+          : t('pageTitles.templeDashboard', 'Temple-1 Administrative Dashboard');
+      case 'designations':
+        return t('pageTitles.designations', 'Designations & Titles Management');
+      case 'roles':
+        return t('pageTitles.roles', 'Dynamic Roles & Access Control');
+      case 'trustees':
+        return t('pageTitles.trustees', 'Trustees & Board of Management');
+      case 'committees':
+        return t('pageTitles.committees', 'Committees & Sub-Committees Management');
+      case 'members':
+        return t('pageTitles.members', 'Members, Staff & Committee Appointees');
+      case 'add_temple':
+        return t('pageTitles.addTemple', 'New Temple Registration');
+      case 'masters_hub':
+        return t('pageTitles.mastersHub', 'Structural Masters Hub');
+      case 'org_chart':
+        return t('pageTitles.orgChart', 'Devasthanam Organization Chart & Matrix Reporting');
+      case 'archaka_master':
+        return t('pageTitles.archakaMaster', 'Acharyas & Archakas Registry');
+      case 'seva_master':
+        return t('pageTitles.sevaMaster', 'Seva Offerings Setup');
+      case 'temple_info':
+        return t('pageTitles.templeInfo', 'Temple Profile & Core Timings');
+      case 'temple_facilities':
+        return t('pageTitles.templeFacilities', 'Facilities & Guest Amenities');
+      case 'scheduling':
+        return t('pageTitles.scheduling', 'Priest Rostering & Shift Scheduling');
+      case 'transactions':
+        return t('pageTitles.transactions', 'Seva Ledger & Darshan Receipts');
+      case 'prasadam':
+        return t('pageTitles.prasadam', 'Remote Prasadam Dispatch & Logistics');
+      case 'system_overview':
+        return t('pageTitles.systemOverview', 'System Performance & Security Logs');
+      case 'calendar':
+        return t('pageTitles.calendar', 'Devotee Bookings Calendar');
+      case 'settings':
+        return t('pageTitles.settings', 'Temple Notifications & Configuration');
+      default:
+        return t('pageTitles.default', 'Temple Administration Portal');
     }
   };
 
@@ -540,8 +559,8 @@ function AdminPortalContent() {
                             type="button"
                             onClick={() => setFormAvatar(avatarUrl)}
                             className={`relative rounded-xl overflow-hidden aspect-square border-2 transition-all cursor-pointer ${formAvatar === avatarUrl
-                                ? 'border-primary ring-2 ring-primary/20 scale-95 shadow-md'
-                                : 'border-outline-variant hover:border-primary/50'
+                              ? 'border-primary ring-2 ring-primary/20 scale-95 shadow-md'
+                              : 'border-outline-variant hover:border-primary/50'
                               }`}
                           >
                             <img src={avatarUrl} alt={`Preset ${idx + 1}`} className="w-full h-full object-cover" />

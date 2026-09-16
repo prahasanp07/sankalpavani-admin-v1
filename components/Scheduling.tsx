@@ -1,13 +1,13 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { 
-  ArrowLeft, 
-  Calendar, 
-  User, 
-  Sparkles, 
-  Clock, 
-  CheckCircle, 
+import {
+  ArrowLeft,
+  Calendar,
+  User,
+  Sparkles,
+  Clock,
+  CheckCircle,
   AlertTriangle,
   ChevronRight,
   UserCheck,
@@ -15,6 +15,7 @@ import {
   X,
   Search
 } from 'lucide-react';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface Shift {
   id: string;
@@ -38,18 +39,45 @@ const INITIAL_SHIFTS: Shift[] = [
 ];
 
 export default function Scheduling({ onBack }: SchedulingProps) {
+  const { t } = useLanguage();
+
+  const getRoleLabel = (role: string) => {
+    switch (role) {
+      case 'Chief Archaka': return t('priestMaster.roleChief', 'Chief Archaka');
+      case 'Senior Archaka':
+      case 'Second Priest': return t('priestMaster.roleSenior', 'Senior Archaka');
+      case 'Archaka':
+      case 'Purohit':
+      case 'Assistant Priest': return t('priestMaster.roleArchaka', 'Archaka');
+      case 'Rigveda specialist':
+      case 'Rigveda Scholar': return t('priestMaster.roleRigveda', 'Rigveda specialist');
+      default: return role;
+    }
+  };
+
+  const getSevaLabel = (seva: string) => {
+    return t(`scheduling.sevas.${seva}`, seva);
+  };
+
+  const getSlotShortLabel = (slot: string) => {
+    if (slot.includes('Morning')) return t('scheduling.slotMorningShort', 'Morning');
+    if (slot.includes('Noon')) return t('scheduling.slotNoonShort', 'Noon');
+    if (slot.includes('Evening')) return t('scheduling.slotEveningShort', 'Evening');
+    return slot.split(' ')[0];
+  };
+
   const [shifts, setShifts] = useState<Shift[]>(() => {
     if (typeof window !== 'undefined') {
       const cached = localStorage.getItem('sankalpvani_shifts');
       if (cached) {
         try {
           return JSON.parse(cached);
-        } catch (e) {}
+        } catch (e) { }
       }
     }
     return INITIAL_SHIFTS;
   });
-  
+
   const [showAssignForm, setShowAssignForm] = useState(false);
   const [selectedDate, setSelectedDate] = useState('2026-06-28');
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -82,14 +110,16 @@ export default function Scheduling({ onBack }: SchedulingProps) {
       const yyyy = d.getFullYear();
       const mm = String(d.getMonth() + 1).padStart(2, '0');
       const dd = String(d.getDate()).padStart(2, '0');
-      
+
       const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
       const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-      
+      const rawMonth = monthNames[d.getMonth()];
+      const localizedMonth = t(`scheduling.months.${rawMonth}`, rawMonth);
+
       dates.push({
         name: dayNames[i],
         dateNum: d.getDate(),
-        formattedDate: `${dd} ${monthNames[d.getMonth()]}`,
+        formattedDate: `${dd} ${localizedMonth}`,
         value: `${yyyy}-${mm}-${dd}`
       });
     }
@@ -106,7 +136,7 @@ export default function Scheduling({ onBack }: SchedulingProps) {
       if (cachedPriests) {
         try {
           return JSON.parse(cachedPriests);
-        } catch (e) {}
+        } catch (e) { }
       }
     }
     return [];
@@ -119,7 +149,7 @@ export default function Scheduling({ onBack }: SchedulingProps) {
         try {
           const parsed = JSON.parse(cachedPriests);
           return parsed.map((p: any) => p.name);
-        } catch (e) {}
+        } catch (e) { }
       }
     }
     return ['Raghavan Bhattar', 'Sunder Raman', 'Madhavan Shastri', 'Vasudevan Swamy', 'Ganesha Dikshidar'];
@@ -136,7 +166,7 @@ export default function Scheduling({ onBack }: SchedulingProps) {
           if (parsed.length > 0 && !parsed.map((p: any) => p.name).includes(formPriest)) {
             setFormPriest(parsed[0].name);
           }
-        } catch (e) {}
+        } catch (e) { }
       }
     };
     loadPriests();
@@ -170,17 +200,17 @@ export default function Scheduling({ onBack }: SchedulingProps) {
     loadLiveShifts();
   }, []);
 
-  const displayPriests = priestsData.length > 0 
+  const displayPriests = priestsData.length > 0
     ? priestsData.map((p, idx) => ({
-        ...p,
-        role: p.role || (idx === 0 ? 'Chief Archaka' : 'Archaka'),
-        avatar: p.avatar || DEFAULT_PRIESTS[idx % DEFAULT_PRIESTS.length].avatar
-      }))
+      ...p,
+      role: p.role || (idx === 0 ? 'Chief Archaka' : 'Archaka'),
+      avatar: p.avatar || DEFAULT_PRIESTS[idx % DEFAULT_PRIESTS.length].avatar
+    }))
     : DEFAULT_PRIESTS;
 
   const filteredPriests = displayPriests.filter(p => {
     const matchesSearch = p.name.toLowerCase().includes(rosterSearch.toLowerCase()) ||
-                          p.role.toLowerCase().includes(rosterSearch.toLowerCase());
+      p.role.toLowerCase().includes(rosterSearch.toLowerCase());
     const matchesStatus = statusFilter === 'All' || p.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
@@ -231,7 +261,7 @@ export default function Scheduling({ onBack }: SchedulingProps) {
     setShifts(updated);
     localStorage.setItem('sankalpvani_shifts', JSON.stringify(updated));
     setShowAssignForm(false);
-    
+
     setToastMessage(publish ? `Assigned and published shift for Acharya ${formPriest}.` : `Saved shift draft for Acharya ${formPriest}.`);
     setTimeout(() => setToastMessage(null), 3000);
   };
@@ -242,7 +272,7 @@ export default function Scheduling({ onBack }: SchedulingProps) {
   };
 
   const handleDeleteShift = (id: string) => {
-    if (confirm('Cancel this archaka assignment?')) {
+    if (confirm(t('scheduling.confirmCancel', 'Cancel this archaka assignment?'))) {
       const updated = shifts.filter(s => s.id !== id);
       setShifts(updated);
       localStorage.setItem('sankalpvani_shifts', JSON.stringify(updated));
@@ -270,7 +300,7 @@ export default function Scheduling({ onBack }: SchedulingProps) {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <button 
+          <button
             onClick={onBack}
             className="p-2 hover:bg-primary-container/10 rounded-full text-primary transition-colors cursor-pointer"
           >
@@ -278,11 +308,11 @@ export default function Scheduling({ onBack }: SchedulingProps) {
           </button>
           <div>
             <div className="flex items-center gap-1.5 text-xs font-bold text-primary tracking-wider uppercase mb-0.5">
-              <span>Masters</span>
+              <span>{t('scheduling.breadcrumbMasters', 'Masters')}</span>
               <ChevronRight size={12} className="text-on-surface-variant" />
-              <span>Roster & Scheduling</span>
+              <span>{t('scheduling.breadcrumbRoster', 'Roster & Scheduling')}</span>
             </div>
-            <h2 className="font-serif text-3xl font-semibold text-primary">Archakas Duty Roster</h2>
+            <h2 className="font-serif text-3xl font-semibold text-primary">{t('scheduling.title', 'Archakas Duty Roster')}</h2>
           </div>
         </div>
 
@@ -291,7 +321,7 @@ export default function Scheduling({ onBack }: SchedulingProps) {
           className="bg-primary hover:bg-on-primary-container text-on-primary text-sm font-bold py-2.5 px-4 rounded-xl flex items-center gap-2 shadow-sm transition-all cursor-pointer active:scale-95"
         >
           <Plus size={16} />
-          <span>{showAssignForm ? 'Close Assignment Form' : 'Assign Duty Shift'}</span>
+          <span>{showAssignForm ? t('scheduling.closeAssignmentForm', 'Close Assignment Form') : t('scheduling.assignDutyShift', 'Assign Duty Shift')}</span>
         </button>
       </div>
 
@@ -299,9 +329,9 @@ export default function Scheduling({ onBack }: SchedulingProps) {
       <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex gap-3 text-amber-900">
         <AlertTriangle size={18} className="text-amber-600 shrink-0 mt-0.5 animate-pulse" />
         <div>
-          <h4 className="text-xs font-bold uppercase tracking-wider">Automated Conflict Safeguards</h4>
+          <h4 className="text-xs font-bold uppercase tracking-wider">{t('scheduling.safeguardsTitle', 'Automated Conflict Safeguards')}</h4>
           <p className="font-sans text-xs mt-0.5 leading-relaxed">
-            The scheduling engine guards against dual-booking of archakas for concurrent sevas or while they are marked &quot;On Leave&quot; in the Archakas Registry.
+            {t('scheduling.safeguardsDesc', 'The scheduling engine guards against dual-booking of archakas for concurrent sevas or while they are marked "On Leave" in the Archakas Registry.')}
           </p>
         </div>
       </div>
@@ -311,12 +341,12 @@ export default function Scheduling({ onBack }: SchedulingProps) {
         <form onSubmit={handleAssign} className="bg-surface-container rounded-2xl p-6 border border-outline-variant/30 shadow-sm space-y-4 animate-[scaleIn_0.15s_ease-out]">
           <h3 className="font-serif text-xl font-bold text-primary flex items-center gap-2">
             <Calendar size={18} className="text-primary" />
-            Assign Archaka Duty Shift
+            {t('scheduling.formTitle', 'Assign Archaka Duty Shift')}
           </h3>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1">Target Date</label>
+              <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1">{t('scheduling.targetDate', 'Target Date')}</label>
               <input
                 type="date"
                 value={selectedDate}
@@ -326,54 +356,53 @@ export default function Scheduling({ onBack }: SchedulingProps) {
             </div>
 
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1">Choose Archaka *</label>
+              <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1">{t('scheduling.selectArchaka', 'Choose Archaka')} *</label>
               <select
                 value={formPriest}
                 onChange={(e) => setFormPriest(e.target.value)}
-                className={`w-full px-3.5 py-2.5 bg-white border rounded-xl text-sm focus:outline-none focus:border-primary ${
-                  (priestsData.find(p => p.name === formPriest)?.status === 'On Leave' || 
-                   shifts.some(s => s.priestName === formPriest && s.date === selectedDate && s.slot === formSlot))
+                className={`w-full px-3.5 py-2.5 bg-white border rounded-xl text-sm focus:outline-none focus:border-primary ${(priestsData.find(p => p.name === formPriest)?.status === 'On Leave' ||
+                    shifts.some(s => s.priestName === formPriest && s.date === selectedDate && s.slot === formSlot))
                     ? 'border-error text-error focus:border-error focus:ring-error'
                     : 'border-outline'
-                }`}
+                  }`}
               >
                 {activePriests.map(name => (
                   <option key={name} value={name}>{name}</option>
                 ))}
               </select>
               {priestsData.find(p => p.name === formPriest)?.status === 'On Leave' && (
-                <p className="text-[11px] text-error font-semibold mt-1">Archaka is marked "On Leave".</p>
+                <p className="text-[11px] text-error font-semibold mt-1">{t('scheduling.errOnLeave', 'Archaka is marked "On Leave".')}</p>
               )}
               {shifts.some(s => s.priestName === formPriest && s.date === selectedDate && s.slot === formSlot) && (
-                <p className="text-[11px] text-error font-semibold mt-1">Archaka is already busy at this time.</p>
+                <p className="text-[11px] text-error font-semibold mt-1">{t('scheduling.errBusy', 'Archaka is already busy at this time.')}</p>
               )}
             </div>
 
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1">Target Seva Pooja</label>
+              <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1">{t('scheduling.assignedSeva', 'Target Seva Pooja')}</label>
               <select
                 value={formSeva}
                 onChange={(e) => setFormSeva(e.target.value)}
                 className="w-full px-3.5 py-2.5 bg-white border border-outline rounded-xl text-sm focus:outline-none focus:border-primary"
               >
-                <option value="Archana Pooja">Archana Pooja</option>
-                <option value="Maha Abhisheka">Maha Abhisheka</option>
-                <option value="Annadanam Seva">Annadanam Seva</option>
-                <option value="Vahan Pooja">Vahan Pooja</option>
-                <option value="Chandi Homa">Chandi Homa</option>
+                <option value="Archana Pooja">{t('scheduling.sevas.Archana Pooja', 'Archana Pooja')}</option>
+                <option value="Maha Abhisheka">{t('scheduling.sevas.Maha Abhisheka', 'Maha Abhisheka')}</option>
+                <option value="Annadanam Seva">{t('scheduling.sevas.Annadanam Seva', 'Annadanam Seva')}</option>
+                <option value="Vahan Pooja">{t('scheduling.sevas.Vahan Pooja', 'Vahan Pooja')}</option>
+                <option value="Chandi Homa">{t('scheduling.sevas.Chandi Homa', 'Chandi Homa')}</option>
               </select>
             </div>
 
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1">Shift Time Slot</label>
+              <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1">{t('scheduling.dutySlot', 'Shift Time Slot')}</label>
               <select
                 value={formSlot}
                 onChange={(e) => setFormSlot(e.target.value as Shift['slot'])}
                 className="w-full px-3.5 py-2.5 bg-white border border-outline rounded-xl text-sm focus:outline-none focus:border-primary"
               >
-                <option value="Morning (06:00 AM)">Morning (06:00 AM)</option>
-                <option value="Noon (11:00 AM)">Noon (11:00 AM)</option>
-                <option value="Evening (05:00 PM)">Evening (05:00 PM)</option>
+                <option value="Morning (06:00 AM)">{t('scheduling.slotMorning', 'Morning (06:00 AM)')}</option>
+                <option value="Noon (11:00 AM)">{t('scheduling.slotNoon', 'Noon (11:00 AM)')}</option>
+                <option value="Evening (05:00 PM)">{t('scheduling.slotEvening', 'Evening (05:00 PM)')}</option>
               </select>
             </div>
           </div>
@@ -384,18 +413,18 @@ export default function Scheduling({ onBack }: SchedulingProps) {
               onClick={() => setShowAssignForm(false)}
               className="px-4 py-2.5 bg-surface-container-low hover:bg-surface-container border border-outline-variant/40 text-on-surface-variant hover:text-on-surface text-xs font-bold rounded-xl shadow-sm cursor-pointer transition-all active:scale-95"
             >
-              Cancel
+              {t('common.cancel', 'Cancel')}
             </button>
             <button
               type="button"
               disabled={
-                priestsData.find(p => p.name === formPriest)?.status === 'On Leave' || 
+                priestsData.find(p => p.name === formPriest)?.status === 'On Leave' ||
                 shifts.some(s => s.priestName === formPriest && s.date === selectedDate && s.slot === formSlot)
               }
               onClick={() => handleCreateShift(true)}
               className="px-5 py-2.5 bg-primary hover:bg-on-primary-container text-on-primary text-xs font-bold rounded-xl shadow-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Save & Publish
+              {t('templeInfo.savePublish', 'Save & Publish')}
             </button>
           </div>
         </form>
@@ -404,16 +433,16 @@ export default function Scheduling({ onBack }: SchedulingProps) {
       {/* Roster Search and Filters Row */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-surface-container-lowest rounded-2xl p-4 border border-outline-variant/30 shadow-sacred">
         <div className="flex flex-1 items-center gap-3 max-w-md bg-surface-container-low border border-outline-variant/50 rounded-xl px-4.5 py-2.5">
-          <Search size={18} className="text-on-surface-variant" />
           <input
             type="text"
-            placeholder="Search archakas or roles..."
+            placeholder={t('scheduling.searchPlaceholder', 'Search archakas or roles...')}
             value={rosterSearch}
             onChange={(e) => setRosterSearch(e.target.value)}
             className="w-full bg-transparent text-sm font-medium focus:outline-none text-on-surface placeholder:text-on-surface-variant/60"
           />
+          <Search size={18} className="text-on-surface-variant shrink-0" />
         </div>
-        
+
         <div className="flex flex-wrap items-center gap-3.5">
           <div className="flex rounded-xl bg-surface-container-low p-1 border border-outline-variant/30">
             <button
@@ -421,26 +450,26 @@ export default function Scheduling({ onBack }: SchedulingProps) {
               onClick={() => setStatusFilter('All')}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${statusFilter === 'All' ? 'bg-primary text-on-primary shadow-sm' : 'text-on-surface-variant hover:text-primary'}`}
             >
-              All Archakas
+              {t('scheduling.filterAll', 'All Archakas')}
             </button>
             <button
               type="button"
               onClick={() => setStatusFilter('Active')}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${statusFilter === 'Active' ? 'bg-primary text-on-primary shadow-sm' : 'text-on-surface-variant hover:text-primary'}`}
             >
-              Active
+              {t('scheduling.filterActive', 'Active')}
             </button>
             <button
               type="button"
               onClick={() => setStatusFilter('On Leave')}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${statusFilter === 'On Leave' ? 'bg-primary text-on-primary shadow-sm' : 'text-on-surface-variant hover:text-primary'}`}
             >
-              On Leave
+              {t('scheduling.filterOnLeave', 'On Leave')}
             </button>
           </div>
 
           <div className="flex items-center gap-2">
-            <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Week Base Date:</label>
+            <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">{t('scheduling.weekBaseDate', 'Week Base Date:')}</label>
             <input
               type="date"
               value={selectedDate}
@@ -457,10 +486,10 @@ export default function Scheduling({ onBack }: SchedulingProps) {
           <table className="w-full text-left border-collapse min-w-[1100px]">
             <thead>
               <tr className="bg-surface-container border-b border-outline-variant/30 text-xs font-bold text-on-surface-variant uppercase tracking-wider">
-                <th className="py-4 px-6 w-64">Employee</th>
+                <th className="py-4 px-6 w-64">{t('scheduling.employee', 'Employee')}</th>
                 {weekDays.map((day) => (
                   <th key={day.value} className="py-4 px-4 text-center border-l border-outline-variant/10">
-                    <div>{day.name}</div>
+                    <div>{t(`scheduling.days.${day.name}`, day.name)}</div>
                     <div className="text-[10px] text-on-surface-variant/70 normal-case mt-0.5">{day.formattedDate}</div>
                   </th>
                 ))}
@@ -480,7 +509,7 @@ export default function Scheduling({ onBack }: SchedulingProps) {
                         />
                         <div>
                           <h4 className="font-sans text-sm font-bold text-on-surface leading-tight">{priest.name}</h4>
-                          <span className="text-[11px] text-on-surface-variant font-semibold mt-0.5 block">{priest.role}</span>
+                          <span className="text-[11px] text-on-surface-variant font-semibold mt-0.5 block">{getRoleLabel(priest.role)}</span>
                         </div>
                       </div>
                     </td>
@@ -499,12 +528,11 @@ export default function Scheduling({ onBack }: SchedulingProps) {
                             setFormPriest(priest.name);
                             setShowAssignForm(true);
                           }}
-                          className={`py-4 px-3 text-center align-top min-h-[100px] border-l border-outline-variant/10 relative cursor-pointer select-none transition-all ${
-                            !hasShifts && !isPriestOnLeave
+                          className={`py-4 px-3 text-center align-top min-h-[100px] border-l border-outline-variant/10 relative cursor-pointer select-none transition-all ${!hasShifts && !isPriestOnLeave
                               ? 'bg-[repeating-linear-gradient(45deg,rgba(0,0,0,0.015),rgba(0,0,0,0.015)_6px,transparent_6px,transparent_12px)] hover:bg-surface-container-low/20'
                               : 'hover:bg-surface-container-low/20'
-                          }`}
-                          title="Double-click to assign shift"
+                            }`}
+                          title={t('scheduling.doubleClickToAssign', 'Double-click to assign shift')}
                         >
                           {/* Date number label inside cell */}
                           <div className="flex justify-between items-center text-[10px] font-bold text-on-surface-variant/40 mb-2">
@@ -514,7 +542,7 @@ export default function Scheduling({ onBack }: SchedulingProps) {
                           {isPriestOnLeave ? (
                             <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-purple-100 text-purple-700 border border-purple-200/50 shadow-sm">
                               <span className="w-1.5 h-1.5 rounded-full bg-purple-500"></span>
-                              <span>Leave</span>
+                              <span>{t('scheduling.leave', 'Leave')}</span>
                             </div>
                           ) : hasShifts ? (
                             <div className="flex flex-col gap-2">
@@ -524,9 +552,9 @@ export default function Scheduling({ onBack }: SchedulingProps) {
                                 const bgClass = isMorning
                                   ? 'bg-green-50 text-green-700 border-green-200/50 hover:bg-green-100/50'
                                   : isNoon
-                                  ? 'bg-amber-50 text-amber-700 border-amber-200/50 hover:bg-amber-100/50'
-                                  : 'bg-indigo-50 text-indigo-700 border-indigo-200/50 hover:bg-indigo-100/50';
-                                
+                                    ? 'bg-amber-50 text-amber-700 border-amber-200/50 hover:bg-amber-100/50'
+                                    : 'bg-indigo-50 text-indigo-700 border-indigo-200/50 hover:bg-indigo-100/50';
+
                                 return (
                                   <div
                                     key={shift.id}
@@ -536,20 +564,20 @@ export default function Scheduling({ onBack }: SchedulingProps) {
                                       type="button"
                                       onClick={() => handleDeleteShift(shift.id)}
                                       className="absolute right-1 top-1 p-0.5 bg-white text-red-600 rounded-full opacity-0 group-hover/item:opacity-100 transition-opacity cursor-pointer shadow-sm border border-red-100"
-                                      title="Cancel Shift"
+                                      title={t('scheduling.deleteShift', 'Delete shift assignment')}
                                     >
                                       <X size={10} />
                                     </button>
 
-                                    <div className="font-bold text-[11px] leading-tight pr-3 truncate" title={shift.sevaName}>
-                                      {shift.sevaName}
+                                    <div className="font-bold text-[11px] leading-tight pr-3 truncate" title={getSevaLabel(shift.sevaName)}>
+                                      {getSevaLabel(shift.sevaName)}
                                     </div>
                                     <div className="text-[9px] font-semibold opacity-85 mt-1 flex items-center gap-1">
                                       <Clock size={8} />
-                                      <span>{shift.slot.split(' ')[0]}</span>
+                                      <span>{getSlotShortLabel(shift.slot)}</span>
                                       {shift.isDraft && (
                                         <span className="px-1 py-0 rounded bg-amber-500/10 text-amber-700 border border-amber-500/20 text-[8px] font-bold">
-                                          Draft
+                                          {t('scheduling.draft', 'Draft')}
                                         </span>
                                       )}
                                     </div>
@@ -558,7 +586,7 @@ export default function Scheduling({ onBack }: SchedulingProps) {
                               })}
                             </div>
                           ) : (
-                            <span className="text-[10px] font-bold text-on-surface-variant/20 italic select-none">Off</span>
+                            <span className="text-[10px] font-bold text-on-surface-variant/20 italic select-none">{t('scheduling.off', 'Off')}</span>
                           )}
                         </td>
                       );

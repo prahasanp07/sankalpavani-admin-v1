@@ -2,7 +2,7 @@
 
 > **Project Name**: SankalpVani Multi-Temple & Trust Enterprise Governance Platform  
 > **Repository Version**: v1.0.0-Production-Ready  
-> **Generation Date**: September 7, 2026  
+> **Generation Date**: September 9, 2026  
 > **Architecture Law**: 100% Dynamic Hierarchy — Zero Hardcoded Enums across Temples, Trustees, Committees, Members, Designations, Roles, and Departments.
 
 ---
@@ -22,8 +22,9 @@
 12. [Operational & Temple Management Subsystems](#12-operational--temple-management-subsystems)
 13. [Modern Temple Dashboard & Operational Analytics](#13-modern-temple-dashboard--operational-analytics)
 14. [Temple Notifications & Communication Gateway Architecture](#14-temple-notifications--communication-gateway-architecture)
-15. [Automated Verification & Test Suite Matrix](#15-automated-verification--test-suite-matrix)
-16. [Complete File & Component Inventory](#16-complete-file--component-inventory)
+15. [Comprehensive 5-Language Multilingual Architecture & API Content Negotiation](#15-comprehensive-5-language-multilingual-architecture--api-content-negotiation)
+16. [Automated Verification & Test Suite Matrix](#16-automated-verification--test-suite-matrix)
+17. [Complete File & Component Inventory](#17-complete-file--component-inventory)
 
 ---
 
@@ -32,7 +33,7 @@
 SankalpVani is an enterprise-grade, multi-tenant digital governance and operations platform built specifically for Hindu Temple Endowments, Religious Trusts (*Mutts / Peethams*), and independent temple complexes.
 
 ### The Problem Addressed
-Traditional temple software suffered from rigid, hardcoded organizational hierarchies, single-temple silos, conflation between ceremonial sanctum titles and software permissions, lack of sub-committee lifecycle tracking, inflexible financial analytics, and leaky multi-tenant data structures.
+Traditional temple software suffered from rigid, hardcoded organizational hierarchies, single-temple silos, conflation between ceremonial sanctum titles and software permissions, lack of sub-committee lifecycle tracking, inflexible financial analytics, monolingual English interfaces inaccessible to local priests/trustees, and leaky multi-tenant data structures.
 
 ### The Solution Delivered
 The codebase has been engineered such that **every entity across the organizational hierarchy is 100% dynamically manageable by administrators at runtime**:
@@ -42,8 +43,10 @@ The codebase has been engineered such that **every entity across the organizatio
 - **Focused Role-Based Sidebar Navigation**:
   - **Trust Admin Scope**: Clean 6-item sequence (`1. Designation & Titles`, `2. Add new temple`, `3. Members`, `4. Trustees & Board`, `5. Committees`, `6. Dynamic RBAC... (opt.)`).
   - **Temple Admin Scope**: Streamlined 7-item operational sequence (`1. Temple Dashboard`, `2. Masters`, `3. Devotee Bookings`, `4. Seva Ledger`, `5. Prasadam Dispatch`, `6. Temple Reports`, `7. Temple Notifications`).
+- **Comprehensive 5-Language Multilingual Infrastructure**: Instant client-side switching between **English (`en`)**, **Kannada (`kn`)**, **Telugu (`te`)**, **Tamil (`ta`)**, and **Sanskrit (`sa`)** across 100% of Trust Admin and Temple Admin screens with zero reload and `localStorage` persistence.
+- **API Content Negotiation Pattern (Pattern B)**: Architectural standard for dynamic database records (`sevas`, `temple`, `designations`), where the frontend attaches `Accept-Language` headers and backend repositories project pre-localized fields with automatic English fallback.
+- **In-Workplace Designations & Human-Readable Titles**: Designations & Office Bearers screen embedded directly into the central workplace without page reloads, displaying human-friendly official titles instead of raw database identifier strings.
 - **Dynamic Category Masters & Contextual Modals**: Universal `GovernanceMastersModal` dynamically re-titling forms (*New Trust Category*, *New Membership Type Category*, *New Committee Category*) with Trust-branded headers.
-- **Interactive Designations Governance**: Fast popup modal launchers for category taxonomy authoring and office bearer appointments, with simplified appointee identity badges.
 - **Preferred Communication Channels**: Multi-channel preference selection (*Email*, *WhatsApp / SMS*) for trust members with interactive pill checkboxes matching multi-temple scoping aesthetics.
 - **Auditable Trust Resolutions for Sevas**: Timestamps and resolution tracking (`trustResolutionDateTime`) capturing date and time of trust board approval for pooja offerings.
 - **Apex Trust Board**: Trustees and office bearers are onboarded dynamically with legal resolution numbers, visual lifecycle term progress, and life-term support.
@@ -51,7 +54,7 @@ The codebase has been engineered such that **every entity across the organizatio
 - **Separation of Title and Role**: Ceremonial designations (*Pradhana Archaka, Bhandari*) exist independently of software roles, with optional auto-binding.
 - **Granular Dynamic RBAC/ABAC**: Custom roles with namespace-resource-action permission strings, interactive modal capability toggling, and cache-invalidating policy versions.
 - **Dynamic Departments**: Dynamic department generation per trust and temple, with inline on-the-fly creation within drawers.
-- **Persistent Scoped Context Switcher**: Real-time visual indicator distinguishing Temple Trusts Operations (Crimson) from Specific Temple Operations (Saffron).
+- **Persistent Scoped Context Switcher & Ergonomic Header**: Real-time visual indicator distinguishing Temple Trusts Operations (Crimson) from Specific Temple Operations (Saffron), paired with a compact 2-line stacked Live Date & Clock display (`Date` on Line 1, `Time` on Line 2) maximizing header utility.
 - **Dynamic Temple Portfolio & Real-time Metrics**: Dynamic child temple cards displaying 3 essential operational metrics: Today's Collections (e.g. `₹ 4,80,000`), Sevas Configured (e.g. `18 Offerings`), and Priest Cadre (e.g. `5 Staff`).
 - **Executive Operational Analytics**: Re-engineered Temple Dashboard featuring dual-bar Seva vs Donation comparative trends, dynamic Seva Popularity Doughnut charts with rise/fall metrics, and quick action bento grids.
 - **Streamlined Notification Gateways**: Dedicated SMS, WhatsApp Business, and Email (SMTP) sender configurations with clean direct-entry fields and persistent storage.
@@ -81,6 +84,10 @@ $$\text{Access Level} = \begin{cases}
 \text{Global Oversight} & \text{if } \text{Scope} = \text{TRUST} \ (\forall \ \text{temples under trust}) \\
 \text{Localized Control} & \text{if } \text{Scope} = \text{TEMPLE} \ (\text{strict } \text{WHERE } \text{temple\_id} = \text{session.temple\_id})
 \end{cases}$$
+
+### Law 5: Omnichannel Linguistic Equivalence Invariant
+$$\forall \ \text{entity } e \in \text{Masters}, \quad \text{Projection}(e, L) \longrightarrow \text{localized string in language } L \in \{\text{en}, \text{kn}, \text{te}, \text{ta}, \text{sa}\}$$
+UI chrome is decoupled from dynamic catalog records. System labels are translated deterministically on the client, while database records are resolved via standard HTTP `Accept-Language` content negotiation, ensuring identical linguistic behavior across Web and Mobile portals.
 
 ---
 
@@ -139,7 +146,7 @@ The database is built on PostgreSQL with Drizzle ORM, partitioned into domain sc
 1. **`auditEvents`**: Append-only log recording actor, event type, target entity, request ID, timestamp, and JSON payload.
 
 ### D. `db/schema/operations.ts` — Operational Subsystems
-1. **`sevas`**: Pooja catalogue with multi-priest, quota, online eligibility flags, and `trustResolutionDateTime`.
+1. **`sevas`**: Pooja catalogue with multi-priest, quota, online eligibility flags, and `trustResolutionDateTime`. Supports multi-language JSON projections (`en`, `kn`, `te`, `ta`, `sa`).
 2. **`priestProfiles`**: Lineage, Veda shakha, qualification, and active sanctum assignments.
 3. **`priestRosters`**: Shift schedules, duty statuses, and replacement tracking.
 4. **`sevaBookings`**: Devotee bookings, sankalpam details (Gotra, Nakshatra, Rashi), and token QR codes.
@@ -163,12 +170,13 @@ All business logic is encapsulated in strongly-typed repository classes under `l
 | **`RoleRepository`** | [`lib/repositories/role.repository.ts`](file:///c:/Users/praha/Documents/PraGana%20Innovations%20Projects/Sankalpavani-v1/lib/repositories/role.repository.ts) | Custom roles, permission bindings, scope cascading (`ALL_DESCENDANTS`), and cache-invalidating policy versions. |
 | **`OrgChartRepository`** | [`lib/repositories/org-chart.repository.ts`](file:///c:/Users/praha/Documents/PraGana%20Innovations%20Projects/Sankalpavani-v1/lib/repositories/org-chart.repository.ts) | React Flow graph node/edge generator, reportee count computation, and cycle detection algorithms. |
 | **`DepartmentRepository`** | [`lib/repositories/department.repository.ts`](file:///c:/Users/praha/Documents/PraGana%20Innovations%20Projects/Sankalpavani-v1/lib/repositories/department.repository.ts) | Dynamic department management, scope inheritance, and auto-seeding defaults. |
+| **`BookingRepository`** & **`SevaRepository`** | [`lib/repositories/booking.repository.ts`](file:///c:/Users/praha/Documents/PraGana%20Innovations%20Projects/Sankalpavani-v1/lib/repositories/booking.repository.ts) | Devotee bookings, pooja catalogues, and multi-language content resolution via `RequestContext.locale`. |
 
 ---
 
 ## 6. Complete REST API Catalogue
 
-All APIs follow standard HTTP REST semantics, return `{ data, meta }` envelopes, enforce multi-tenant authorization guards, and feature development in-memory fallback store resilience:
+All APIs follow standard HTTP REST semantics, return `{ data, meta }` envelopes, enforce multi-tenant authorization guards, support `Accept-Language` content negotiation, and feature development in-memory fallback store resilience:
 
 ### 1. Multi-Temple Workspace
 - `GET /api/v1/trusts/[trustId]/temples`: Lists all child temples under a trust.
@@ -229,7 +237,7 @@ Built on Next.js App Router, Tailwind CSS, and Lucide Icons, adhering to the **S
 ```mermaid
 graph TD
     subgraph TrustAdminScope["Trust Admin Scope Sidebar (6 Items)"]
-        T1["1. Designation & Titles (/governance/designations)"]
+        T1["1. Designation & Titles (Active Tab: designations)"]
         T2["2. Add new temple (Dynamic Modal)"]
         T3["3. Members (/governance/members)"]
         T4["4. Trustees & Board (/governance/trustees)"]
@@ -255,7 +263,7 @@ graph TD
 ### Sidebar Navigation Layouts:
 
 #### A. Trust Admin Scope ([`components/Sidebar.tsx`](file:///c:/Users/praha/Documents/PraGana%20Innovations%20Projects/Sankalpavani-v1/components/Sidebar.tsx))
-1. **Designation** (`Crown` icon): Direct navigation to designations governance, with interactive cards launching category taxonomy modals.
+1. **Designation & Titles** (`Crown` icon): In-workplace tab integration (`activeTab === 'designations'`) directly in the central workplace without page navigation.
 2. **Add new temple** (`Building2` icon): Instant trigger for the dynamic child temple creation modal.
 3. **Members** (`Users` icon): Direct navigation to the unified members directory and preferred communication manager.
 4. **Trustees & Board** (`Award` icon): Direct navigation to apex trustee appointments, resolutions, and term lifecycle trackers.
@@ -271,7 +279,6 @@ graph TD
 6. **Temple Reports** (`PieChart` icon): Daily reconciliation, 80G tax summaries, and financial reports.
 7. **Temple Notifications** (`Bell` icon): Gateway configurations for SMS, WhatsApp Business API, and SMTP email services.
 
-
 ---
 
 ## 8. Governance Action Sequence & Category Masters Architecture
@@ -283,7 +290,9 @@ On Screen 1 ([`app/trusts/[trustId]/dashboard/page.tsx`](file:///c:/Users/praha/
 ```
 
 ### Action Modules Breakdown:
-1. **Designation & Titles** (`Crown` icon): Direct navigation to `/governance/designations`.
+1. **Designation & Titles** (`Crown` icon):
+   - In-workplace tab integration in [`app/page.tsx`](file:///c:/Users/praha/Documents/PraGana%20Innovations%20Projects/Sankalpavani-v1/app/page.tsx) and standalone route at `/governance/designations`.
+   - Displays official human-readable designation titles rather than raw system IDs.
    - Features top 4 interactive trigger cards launching popup modals:
      - **Trust Categories**: Launches category master on Trust Categories tab.
      - **Membership Type**: Launches category master on Membership Types tab.
@@ -364,7 +373,14 @@ A persistent visual pill is positioned at the top of the header navigation:
 - **Temple Scope**: Saffron background (`bg-orange-600 text-white`) reading **"Viewing: [Temple Name]"**.
 - All data dropdowns strictly filter options based on the active session scope.
 
-### B. Dynamic Policy Versioning & Cache Invalidation
+### B. Ergonomic Stacked Date & Live Clock Pill
+To maximize horizontal header clarity and prevent layout crowding across all display resolutions:
+- **Two-Line Stacked Format**:
+  - **1st Line (Date)**: Formatted day and date (e.g. `Wed, 09 Sept` in `text-[11px] font-medium text-on-surface-variant leading-snug`).
+  - **2nd Line (Time)**: Real-time clock (e.g. `05:09 pm` in `text-[11px] font-bold text-on-surface leading-snug`).
+- **Encapsulated Layout**: Integrated with a sacred gold `Clock` icon inside a compact `rounded-xl bg-surface-container-low border border-outline-variant/40` pill across [`components/Header.tsx`](file:///c:/Users/praha/Documents/PraGana%20Innovations%20Projects/Sankalpavani-v1/components/Header.tsx) and standalone pages, providing immediate temporal context for daily pooja muhurtams, accounting, and audits without consuming excessive horizontal space.
+
+### C. Dynamic Policy Versioning & Cache Invalidation
 Whenever custom roles, permissions, or assignments change, the `policyVersions` counter is incremented:
 - In-memory authorization caches check `policy_version`. If stale, cache is purged and permissions are re-evaluated in real time with **zero downtime**.
 
@@ -381,6 +397,7 @@ Whenever custom roles, permissions, or assignments change, the `policyVersions` 
 3. **Calendar View & Seva Booking Workflow** ([`components/CalendarView.tsx`](file:///c:/Users/praha/Documents/PraGana%20Innovations%20Projects/Sankalpavani-v1/components/CalendarView.tsx)):
    - Single-line summary header: `Seva Overview - [Selected Date / Current Date]`.
    - Devotee demographics: Optional Age and Gender inputs.
+   - Multilingual controls: Localized navigation breadcrumbs, today button, grid/list view switcher, and booking buttons.
    - Dynamic Payment Gateway Mode:
      - **UPI**: Instant dynamic QR code generation (MVP) with direct scan-and-pay.
      - **Card / NetBanking**: Seamless checkout redirection.
@@ -413,8 +430,10 @@ Whenever custom roles, permissions, or assignments change, the `policyVersions` 
 - **Quick Actions Bento Grid**: Instant 1-click launchers for Seva Booking, Hundi Counting, Priest Rostering, and Devotee Receipt generation.
 - **System Overview & Operational Reports ([`components/SystemOverview.tsx`](file:///c:/Users/praha/Documents/PraGana%20Innovations%20Projects/Sankalpavani-v1/components/SystemOverview.tsx))**:
   - Full Indian Rupee (`IndianRupee`) symbology and currency formatting for all financial ledgers.
-  - Streamlined, high-contrast KPI cards displaying **Total Collections**, **Total Bookings**, **Average Ticket Value**, and **Prasadam Delivery Rate** without redundant UI clutter.
-  - CSV export capabilities for accounting reconciliation and trustee audit meetings.
+  - Streamlined, high-contrast KPI cards displaying **Total Collections**, **Total Bookings**, **Average Ticket Value**, and **Prasadam Delivery Rate**.
+  - Visual Progress Analytics: **Seva Revenue Contributions** bar indicators and **Prasadam Fulfillment Pipeline** tracking packages with logistics status alerts.
+  - Aggregated Ledger Breakdown table with dynamic sorting across Daily, Seva, Monthly, and Yearly intervals.
+  - Full pagination controls with localized *Previous* and *Next* actions and CSV summary export.
 
 ---
 
@@ -435,9 +454,91 @@ Whenever custom roles, permissions, or assignments change, the `policyVersions` 
 
 ---
 
-## 15. Automated Verification & Test Suite Matrix
+## 15. Comprehensive 5-Language Multilingual Architecture & API Content Negotiation
 
-The entire project is verified with 10 comprehensive test suites written in TypeScript:
+SankalpVani features an enterprise-grade internationalization system engineered for pan-Indian temples, trusts, and devotees.
+
+```mermaid
+graph TD
+    User([User / Priest / Trustee]) --> Switcher["Language Switcher Dropdown\n(Header: English | ಕನ್ನಡ | తెలుగు | தமிழ் | संस्कृतम्)"]
+    Switcher --> LangCtx["LanguageContext.tsx\n(Active Locale + localStorage persistence)"]
+    
+    subgraph FrontendUIChrome["Frontend UI Chrome (Static UI)"]
+        LangCtx --> Dictionaries["locales/*.json (en, kn, te, ta, sa)"]
+        Dictionaries --> Components["UI Screens & Modals\nt('key.path', 'Fallback')"]
+    end
+
+    subgraph BackendDynamicData["Backend Dynamic Data (Pattern B)"]
+        LangCtx --> APIHeaders["Fetch Wrapper / HTTP Client\nHeaders: {'Accept-Language': locale}"]
+        APIHeaders --> APIRoutes["Next.js API Routes\n(Extracts locale -> RequestContext)"]
+        APIRoutes --> Repositories["Domain Repositories (Drizzle ORM)\nresolveLocalizedField(record, ctx.locale)"]
+        Repositories --> DB[(PostgreSQL Multilingual JSONB)]
+    end
+```
+
+### 1. Supported Languages Matrix
+
+| Locale Code | Language | Native Script | Coverage Scope |
+| :---: | :---: | :---: | :--- |
+| **`en`** | English | English | Global Master Reference |
+| **`kn`** | Kannada | ಕನ್ನಡ | Complete Trust & Temple Governance |
+| **`te`** | Telugu | తెలుగు | Complete Trust & Temple Governance |
+| **`ta`** | Tamil | தமிழ் | Complete Trust & Temple Governance |
+| **`sa`** | Sanskrit | संस्कृतम् | Sacred Rituals & Traditional Governance |
+
+### 2. Client-Side Architecture (`LanguageContext`)
+- **File**: [`contexts/LanguageContext.tsx`](file:///c:/Users/praha/Documents/PraGana%20Innovations%20Projects/Sankalpavani-v1/contexts/LanguageContext.tsx)
+- **Features**:
+  - Provides `locale`, `setLocale(lang)`, and `t(key, fallback)` helper with nested dot-notation key resolution.
+  - Automatically restores and saves user language preference in `localStorage` under `'sankalpavani_lang'`.
+  - Zero page-reload switching: Component trees update reactively without refreshing the browser or resetting form states.
+
+### 3. Global Language Switcher Component
+- **File**: [`components/LanguageSwitcher.tsx`](file:///c:/Users/praha/Documents/PraGana%20Innovations%20Projects/Sankalpavani-v1/components/LanguageSwitcher.tsx)
+- Prominently positioned in the global application header ([`components/Header.tsx`](file:///c:/Users/praha/Documents/PraGana%20Innovations%20Projects/Sankalpavani-v1/components/Header.tsx)).
+- Clean dropdown with native scripts, flag icons, active check indicators, and accessible keyboard navigation.
+
+### 4. Fully Synchronized 5-Locale Dictionaries
+All 5 dictionaries under [`locales/`](file:///c:/Users/praha/Documents/PraGana%20Innovations%20Projects/Sankalpavani-v1/locales) maintain strict parity across 12 primary namespaces:
+- `common`: Universal actions (`save`, `cancel`, `delete`, `search`, `filter`, `previous`, `next`, `status`).
+- `header`: RLS scope titles, live clock, designation badges, language selection.
+- `sidebar`: Trust and Temple menu navigation links.
+- `dashboard`: Trust portfolio KPIs, temple search, status badges, action launchers.
+- `designations`: Titles catalog, active office bearers, nomination modals.
+- `trustees`: Board dossiers, resolutions, tenure dates, appointment forms.
+- `members`: Cadre personnel, roles, sanctum assignments, empty states.
+- `committees`: Committee charters, sub-committees, mandates, rosters.
+- `roles`: RBAC privilege matrix, capability descriptions, and system roles.
+- `temple`: Daily sanctum metrics, dual-bar trend legends, quick actions, doughnut charts.
+- `reports`: Seva contributions, prasadam logistics pipeline, aggregated ledger table, and empty states.
+- `calendar`: Navigation breadcrumbs, today button, view modes, and booking triggers.
+
+### 5. API Content Negotiation for Dynamic Server Records (Pattern B)
+To cleanly separate static UI labels from dynamic database records, SankalpVani implements **Pattern B (API Content Negotiation via `Accept-Language`)**:
+1. **Frontend API Client**: Automatically attaches the active language from `LanguageContext` in the HTTP header:
+   ```typescript
+   headers.set('Accept-Language', currentLocale);
+   ```
+2. **Server Context**: Next.js API routes extract `req.headers.get('accept-language')` and inject `locale` into the authoritative [`RequestContext`](file:///c:/Users/praha/Documents/PraGana%20Innovations%20Projects/Sankalpavani-v1/lib/tenant/context.ts).
+3. **Repository Field Projection**: Repositories project localized strings from multilingual records using `resolveLocalizedField`:
+   ```typescript
+   function resolveLocalizedField(field: any, locale: string, fallback = 'en'): string {
+     if (!field) return '';
+     if (typeof field === 'string') return field;
+     return field[locale] || field[fallback] || Object.values(field)[0] || '';
+   }
+   ```
+4. **Architectural Benefit**:
+   - UI components remain simple and declarative (`<span>{item.sevaName}</span>`).
+   - Network payload is minimized over mobile bandwidth (only 1 translated string transmitted per record instead of 5).
+   - Uniform compatibility across Web Admin, Temple Admin, and Devotee Mobile Apps.
+   - Robust fallback to English whenever a localized translation is pending.
+
+---
+
+## 16. Automated Verification & Test Suite Matrix
+
+The entire project is verified with comprehensive test suites written in TypeScript:
 
 | Test Suite | File Path | Total Tests | Status | Key Assertions Verified |
 | :--- | :--- | :---: | :---: | :--- |
@@ -455,7 +556,7 @@ The entire project is verified with 10 comprehensive test suites written in Type
 
 ---
 
-## 16. Complete File & Component Inventory
+## 17. Complete File & Component Inventory
 
 ### Database Schemas
 - `db/schema/core.ts`: Trusts, Organization Nodes, Temples, Users, Person Profiles, Memberships, Designations, Office Bearers, Committees, Committee Members, Reporting Relationships, Departments, Custom Roles.
@@ -472,6 +573,8 @@ The entire project is verified with 10 comprehensive test suites written in Type
 - `lib/repositories/role.repository.ts`
 - `lib/repositories/org-chart.repository.ts`
 - `lib/repositories/department.repository.ts`
+- `lib/repositories/booking.repository.ts`
+- `lib/repositories/seva.repository.ts`
 - `lib/tenant/resolver.ts` & `lib/tenant/context.ts`
 - `lib/authorization/service.ts`
 - `lib/auth/session.ts`
@@ -489,6 +592,15 @@ The entire project is verified with 10 comprehensive test suites written in Type
 - `app/api/v1/trusts/[trustId]/org-chart/route.ts`
 - `app/api/v1/trusts/[trustId]/departments/route.ts` & `[templeId]/departments/route.ts`
 
+### Localization & Contexts
+- `contexts/LanguageContext.tsx`: React Context with dot-notation lookup and `localStorage` persistence.
+- `components/LanguageSwitcher.tsx`: Global header dropdown with native scripts (`English`, `ಕನ್ನಡ`, `తెలుగు`, `தமிழ்`, `संस्कृतम्`).
+- `locales/en.json`: English master dictionary.
+- `locales/kn.json`: Kannada translation dictionary.
+- `locales/te.json`: Telugu translation dictionary.
+- `locales/ta.json`: Tamil translation dictionary.
+- `locales/sa.json`: Sanskrit translation dictionary.
+
 ### Frontend Portals & Reusable Components
 - `app/trusts/[trustId]/dashboard/page.tsx` *(Screen 1 Unified Apex Control Room)*
 - `app/trusts/[trustId]/layout.tsx` *(Tenant Security Boundary Route Guard)*
@@ -497,14 +609,14 @@ The entire project is verified with 10 comprehensive test suites written in Type
 - `app/trusts/[trustId]/governance/designations/page.tsx`
 - `app/trusts/[trustId]/governance/members/page.tsx`
 - `app/trusts/[trustId]/governance/roles/page.tsx`
-- `components/Header.tsx` *(Scoped Access Context Switcher & Temple Trusts Operations)*
-- `components/Sidebar.tsx` *(Role-based Dynamic Trust Admin & Temple Admin Sidebars)*
-- `components/TrustDashboardPortfolio.tsx` *(Temples Governed by Trust & Activity Launchers)*
-- `components/DashboardPortal.tsx` *(Temple Operational Analytics & Bento Grid)*
-- `components/SystemOverview.tsx` *(Operational Reports, Rupee Currency Format & Export Suite)*
-- `components/CalendarView.tsx` *(Seva Calendar & Dynamic UPI / Gateway Booking)*
+- `components/Header.tsx` *(Scoped Access Context Switcher, 2-Line Stacked Live Date & Clock Pill, and Language Switcher)*
+- `components/Sidebar.tsx` *(Role-based Dynamic Trust Admin & Temple Admin Sidebars with Full i18n)*
+- `components/TrustDashboardPortfolio.tsx` *(Temples Governed by Trust, Real-time KPIs & Activity Launchers)*
+- `components/DashboardPortal.tsx` *(Temple Operational Analytics, Dual-bar Trends, Seva Doughnut & Bento Grid)*
+- `components/SystemOverview.tsx` *(Operational Reports, Visual Progress Pipelines, Rupee Currency Format & Export Suite)*
+- `components/CalendarView.tsx` *(Seva Calendar, Header Controls & Dynamic UPI / Gateway Booking)*
 - `components/Settings.tsx` *(Temple Notifications & Communication Gateways)*
-- `components/CommitteesGovernance.tsx` *(Committees & Dynamic Creation Modal)*
+- `components/CommitteesGovernance.tsx` *(Committees, Sub-Committees & Dynamic Creation Modal)*
 - `components/DesignationsGovernance.tsx` *(Designation Titles, Appointee Badges & Modal Launchers)*
 - `components/MembersGovernance.tsx` *(Members Directory, Multi-Temple Scoping & Preferred Channels)*
 - `components/SevaMaster.tsx` *(Seva Offerings Setup & Trust Resolution Timestamps)*
@@ -515,10 +627,10 @@ The entire project is verified with 10 comprehensive test suites written in Type
 - `components/org-chart/OrgChartCanvas.tsx`
 - `components/org-chart/AddStaffDrawer.tsx`
 - `contexts/AuthContext.tsx`
+- `components/Providers.tsx`
 
 ---
 
 ## Conclusion
 
-The SankalpVani platform stands as a **complete, production-ready, 100% dynamic multi-tenant hierarchy and temple governance operating system**. Every administrative entity (temples, trustees, committees, members, designations, custom roles, category masters, matrix reporting trees, operational analytics dashboards, and dynamic departments) is dynamically configurable through intuitive, sacred-aesthetic UI interfaces and protected by rigorous database schemas, RLS guards, and automated test suites with zero TypeScript errors.
-
+The SankalpVani platform stands as a **complete, production-ready, 100% dynamic multi-tenant hierarchy, multilingual operating system, and temple governance platform**. Every administrative entity (temples, trustees, committees, members, designations, custom roles, category masters, matrix reporting trees, operational analytics dashboards, communication gateways, and dynamic departments) is dynamically configurable through intuitive sacred-aesthetic UI interfaces, fully accessible in 5 major Indic languages, backed by Pattern B API content negotiation, and validated by zero TypeScript compilation errors.

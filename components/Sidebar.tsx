@@ -28,6 +28,7 @@ import {
 } from 'lucide-react';
 
 import { useAuth, STAKEHOLDER_PERSONAS } from '../contexts/AuthContext';
+import { useLanguage } from '../contexts/LanguageContext';
 import { PermissionKey } from '../utils/permissions';
 import GovernanceMastersModal from './governance/GovernanceMastersModal';
 import { MasterType } from '@/lib/types/masters';
@@ -82,6 +83,7 @@ export default function Sidebar({
     updateSession,
     switchScope
   } = useAuth();
+  const { t } = useLanguage();
   const router = useRouter();
   const [templeLogo, setTempleLogo] = useState('https://lh3.googleusercontent.com/aida-public/AB6AXuANcPfzsfum8zGj2STDpP_Eds0xOoXxtm_OjHwVkP2MZOW3999u6oVf8P-7GeIMQA1hFSnmMM-gxsed4iDD-ruqP0OJKhI0LBMl2OTllKr3RJspedpV9pOsdDyz43dF_teOB1cC39MQgm579_rgeQq4Evh6iDEqE4aFi5LR5E3SLkqyCjsFrlyNnt_YF1ph80p1i-M4ec2yFc2A9oBE9U3sOA8W64XAiqtD-IxdDQLuoEYwwIz6gU1SePMjmWX2QVVSn1bT8aiesII');
   const [personaMenuOpen, setPersonaMenuOpen] = useState(false);
@@ -118,14 +120,14 @@ export default function Sidebar({
 
   // Temple Level Operational Nav Items
   const templeNavItems = [
-    { id: 'dashboard', label: 'Temple Dashboard', icon: LayoutDashboard, perm: ['DASHBOARD_VIEW'] },
-    { id: 'masters_hub', label: 'Masters', icon: Grid, perm: ['VIEW_SEVAS', 'MANAGE_SEVAS', 'VIEW_PRIESTS', 'MANAGE_PRIESTS', 'MANAGE_TEMPLE_INFO'] },
-    { id: 'calendar', label: 'Devotee Bookings', icon: Calendar, perm: ['VIEW_BOOKINGS', 'REGISTER_BOOKINGS'] },
-    { id: 'transactions', label: 'Seva Ledger', icon: Receipt, perm: ['VIEW_FINANCE', 'PRINT_RECEIPTS'] },
-    { id: 'prasadam', label: 'Prasadam Dispatch', icon: Utensils, perm: ['PROCESS_LOGISTICS'] },
+    { id: 'dashboard', labelKey: 'sidebar.templeDashboard', label: 'Temple Dashboard', icon: LayoutDashboard, perm: ['DASHBOARD_VIEW'] },
+    { id: 'masters_hub', labelKey: 'sidebar.masters', label: 'Masters', icon: Grid, perm: ['VIEW_SEVAS', 'MANAGE_SEVAS', 'VIEW_PRIESTS', 'MANAGE_PRIESTS', 'MANAGE_TEMPLE_INFO'] },
+    { id: 'calendar', labelKey: 'sidebar.calendar', label: 'Devotee Bookings', icon: Calendar, perm: ['VIEW_BOOKINGS', 'REGISTER_BOOKINGS'] },
+    { id: 'transactions', labelKey: 'sidebar.transactions', label: 'Seva Ledger', icon: Receipt, perm: ['VIEW_FINANCE', 'PRINT_RECEIPTS'] },
+    { id: 'prasadam', labelKey: 'sidebar.prasadam', label: 'Prasadam Dispatch', icon: Utensils, perm: ['PROCESS_LOGISTICS'] },
     // { id: 'org_chart', label: 'Org Hierarchy', icon: Network, perm: ['VIEW_ORG_CHART'] }, // TEMPORARILY COMMENTED OUT FROM UI
-    { id: 'system_overview', label: 'Temple Reports', icon: BarChart3, perm: ['VIEW_REPORTS'] },
-    { id: 'settings', label: 'Temple Notifications', icon: Bell, perm: ['MANAGE_SETTINGS'] },
+    { id: 'system_overview', labelKey: 'sidebar.systemOverview', label: 'Temple Reports', icon: BarChart3, perm: ['VIEW_REPORTS'] },
+    { id: 'settings', labelKey: 'sidebar.notifications', label: 'Temple Notifications', icon: Bell, perm: ['MANAGE_SETTINGS'] },
   ];
 
   // Filter items strictly by user's role permissions (Dynamic Role-based Display)
@@ -174,15 +176,17 @@ export default function Sidebar({
             className="w-12 h-12 rounded-full shadow-sacred mb-2.5 object-cover border border-outline-variant/30"
             src={templeLogo}
           />
-          <h1 className="font-serif text-xl text-primary text-center font-bold tracking-tight">SankalpVani</h1>
+          <h1 className="font-serif text-xl text-primary text-center font-bold tracking-tight">
+            {t('common.brandName', 'SankalpVani')}
+          </h1>
           <div className="flex items-center gap-1.5 mt-2 w-full justify-center">
             <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full text-center shadow-xs truncate max-w-[210px] ${activeScope === 'TRUST'
               ? 'bg-red-800 text-white'
               : 'bg-orange-600 text-white'
               }`}>
               {activeScope === 'TRUST'
-                ? 'Viewing: Temple Trusts Operations'
-                : `Viewing: ${activeTempleName || 'Sri Vidyashankara Temple'}`}
+                ? t('header.scopeTitle', 'Viewing: Temple Trusts Operations')
+                : `${t('header.viewing', 'Viewing')}: ${activeTempleName || 'Sri Vidyashankara Temple'}`}
             </span>
           </div>
         </div>
@@ -190,7 +194,7 @@ export default function Sidebar({
         {/* Dynamic Navigation Links */}
         <nav className="flex-1 overflow-y-auto px-3 space-y-1 hide-scrollbar">
           <p className="text-[9px] font-mono font-bold uppercase tracking-wider text-on-surface-variant/70 mb-2 px-3">
-            {activeScope === 'TRUST' ? 'Trust Governance' : 'Temple Operations'}
+            {activeScope === 'TRUST' ? t('sidebar.trustGovernance', 'Trust Governance') : t('sidebar.templeOperations', 'Temple Operations')}
           </p>
 
           {activeScope === 'TEMPLE' && visibleTempleNavItems.map((item) => {
@@ -209,7 +213,7 @@ export default function Sidebar({
               >
                 <div className="flex items-center gap-2.5">
                   <Icon size={16} />
-                  <span>{item.label}</span>
+                  <span>{t(item.labelKey, item.label)}</span>
                 </div>
               </button>
             );
@@ -228,7 +232,7 @@ export default function Sidebar({
                 title="Open Trust Dashboard & Portfolio"
               >
                 <Landmark size={16} />
-                <span>Trust Dashboard</span>
+                <span>{t('sidebar.dashboard', 'Trust Dashboard')}</span>
               </button>
 
               {/* Items displayed in Trust Dashboard (Governance & Masters) */}
@@ -243,7 +247,7 @@ export default function Sidebar({
                     }`}
                 >
                   <Crown size={13} className="shrink-0 text-amber-700" />
-                  <span className="truncate">Designation & Titles</span>
+                  <span className="truncate">{t('sidebar.designations', 'Designation & Titles')}</span>
                 </button>
 
                 {/* 2. Add new temple */}
@@ -256,7 +260,7 @@ export default function Sidebar({
                     }`}
                 >
                   <Plus size={13} className="shrink-0 text-primary" />
-                  <span className="truncate">Add new temple</span>
+                  <span className="truncate">{t('sidebar.addTemple', 'Add new temple')}</span>
                 </button>
 
                 {/* 3. Members */}
@@ -269,7 +273,7 @@ export default function Sidebar({
                     }`}
                 >
                   <UserCheck size={13} className="shrink-0 text-primary" />
-                  <span className="truncate">Members</span>
+                  <span className="truncate">{t('sidebar.members', 'Members')}</span>
                 </button>
 
                 {/* 4. Trustees & Board */}
@@ -282,7 +286,7 @@ export default function Sidebar({
                     }`}
                 >
                   <Users size={13} className="shrink-0 text-primary" />
-                  <span className="truncate">Trustees & Board</span>
+                  <span className="truncate">{t('sidebar.trustees', 'Trustees & Board')}</span>
                 </button>
 
                 {/* 5. Committees */}
@@ -295,7 +299,7 @@ export default function Sidebar({
                     }`}
                 >
                   <Layers size={13} className="shrink-0 text-primary" />
-                  <span className="truncate">Committees</span>
+                  <span className="truncate">{t('sidebar.committees', 'Committees')}</span>
                 </button>
 
                 {/* 6. Dynamic RBAC...(opt.) */}
@@ -308,7 +312,7 @@ export default function Sidebar({
                     }`}
                 >
                   <ShieldCheck size={13} className="shrink-0 text-primary" />
-                  <span className="truncate">Dynamic RBAC... <span className="italic font-normal text-[10px] text-on-surface-variant/80">(opt.)</span></span>
+                  <span className="truncate">{t('sidebar.roles', 'Dynamic Roles & RBAC')}</span>
                 </button>
               </div>
             </div>
@@ -318,7 +322,7 @@ export default function Sidebar({
           {!isTrustScope && scopeContext !== 'trust' && (
             <div className="pt-3 pb-1 border-t border-outline-variant/30 mt-3">
               <p className="text-[9px] font-mono font-bold uppercase tracking-wider text-on-surface-variant/70 mb-1.5 px-3">
-                Trust Control Center
+                {t('sidebar.trustControlCenter', 'Trust Control Center')}
               </p>
               <a
                 href={`/trusts/${currentTrustId}/dashboard`}
@@ -326,7 +330,7 @@ export default function Sidebar({
                 title="Open Trust Dashboard"
               >
                 <Landmark size={14} className="shrink-0" />
-                <span>Trust Dashboard</span>
+                <span>{t('sidebar.dashboard', 'Trust Dashboard')}</span>
               </a>
             </div>
           )}
@@ -343,7 +347,7 @@ export default function Sidebar({
             >
               <div className="flex items-center gap-1.5 truncate">
                 <UserCheck size={13} className="shrink-0 text-primary" />
-                <span className="truncate">Role: {displayDesignation}</span>
+                <span className="truncate">{t('common.role', 'Role')}: {displayDesignation}</span>
               </div>
               <ChevronDown size={13} className={`shrink-0 transition-transform ${personaMenuOpen ? 'rotate-180' : ''}`} />
             </button>
@@ -426,7 +430,7 @@ export default function Sidebar({
               <div className="flex items-center gap-1">
                 <ShieldCheck size={9} className="text-amber-800 shrink-0" />
                 <span className="text-[9px] text-on-surface-variant font-mono truncate">
-                  {session?.permissions?.length || 0} Permissions
+                  {session?.permissions?.length || 0} {t('sidebar.permissions', 'Permissions')}
                 </span>
               </div>
             </div>
@@ -437,7 +441,7 @@ export default function Sidebar({
             className="w-full flex items-center justify-center px-3 py-1.5 rounded-xl border border-outline-variant/40 font-sans text-xs font-bold text-error hover:bg-error-container hover:text-on-error-container transition-all duration-150 cursor-pointer"
           >
             <LogOut size={13} className="mr-1.5" />
-            <span>Logout</span>
+            <span>{t('sidebar.logout', 'Logout')}</span>
           </button>
         </div>
       </aside>
@@ -457,9 +461,11 @@ export default function Sidebar({
                 className="w-12 h-12 rounded-full shadow-sacred mb-2 object-cover"
                 src={templeLogo}
               />
-              <h1 className="font-serif text-xl text-primary text-center font-bold">SankalpVani</h1>
+              <h1 className="font-serif text-xl text-primary text-center font-bold">
+                {t('common.brandName', 'SankalpVani')}
+              </h1>
               <p className="font-sans text-[10px] text-on-surface-variant uppercase tracking-widest font-semibold">
-                {scopeContext === 'trust' ? 'Trust Scope' : 'Temple Scope'}
+                {scopeContext === 'trust' ? t('sidebar.trustScope', 'Trust Scope') : t('sidebar.templeScope', 'Temple Scope')}
               </p>
             </div>
 
@@ -477,7 +483,7 @@ export default function Sidebar({
                       }`}
                   >
                     <Icon size={16} />
-                    <span>{item.label}</span>
+                    <span>{t(item.labelKey, item.label)}</span>
                   </button>
                 );
               })}
@@ -493,7 +499,7 @@ export default function Sidebar({
                       }`}
                   >
                     <Landmark size={15} />
-                    <span>Trust Dashboard</span>
+                    <span>{t('sidebar.dashboard', 'Trust Dashboard')}</span>
                   </button>
                   <div className="pl-3 py-1 space-y-1 border-l-2 border-primary/20 ml-2">
                     {/* 1. Designation & Titles */}
@@ -503,7 +509,7 @@ export default function Sidebar({
                       className={`flex items-center gap-2 text-[11px] w-full text-left py-1 cursor-pointer ${activeTab === 'designations' ? 'text-primary font-bold' : 'text-on-surface-variant'}`}
                     >
                       <Crown size={12} className="text-amber-700 shrink-0" />
-                      <span>Designation & Titles</span>
+                      <span>{t('sidebar.designations', 'Designation & Titles')}</span>
                     </button>
 
                     {/* 2. Add new temple */}
@@ -513,7 +519,7 @@ export default function Sidebar({
                       className={`flex items-center gap-2 text-[11px] w-full text-left py-1 cursor-pointer ${activeTab === 'add_temple' ? 'text-primary font-bold' : 'text-on-surface-variant hover:text-primary'}`}
                     >
                       <Plus size={12} className="text-primary" />
-                      <span>Add new temple</span>
+                      <span>{t('sidebar.addTemple', 'Add new temple')}</span>
                     </button>
 
                     {/* 3. Members */}
@@ -523,7 +529,7 @@ export default function Sidebar({
                       className={`flex items-center gap-2 text-[11px] w-full text-left py-1 cursor-pointer ${activeTab === 'members' ? 'text-primary font-bold' : 'text-on-surface-variant hover:text-primary'}`}
                     >
                       <UserCheck size={12} className="text-primary" />
-                      <span>Members</span>
+                      <span>{t('sidebar.members', 'Members')}</span>
                     </button>
 
                     {/* 4. Trustees & Board */}
@@ -533,7 +539,7 @@ export default function Sidebar({
                       className={`flex items-center gap-2 text-[11px] w-full text-left py-1 cursor-pointer ${activeTab === 'trustees' ? 'text-primary font-bold' : 'text-on-surface-variant hover:text-primary'}`}
                     >
                       <Users size={12} className="text-primary" />
-                      <span>Trustees & Board</span>
+                      <span>{t('sidebar.trustees', 'Trustees & Board')}</span>
                     </button>
 
                     {/* 5. Committees */}
@@ -543,7 +549,7 @@ export default function Sidebar({
                       className={`flex items-center gap-2 text-[11px] w-full text-left py-1 cursor-pointer ${activeTab === 'committees' ? 'text-primary font-bold' : 'text-on-surface-variant hover:text-primary'}`}
                     >
                       <Layers size={12} className="text-primary" />
-                      <span>Committees</span>
+                      <span>{t('sidebar.committees', 'Committees')}</span>
                     </button>
 
                     {/* 6. Dynamic RBAC...(opt.) */}
@@ -553,7 +559,7 @@ export default function Sidebar({
                       className={`flex items-center gap-2 text-[11px] w-full text-left py-1 cursor-pointer ${activeTab === 'roles' ? 'text-primary font-bold' : 'text-on-surface-variant hover:text-primary'}`}
                     >
                       <ShieldCheck size={12} className="text-primary" />
-                      <span>Dynamic RBAC... <span className="italic font-normal text-[10px] text-on-surface-variant/80">(opt.)</span></span>
+                      <span>{t('sidebar.roles', 'Dynamic Roles & RBAC')}</span>
                     </button>
                   </div>
                 </div>
@@ -565,7 +571,7 @@ export default function Sidebar({
                   className="w-full flex items-center gap-2 px-3 py-1.5 rounded-xl font-sans text-xs font-semibold text-on-surface-variant"
                 >
                   <Building2 size={14} />
-                  <span>Switch Workspace</span>
+                  <span>{t('sidebar.switchWorkspace', 'Switch Workspace')}</span>
                 </a>
               </div>
             </nav>
@@ -576,7 +582,7 @@ export default function Sidebar({
                 className="w-full flex items-center justify-center px-3 py-2 rounded-xl border border-outline-variant/40 font-sans text-xs font-bold text-error cursor-pointer"
               >
                 <LogOut size={13} className="mr-1.5" />
-                <span>Logout</span>
+                <span>{t('sidebar.logout', 'Logout')}</span>
               </button>
             </div>
           </div>

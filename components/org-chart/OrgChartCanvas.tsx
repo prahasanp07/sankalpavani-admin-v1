@@ -596,14 +596,14 @@ function OrgChartFlow() {
         <div className="flex flex-wrap items-center gap-2.5">
           {/* Search box */}
           <div className="relative min-w-[180px] sm:min-w-[220px]">
-            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search staff, role, priest..."
-              className="w-full pl-8 pr-3 py-1.5 bg-surface-container-low border border-outline-variant/40 rounded-xl text-xs font-medium focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/30 transition-all placeholder:text-on-surface-variant/40"
+              className="w-full pl-3 pr-8 py-1.5 bg-surface-container-low border border-outline-variant/40 rounded-xl text-xs font-medium focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/30 transition-all placeholder:text-on-surface-variant/40"
             />
+            <Search size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none" />
           </div>
 
           {/* Department Filter Pills */}

@@ -14,6 +14,7 @@ import {
   Building2
 } from 'lucide-react';
 import { AuthProvider, useAuth } from '../../../../../../contexts/AuthContext';
+import { useLanguage } from '../../../../../../contexts/LanguageContext';
 import RequirePermission, { LockedViewFallback } from '../../../../../../components/RequirePermission';
 import Sidebar from '../../../../../../components/Sidebar';
 import DashboardPortal from '../../../../../../components/DashboardPortal';
@@ -33,9 +34,11 @@ function TempleWorkspaceContent() {
   const templeId = (params?.templeId as string) || 'temple_vidyashankara';
 
   const { session, isLoggedIn, isMounted, logout } = useAuth();
+  const { t } = useLanguage();
 
   const [activeTab, setActiveTab] = useState('dashboard');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [currentDate, setCurrentDate] = useState('');
   const [currentTime, setCurrentTime] = useState('');
   const [dynamicTempleName, setDynamicTempleName] = useState<string>('');
 
@@ -61,17 +64,20 @@ function TempleWorkspaceContent() {
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
-      const options: Intl.DateTimeFormatOptions = {
-        weekday: 'short',
-        year: 'numeric',
-        month: 'short',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: true
-      };
-      setCurrentTime(now.toLocaleString('en-IN', options));
+      setCurrentDate(
+        now.toLocaleDateString('en-IN', {
+          weekday: 'short',
+          day: '2-digit',
+          month: 'short'
+        })
+      );
+      setCurrentTime(
+        now.toLocaleTimeString('en-IN', {
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: true
+        })
+      );
     };
 
     updateTime();
@@ -89,20 +95,20 @@ function TempleWorkspaceContent() {
 
   const getPageHeaderTitle = () => {
     switch (activeTab) {
-      case 'dashboard': return `${getTempleDisplayName()} - Dashboard`;
-      case 'masters_hub': return 'Structural Masters Hub';
-      case 'org_chart': return 'Devasthanam Organization Chart & Matrix Reporting';
-      case 'archaka_master': return 'Acharyas & Archakas Registry';
-      case 'seva_master': return 'Seva Offerings Setup';
-      case 'temple_info': return 'Temple Profile & Core Timings';
-      case 'temple_facilities': return 'Facilities & Guest Amenities';
-      case 'scheduling': return 'Priest Rostering & Shift Scheduling';
-      case 'transactions': return 'Financial Ledger & Darshan Receipts';
-      case 'prasadam': return 'Remote Prasadam Dispatch & Logistics';
-      case 'system_overview': return 'System Performance & Security Logs';
-      case 'calendar': return 'Devotee Bookings Calendar';
-      case 'settings': return 'Administrative Configuration & Settings';
-      default: return 'Temple Administration Portal';
+      case 'dashboard': return `${getTempleDisplayName()} - ${t('sidebar.dashboard', 'Dashboard')}`;
+      case 'masters_hub': return t('pageTitles.mastersHub', 'Structural Masters Hub');
+      case 'org_chart': return t('pageTitles.orgChart', 'Devasthanam Organization Chart & Matrix Reporting');
+      case 'archaka_master': return t('pageTitles.archakaMaster', 'Acharyas & Archakas Registry');
+      case 'seva_master': return t('pageTitles.sevaMaster', 'Seva Offerings Setup');
+      case 'temple_info': return t('pageTitles.templeInfo', 'Temple Profile & Core Timings');
+      case 'temple_facilities': return t('pageTitles.templeFacilities', 'Facilities & Guest Amenities');
+      case 'scheduling': return t('pageTitles.scheduling', 'Priest Rostering & Shift Scheduling');
+      case 'transactions': return t('pageTitles.transactions', 'Financial Ledger & Darshan Receipts');
+      case 'prasadam': return t('pageTitles.prasadam', 'Remote Prasadam Dispatch & Logistics');
+      case 'system_overview': return t('pageTitles.systemOverview', 'System Performance & Security Logs');
+      case 'calendar': return t('pageTitles.calendar', 'Devotee Bookings Calendar');
+      case 'settings': return t('pageTitles.settings', 'Administrative Configuration & Settings');
+      default: return t('pageTitles.default', 'Temple Administration Portal');
     }
   };
 
@@ -144,7 +150,7 @@ function TempleWorkspaceContent() {
               title="Switch Trust / Temple Workspace"
             >
               <Building2 size={13} />
-              <span>Switch Workspace</span>
+              <span>{t('sidebar.switchWorkspace', 'Switch Workspace')}</span>
             </button>
 
             <div className="flex items-center gap-2">
@@ -156,9 +162,12 @@ function TempleWorkspaceContent() {
 
           <div className="flex items-center gap-3 md:gap-4">
             {/* Live Clock */}
-            <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-container-low border border-outline-variant/40 text-on-surface-variant text-xs font-mono">
-              <Clock size={13} className="text-primary" />
-              <span>{currentTime || 'Loading...'}</span>
+            <div className="hidden sm:flex items-center gap-2 px-3 py-1 rounded-xl bg-surface-container-low border border-outline-variant/40 text-on-surface-variant font-mono">
+              <Clock size={13} className="text-primary shrink-0" />
+              <div className="flex flex-col text-left leading-tight">
+                <span className="text-[11px] font-medium text-on-surface-variant">{currentDate || 'Loading...'}</span>
+                <span className="text-[11px] font-bold text-on-surface">{currentTime}</span>
+              </div>
             </div>
 
             {/* Active Role Badge */}

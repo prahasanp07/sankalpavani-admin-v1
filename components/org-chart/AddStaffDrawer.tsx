@@ -996,7 +996,6 @@ export default function AddStaffDrawer({
                     {isManagerDropdownOpen && (
                       <div className="absolute top-full left-0 right-0 mt-1.5 bg-surface-container-lowest border border-outline-variant/40 rounded-2xl shadow-xl z-50 overflow-hidden animate-[slideDown_0.2s_ease-out]">
                         <div className="p-2 border-b border-outline-variant/20 bg-surface-container-low/60 flex items-center gap-2">
-                          <Search size={14} className="text-on-surface-variant" />
                           <input
                             type="text"
                             value={managerSearchQuery}
@@ -1005,6 +1004,7 @@ export default function AddStaffDrawer({
                             className="w-full bg-transparent text-xs focus:outline-none placeholder:text-on-surface-variant/50"
                             autoFocus
                           />
+                          <Search size={14} className="text-on-surface-variant shrink-0" />
                         </div>
 
                         <div className="max-h-56 overflow-y-auto p-1.5 space-y-1 hide-scrollbar">
@@ -1125,7 +1125,6 @@ export default function AddStaffDrawer({
                     {isMatrixDropdownOpen && (
                       <div className="absolute top-full left-0 right-0 mt-1.5 bg-surface-container-lowest border border-purple-200 rounded-2xl shadow-xl z-50 overflow-hidden animate-[slideDown_0.2s_ease-out]">
                         <div className="p-2 border-b border-outline-variant/20 bg-surface-container-low/60 flex items-center gap-2">
-                          <Search size={14} className="text-on-surface-variant" />
                           <input
                             type="text"
                             value={matrixSearchQuery}
@@ -1134,6 +1133,7 @@ export default function AddStaffDrawer({
                             className="w-full bg-transparent text-xs focus:outline-none placeholder:text-on-surface-variant/50"
                             autoFocus
                           />
+                          <Search size={14} className="text-on-surface-variant shrink-0" />
                         </div>
 
                         <div className="max-h-56 overflow-y-auto p-1.5 space-y-1 hide-scrollbar">

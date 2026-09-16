@@ -21,6 +21,7 @@ import {
   ChevronUp
 } from 'lucide-react';
 import { Chart, registerables } from 'chart.js';
+import { useLanguage } from '../contexts/LanguageContext';
 
 Chart.register(...registerables);
 
@@ -100,6 +101,7 @@ interface DashboardPortalProps {
 }
 
 export default function DashboardPortal({ onNavigate }: DashboardPortalProps) {
+  const { t } = useLanguage();
   const [hoveredTrend, setHoveredTrend] = useState<number | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const doughnutCanvasRef = React.useRef<HTMLCanvasElement | null>(null);
@@ -384,11 +386,11 @@ export default function DashboardPortal({ onNavigate }: DashboardPortalProps) {
     const chart = new Chart(barCanvasRef.current, {
       type: 'bar',
       data: {
-        labels: finalTrends.map(t => t.day),
+        labels: finalTrends.map(item => item.day),
         datasets: [
           {
             label: 'Sevas',
-            data: finalTrends.map(t => t.sevaAmount),
+            data: finalTrends.map(item => item.sevaAmount),
             backgroundColor: '#8f4e00',
             hoverBackgroundColor: '#a85f05',
             borderRadius: 6,
@@ -398,7 +400,7 @@ export default function DashboardPortal({ onNavigate }: DashboardPortalProps) {
           },
           {
             label: 'Donations',
-            data: finalTrends.map(t => t.donationAmount),
+            data: finalTrends.map(item => item.donationAmount),
             backgroundColor: '#059669',
             hoverBackgroundColor: '#047857',
             borderRadius: 6,
@@ -659,9 +661,9 @@ export default function DashboardPortal({ onNavigate }: DashboardPortalProps) {
       )}
 
       {/* Welcome Section Banner Card */}
-      <div className="border border-dashed border-outline-variant/70 rounded-[24px] p-4 bg-surface-container-lowest flex flex-col md:flex-row items-stretch gap-6 shadow-sm">
-        {/* Banner image covering roughly 3/4ths of the container on md+ screens */}
-        <div className="relative w-full md:w-5/6 h-64 md:h-56 rounded-2xl overflow-hidden shadow-inner shrink-0 bg-surface-container-low/40 flex items-center justify-center">
+      <div className="border border-dashed border-outline-variant/70 rounded-[24px] p-4 bg-surface-container-lowest flex flex-col md:flex-row items-stretch gap-6 shadow-sm overflow-hidden">
+        {/* Banner image covering the majority of the container on md+ screens */}
+        <div className="relative flex-1 min-w-0 h-56 md:h-56 rounded-2xl overflow-hidden shadow-inner bg-surface-container-low/40 flex items-center justify-center">
           {/* Crisp, original image covering the container */}
           <img
             src={templePhoto}
@@ -673,12 +675,16 @@ export default function DashboardPortal({ onNavigate }: DashboardPortalProps) {
         </div>
 
         {/* Welcome Text on the right side */}
-        <div className="w-full md:w-1/4 flex flex-col justify-center py-2">
-          <h2 className="font-serif text-xl font-bold text-primary tracking-tight">
-            Namaste Admin.
+        <div className="w-full md:w-72 lg:w-80 shrink-0 flex flex-col justify-center py-2 pr-2">
+          {/* <div className="flex items-center gap-1.5 text-primary/80 font-medium text-[11px] uppercase tracking-wider mb-1">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span>{t('temple.dailyOperations', 'Daily Operations')}</span>
+          </div> */}
+          <h2 className="font-serif text-xl lg:text-2xl font-bold text-primary tracking-tight break-words">
+            {t('temple.namasteAdmin', 'Namaste Admin.')}
           </h2>
-          <p className="font-sans text-xs text-on-surface-variant font-medium mt-1 leading-snug">
-            Here&apos;s what&apos;s happening today at the Temple.
+          <p className="font-sans text-xs sm:text-sm text-on-surface-variant font-medium mt-1.5 leading-snug break-words">
+            {t('temple.happeningToday', "Here's what's happening today at the Temple.")}
           </p>
         </div>
       </div>
@@ -700,7 +706,7 @@ export default function DashboardPortal({ onNavigate }: DashboardPortalProps) {
               <div>
                 <div className="flex justify-between items-start mb-2">
                   <div>
-                    <p className="font-label-sm text-[11px] font-bold text-on-surface-variant uppercase tracking-wider">TODAY&apos;S SEVAS</p>
+                    <p className="font-label-sm text-[11px] font-bold text-on-surface-variant uppercase tracking-wider">{t('temple.todaysSevas', "TODAY'S SEVAS")}</p>
                     <h3 className="font-display-lg text-on-surface mt-1 font-bold flex items-baseline gap-1">
                       <span className="text-2xl sm:text-3xl font-extrabold">{kpiValues.sevas}</span>
                       <span className="text-xs font-semibold text-on-surface-variant/80">/ 355</span>
@@ -744,7 +750,7 @@ export default function DashboardPortal({ onNavigate }: DashboardPortalProps) {
               {/* Trend Indicator Row */}
               <div className="flex items-center gap-1 text-green-600 font-bold bg-green-50 border border-green-200 px-2.5 py-1 rounded-xl w-fit text-[10px] mt-3 shadow-xs">
                 <span className="material-symbols-outlined text-[12px] font-extrabold">trending_up</span>
-                <span>+12% vs yesterday</span>
+                <span>+12% {t('temple.vsYesterday', 'vs yesterday')}</span>
               </div>
             </div>
 
@@ -756,7 +762,7 @@ export default function DashboardPortal({ onNavigate }: DashboardPortalProps) {
               <div>
                 <div className="flex justify-between items-start mb-2">
                   <div>
-                    <p className="font-label-sm text-[11px] font-bold text-on-surface-variant uppercase tracking-wider">RECENT BOOKINGS</p>
+                    <p className="font-label-sm text-[11px] font-bold text-on-surface-variant uppercase tracking-wider">{t('temple.recentBookings', 'RECENT BOOKINGS')}</p>
                     <h3 className="font-display-lg text-2xl sm:text-3xl text-on-surface mt-1 font-bold">{kpiValues.bookings}</h3>
                   </div>
                   <div className="w-9 h-9 rounded-full bg-secondary-container/30 flex items-center justify-center text-secondary shrink-0">
@@ -764,7 +770,7 @@ export default function DashboardPortal({ onNavigate }: DashboardPortalProps) {
                   </div>
                 </div>
                 <p className="text-xs text-on-surface-variant font-medium mt-2">
-                  Online &amp; counter seva tickets booked.
+                  {t('temple.onlineCounterTickets', 'Online & counter seva tickets booked.')}
                 </p>
               </div>
               <div className="flex items-center text-[10px] text-on-surface-variant bg-surface-container-low px-2.5 py-1 rounded-xl border border-outline-variant/20 w-fit mt-3 font-semibold">
@@ -778,7 +784,7 @@ export default function DashboardPortal({ onNavigate }: DashboardPortalProps) {
               <div>
                 <div className="flex justify-between items-start mb-2">
                   <div>
-                    <p className="font-label-sm text-[11px] font-bold text-on-surface-variant uppercase tracking-wider">PRASADAM DISPATCH</p>
+                    <p className="font-label-sm text-[11px] font-bold text-on-surface-variant uppercase tracking-wider">{t('temple.prasadamDispatch', 'PRASADAM DISPATCH')}</p>
                     <h3 className="font-display-lg text-on-surface mt-1 font-bold flex items-baseline gap-1">
                       <span className="text-2xl sm:text-3xl font-extrabold">{shippedCount}</span>
                       <span className="text-xs font-semibold text-on-surface-variant/80">/ {totalPackages}</span>
@@ -814,7 +820,7 @@ export default function DashboardPortal({ onNavigate }: DashboardPortalProps) {
               {/* Progress / Trend Indicator Row */}
               <div className="flex items-center gap-1 text-teal-600 font-bold bg-teal-50 border border-teal-200 px-2.5 py-1 rounded-xl w-fit text-[10px] mt-3 shadow-xs">
                 <span className="material-symbols-outlined text-[12px] font-extrabold">check_circle</span>
-                <span>{dispatchPercentage}% Shipped Today</span>
+                <span>{dispatchPercentage}% {t('temple.shippedToday', 'Shipped Today')}</span>
               </div>
             </div>
           </div>
@@ -823,8 +829,8 @@ export default function DashboardPortal({ onNavigate }: DashboardPortalProps) {
           <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-sacred p-6 border border-outline-variant/30">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
               <div>
-                <h3 className="font-sans text-lg font-bold text-on-surface">Revenue Trends (Last 7 Days)</h3>
-                <p className="text-[11px] text-on-surface-variant font-medium mt-0.5">Comparative daily view of Seva Bookings vs Devotional Donations</p>
+                <h3 className="font-sans text-lg font-bold text-on-surface">{t('temple.revenueTrends', 'Revenue Trends (Last 7 Days)')}</h3>
+                <p className="text-[11px] text-on-surface-variant font-medium mt-0.5">{t('temple.revenueTrendsDesc', 'Comparative daily view of Seva Bookings vs Devotional Donations')}</p>
               </div>
 
               <div className="flex items-center gap-3">
@@ -832,12 +838,12 @@ export default function DashboardPortal({ onNavigate }: DashboardPortalProps) {
                 <div className="flex items-center gap-3 bg-surface-container-low px-3 py-1.5 rounded-xl border border-outline-variant/30 text-xs font-bold shadow-2xs">
                   <div className="flex items-center gap-1.5 text-on-surface">
                     <span className="w-3 h-3 rounded-sm bg-[#8f4e00] shadow-xs shrink-0" />
-                    <span>Sevas</span>
+                    <span>{t('temple.sevas', 'Sevas')}</span>
                   </div>
                   <span className="text-outline-variant/60 font-normal">|</span>
                   <div className="flex items-center gap-1.5 text-on-surface">
                     <span className="w-3 h-3 rounded-sm bg-[#059669] shadow-xs shrink-0" />
-                    <span>Donations</span>
+                    <span>{t('temple.donations', 'Donations')}</span>
                   </div>
                 </div>
 
@@ -873,13 +879,13 @@ export default function DashboardPortal({ onNavigate }: DashboardPortalProps) {
                 <IndianRupee size={22} />
               </div>
               <div>
-                <p className="font-label-sm text-xs font-bold text-on-surface-variant uppercase tracking-wider">Total Collections</p>
+                <p className="font-label-sm text-xs font-bold text-on-surface-variant uppercase tracking-wider">{t('temple.totalCollections', 'Total Collections')}</p>
                 <div className="flex items-center gap-2 mt-1">
                   <span className="flex items-center gap-1 text-green-600 font-bold bg-green-50 border border-green-200 px-2.5 py-0.5 rounded-full text-xs shadow-2xs">
                     <span className="material-symbols-outlined text-[14px] font-extrabold">trending_up</span>
                     <span>+5%</span>
                   </span>
-                  <span className="text-xs text-on-surface-variant font-medium">vs yesterday</span>
+                  <span className="text-xs text-on-surface-variant font-medium">{t('temple.vsYesterday', 'vs yesterday')}</span>
                 </div>
               </div>
             </div>
@@ -890,7 +896,7 @@ export default function DashboardPortal({ onNavigate }: DashboardPortalProps) {
                 <span className="text-2xl sm:text-3xl font-extrabold text-on-surface font-sans tracking-tight">
                   ₹{(kpiValues.collections / 1000).toFixed(1)}k
                 </span>
-                <span className="block text-[10px] text-on-surface-variant font-medium">Daily consolidated revenue</span>
+                <span className="block text-[10px] text-on-surface-variant font-medium">{t('temple.dailyRevenue', 'Daily consolidated revenue')}</span>
               </div>
             </div>
           </div>
@@ -898,22 +904,22 @@ export default function DashboardPortal({ onNavigate }: DashboardPortalProps) {
           {/* Activity Table */}
           <div className="bg-surface-container-lowest rounded-2xl shadow-sacred overflow-hidden border border-outline-variant/30">
             <div className="px-6 py-5 border-b divider-gold flex justify-between items-center">
-              <h3 className="font-sans text-lg font-bold text-on-surface">Recent Transactions</h3>
+              <h3 className="font-sans text-lg font-bold text-on-surface">{t('temple.recentTransactions', 'Recent Transactions')}</h3>
               <button
                 onClick={() => onNavigate('transactions')}
                 className="text-primary text-xs font-bold uppercase tracking-wider hover:underline cursor-pointer"
               >
-                View All
+                {t('temple.viewAll', 'View All')}
               </button>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="bg-surface-container-low border-b divider-gold text-[11px] font-bold text-on-surface-variant uppercase tracking-wider">
-                    <th className="py-4 px-6">Devotee Name</th>
-                    <th className="py-4 px-6">Seva Type</th>
-                    <th className="py-4 px-6">Amount</th>
-                    <th className="py-4 px-6 text-center">Status</th>
+                    <th className="py-4 px-6">{t('temple.devotee', 'Devotee Name')}</th>
+                    <th className="py-4 px-6">{t('temple.seva', 'Seva Type')}</th>
+                    <th className="py-4 px-6">{t('temple.amount', 'Amount')}</th>
+                    <th className="py-4 px-6 text-center">{t('common.status', 'Status')}</th>
                   </tr>
                 </thead>
                 <tbody className="text-sm font-medium text-on-surface divide-y divide-outline-variant/10">
@@ -949,7 +955,7 @@ export default function DashboardPortal({ onNavigate }: DashboardPortalProps) {
 
           {/* Seva Popularity Doughnut Chart */}
           <div className="bg-surface-container-lowest rounded-2xl shadow-sacred p-6 border border-outline-variant/20 flex flex-col">
-            <h3 className="font-sans text-lg font-bold text-on-surface mb-6">Seva Popularity</h3>
+            <h3 className="font-sans text-lg font-bold text-on-surface mb-6">{t('temple.sevaPopularity', 'Seva Popularity')}</h3>
             <div className="flex-grow flex flex-col items-center justify-center relative">
               <div className="w-full h-56 relative mb-6">
                 <canvas ref={doughnutCanvasRef} />
@@ -1020,23 +1026,23 @@ export default function DashboardPortal({ onNavigate }: DashboardPortalProps) {
                       {/* Yesterday vs Today, Rise/Fall indicator */}
                       <div className="flex items-center justify-between text-[10px] mt-1 pl-6">
                         <span className="text-on-surface-variant/75 font-semibold">
-                          Yesterday Vs today: <span className="font-mono text-on-surface font-bold">{item.yesterday}</span> vs <span className="font-mono text-on-surface font-bold">{item.today}</span>
+                          {t('temple.yesterdayVsToday', 'Yesterday Vs today:')} <span className="font-mono text-on-surface font-bold">{item.yesterday}</span> vs <span className="font-mono text-on-surface font-bold">{item.today}</span>
                         </span>
                         {isRise && (
                           <span className="text-green-600 font-bold flex items-center gap-0.5 shrink-0">
                             <span className="material-symbols-outlined text-[12px] font-extrabold">trending_up</span>
-                            <span>+{diff} Rise</span>
+                            <span>+{diff} {t('temple.rise', 'Rise')}</span>
                           </span>
                         )}
                         {isFall && (
                           <span className="text-red-600 font-bold flex items-center gap-0.5 shrink-0">
                             <span className="material-symbols-outlined text-[12px] font-extrabold">trending_down</span>
-                            <span>{Math.abs(diff)} Fall</span>
+                            <span>{Math.abs(diff)} {t('temple.fall', 'Fall')}</span>
                           </span>
                         )}
                         {!isRise && !isFall && (
                           <span className="text-on-surface-variant/50 font-bold shrink-0">
-                            No Change
+                            {t('temple.noChange', 'No Change')}
                           </span>
                         )}
                       </div>
@@ -1053,7 +1059,7 @@ export default function DashboardPortal({ onNavigate }: DashboardPortalProps) {
             <div className="absolute -right-10 -top-10 w-32 h-32 rounded-full border-4 border-primary/10 pointer-events-none"></div>
             <div className="absolute -right-4 -top-4 w-16 h-16 rounded-full border-2 border-primary/20 pointer-events-none"></div>
 
-            <h3 className="font-sans text-lg font-bold text-on-surface mb-4 relative z-10">Quick Actions</h3>
+            <h3 className="font-sans text-lg font-bold text-on-surface mb-4 relative z-10">{t('temple.quickActions', 'Quick Actions')}</h3>
 
             <div className="space-y-3 relative z-10">
               <button
@@ -1062,7 +1068,7 @@ export default function DashboardPortal({ onNavigate }: DashboardPortalProps) {
               >
                 <div className="flex items-center">
                   <Printer className="mr-3 text-primary group-hover:text-on-primary" size={18} />
-                  <span className="font-semibold text-sm">Generate Prasadam Slips</span>
+                  <span className="font-semibold text-sm">{t('temple.generatePrasadamSlips', 'Generate Prasadam Slips')}</span>
                 </div>
                 <ArrowRight size={14} className="opacity-0 group-hover:opacity-100 transition-opacity" />
               </button>
@@ -1073,7 +1079,7 @@ export default function DashboardPortal({ onNavigate }: DashboardPortalProps) {
               >
                 <div className="flex items-center">
                   <Send className="mr-3 text-primary group-hover:text-on-primary" size={18} />
-                  <span className="font-semibold text-sm">Temple Notifications & Configuration</span>
+                  <span className="font-semibold text-sm">{t('temple.notificationsConfig', 'Temple Notifications & Configuration')}</span>
                 </div>
                 <ArrowRight size={14} className="opacity-0 group-hover:opacity-100 transition-opacity" />
               </button>
@@ -1084,7 +1090,7 @@ export default function DashboardPortal({ onNavigate }: DashboardPortalProps) {
               >
                 <div className="flex items-center">
                   <Timer className="mr-3 text-primary group-hover:text-on-primary" size={18} />
-                  <span className="font-semibold text-sm">Update Darshan Timings</span>
+                  <span className="font-semibold text-sm">{t('temple.updateDarshanTimings', 'Update Darshan Timings')}</span>
                 </div>
                 <ArrowRight size={14} className="opacity-0 group-hover:opacity-100 transition-opacity" />
               </button>
@@ -1229,9 +1235,6 @@ export default function DashboardPortal({ onNavigate }: DashboardPortalProps) {
                 <div className="flex flex-col md:flex-row gap-3 items-center justify-between pb-1 border-t border-outline-variant/10 pt-4">
                   {/* Search Bar */}
                   <div className="relative w-full md:w-2/5">
-                    <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant/60 text-[18px]">
-                      search
-                    </span>
                     <input
                       type="text"
                       placeholder="Search Devotee / Receipt..."
@@ -1239,8 +1242,11 @@ export default function DashboardPortal({ onNavigate }: DashboardPortalProps) {
                       onChange={(e) => {
                         setSearchTerm(e.target.value);
                       }}
-                      className="pl-9 pr-4 py-2 w-full text-xs font-semibold rounded-xl border border-outline-variant/50 bg-surface-container-low text-on-surface focus:outline-none focus:border-primary transition-all placeholder:text-on-surface-variant/50"
+                      className="pl-4 pr-9 py-2 w-full text-xs font-semibold rounded-xl border border-outline-variant/50 bg-surface-container-low text-on-surface focus:outline-none focus:border-primary transition-all placeholder:text-on-surface-variant/50"
                     />
+                    <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant/60 text-[18px] pointer-events-none">
+                      search
+                    </span>
                   </div>
 
                   {/* Filters Group */}

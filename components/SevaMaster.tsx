@@ -19,6 +19,7 @@ import {
   Download
 } from 'lucide-react';
 import RequirePermission from './RequirePermission';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface Seva {
   id: string;
@@ -54,6 +55,34 @@ const DEFAULT_SEVAS: Seva[] = [
 ];
 
 export default function SevaMaster({ onBack }: SevaMasterProps) {
+  const { t } = useLanguage();
+
+  const getCategoryLabel = (type: string) => {
+    switch (type) {
+      case 'Daily': return t('sevaMaster.catDaily', 'Daily');
+      case 'Weekly': return t('sevaMaster.catWeekly', 'Weekly');
+      case 'Monthly': return t('sevaMaster.catMonthly', 'Monthly');
+      case 'Annually': return t('sevaMaster.catAnnually', 'Annually');
+      case 'Special': return t('sevaMaster.catSpecial', 'Special');
+      case 'Dhanur Masa': return t('sevaMaster.catDhanurMasa', 'Dhanur Masa');
+      case 'All': return t('sevaMaster.filterAll', 'All');
+      default: return type;
+    }
+  };
+
+  const getDayLabel = (d: string) => {
+    const dayMap: Record<string, string> = {
+      'Sun': t('scheduling.days.Sunday', 'Sunday').slice(0, 3),
+      'Mon': t('scheduling.days.Monday', 'Monday').slice(0, 3),
+      'Tue': t('scheduling.days.Tuesday', 'Tuesday').slice(0, 3),
+      'Wed': t('scheduling.days.Wednesday', 'Wednesday').slice(0, 3),
+      'Thu': t('scheduling.days.Thursday', 'Thursday').slice(0, 3),
+      'Fri': t('scheduling.days.Friday', 'Friday').slice(0, 3),
+      'Sat': t('scheduling.days.Saturday', 'Saturday').slice(0, 3),
+    };
+    return dayMap[d] || d;
+  };
+
   const [sevas, setSevas] = useState<Seva[]>(() => {
     if (typeof window !== 'undefined') {
       const cached = localStorage.getItem('sankalpvani_sevas');
@@ -320,25 +349,25 @@ export default function SevaMaster({ onBack }: SevaMasterProps) {
           </button>
           <div>
             <div className="flex items-center gap-1.5 text-xs font-bold text-primary tracking-wider uppercase mb-0.5">
-              <span>Masters</span>
+              <span>{t('sevaMaster.breadcrumbMasters', 'Masters')}</span>
               <ChevronRight size={12} className="text-on-surface-variant" />
-              <span>Seva/Pooja Master</span>
+              <span>{t('sevaMaster.breadcrumbSeva', 'Seva/Pooja Master')}</span>
             </div>
-            <h2 className="font-serif text-3xl font-semibold text-primary">Seva offerings Setup</h2>
+            <h2 className="font-serif text-3xl font-semibold text-primary">{t('sevaMaster.title', 'Seva offerings Setup')}</h2>
           </div>
         </div>
 
         <RequirePermission 
           permission="MANAGE_SEVAS" 
           showLockedUI={true} 
-          lockedMessage="Setup Capability Locked"
+          lockedMessage={t('sevaMaster.lockedMessage', 'Setup Capability Locked')}
         >
           <button
             onClick={() => setShowAddForm(!showAddForm)}
             className="bg-primary hover:bg-on-primary-container text-on-primary text-sm font-bold py-2.5 px-4 rounded-xl flex items-center gap-2 shadow-sm transition-all cursor-pointer"
           >
             <Plus size={16} />
-            <span>{showAddForm ? 'Close Setup Form' : 'Create New Seva'}</span>
+            <span>{showAddForm ? t('sevaMaster.closeSetupForm', 'Close Setup Form') : t('sevaMaster.createNewSeva', 'Create New Seva')}</span>
           </button>
         </RequirePermission>
       </div>
@@ -348,16 +377,16 @@ export default function SevaMaster({ onBack }: SevaMasterProps) {
         <form onSubmit={handleAddSeva} className="bg-surface-container rounded-2xl p-6 border border-outline-variant/30 shadow-sm space-y-4 animate-[scaleIn_0.15s_ease-out]">
           <h3 className="font-serif text-xl font-bold text-primary flex items-center gap-2">
             <BookOpen size={18} />
-            New Seva Booking Definition
+            {t('sevaMaster.definitionTitle', 'New Seva Booking Definition')}
           </h3>
 
           <div className="grid grid-cols-1 md:grid-cols-6 gap-4 items-start">
             <div className="md:col-span-2">
-              <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1">Seva Name *</label>
+              <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1">{t('sevaMaster.sevaName', 'Seva Name')} *</label>
               <input
                 type="text"
                 required
-                placeholder="e.g. Swarna Pushpa Archana"
+                placeholder={t('sevaMaster.sevaNamePlaceholder', 'e.g. Swarna Pushpa Archana')}
                 value={newSeva.name}
                 onChange={(e) => setNewSeva({ ...newSeva, name: e.target.value })}
                 className={`w-full px-3.5 py-2.5 bg-white border rounded-xl text-sm focus:outline-none focus:border-primary ${newSeva.name.trim() && sevas.some(s => s.name.trim().toLowerCase() === newSeva.name.trim().toLowerCase())
@@ -366,12 +395,12 @@ export default function SevaMaster({ onBack }: SevaMasterProps) {
                   }`}
               />
               {newSeva.name.trim() && sevas.some(s => s.name.trim().toLowerCase() === newSeva.name.trim().toLowerCase()) && (
-                <p className="text-[11px] text-error font-semibold mt-1">A Seva with this name already exists.</p>
+                <p className="text-[11px] text-error font-semibold mt-1">{t('sevaMaster.alreadyExists', 'A Seva with this name already exists.')}</p>
               )}
             </div>
 
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1"># Persons per Seva *</label>
+              <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1">{t('sevaMaster.personsPerSeva', '# Persons per Seva')} *</label>
               <input
                 type="number"
                 required
@@ -383,7 +412,7 @@ export default function SevaMaster({ onBack }: SevaMasterProps) {
             </div>
 
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1">Price (₹) *</label>
+              <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1">{t('sevaMaster.price', 'Price (₹)')} *</label>
               <input
                 type="number"
                 required
@@ -395,7 +424,7 @@ export default function SevaMaster({ onBack }: SevaMasterProps) {
             </div>
 
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1">Extra Person Cost (₹)</label>
+              <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1">{t('sevaMaster.extraPersonCost', 'Extra Person Cost (₹)')}</label>
               <input
                 type="number"
                 min={0}
@@ -406,7 +435,7 @@ export default function SevaMaster({ onBack }: SevaMasterProps) {
             </div>
 
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1">Daily Slot Capacity *</label>
+              <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1">{t('sevaMaster.colCapacity', 'Daily Limit Capacity')} *</label>
               <div className="flex items-center gap-3">
                 <input
                   type="number"
@@ -415,7 +444,7 @@ export default function SevaMaster({ onBack }: SevaMasterProps) {
                   disabled={newSeva.capacity === 999999}
                   value={newSeva.capacity === 999999 ? '' : newSeva.capacity}
                   onChange={(e) => setNewSeva({ ...newSeva, capacity: Number(e.target.value) || 1 })}
-                  placeholder={newSeva.capacity === 999999 ? 'Unlimited' : 'e.g. 20'}
+                  placeholder={newSeva.capacity === 999999 ? t('sevaMaster.unlimited', 'Unlimited') : 'e.g. 20'}
                   className="w-full px-3.5 py-2.5 bg-white border border-outline rounded-xl text-sm focus:outline-none focus:border-primary disabled:bg-surface-container-low disabled:text-on-surface-variant/40"
                 />
                 <div className="flex items-center gap-1.5 shrink-0">
@@ -426,7 +455,7 @@ export default function SevaMaster({ onBack }: SevaMasterProps) {
                     onChange={(e) => setNewSeva({ ...newSeva, capacity: e.target.checked ? 999999 : 20 })}
                     className="w-3.5 h-3.5 text-primary border-outline rounded accent-primary cursor-pointer"
                   />
-                  <label htmlFor="new-seva-unlimited" className="text-xs font-bold text-on-surface-variant uppercase cursor-pointer select-none">Unlimited</label>
+                  <label htmlFor="new-seva-unlimited" className="text-xs font-bold text-on-surface-variant uppercase cursor-pointer select-none">{t('sevaMaster.unlimited', 'Unlimited')}</label>
                 </div>
               </div>
             </div>
@@ -435,7 +464,7 @@ export default function SevaMaster({ onBack }: SevaMasterProps) {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1">
-                Trust Resolution (Date & Time)
+                {t('sevaMaster.trustResolution', 'Trust Resolution (Date & Time)')}
               </label>
               <input
                 type="datetime-local"
@@ -446,10 +475,10 @@ export default function SevaMaster({ onBack }: SevaMasterProps) {
             </div>
 
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1">About Seva</label>
+              <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1">{t('sevaMaster.aboutSeva', 'About Seva')}</label>
               <textarea
                 rows={3}
-                placeholder="Describe the significance and process of this seva..."
+                placeholder={t('sevaMaster.aboutSevaPlaceholder', 'Describe the significance and process of this seva...')}
                 value={newSeva.aboutSeva}
                 onChange={(e) => setNewSeva({ ...newSeva, aboutSeva: e.target.value })}
                 className="w-full px-3.5 py-2.5 bg-white border border-outline rounded-xl text-sm focus:outline-none focus:border-primary"
@@ -457,10 +486,10 @@ export default function SevaMaster({ onBack }: SevaMasterProps) {
             </div>
 
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1">Instructions</label>
+              <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1">{t('sevaMaster.instructions', 'Instructions')}</label>
               <textarea
                 rows={3}
-                placeholder="Dress code, report time guidelines, items to bring..."
+                placeholder={t('sevaMaster.instructionsPlaceholder', 'Dress code, report time guidelines, items to bring...')}
                 value={newSeva.instructions}
                 onChange={(e) => setNewSeva({ ...newSeva, instructions: e.target.value })}
                 className="w-full px-3.5 py-2.5 bg-white border border-outline rounded-xl text-sm focus:outline-none focus:border-primary"
@@ -471,19 +500,19 @@ export default function SevaMaster({ onBack }: SevaMasterProps) {
           {/* Seva Type & Schedule Settings */}
           <div className="border-t divider-gold pt-4 space-y-4">
             <div>
-              <h4 className="text-xs font-bold text-primary uppercase tracking-wider mb-2.5">Seva Type & Performance</h4>
+              <h4 className="text-xs font-bold text-primary uppercase tracking-wider mb-2.5">{t('sevaMaster.sevaTypePerformance', 'Seva Type & Performance')}</h4>
               <div className="flex gap-2 flex-wrap">
-                {(['Daily', 'Weekly', 'Monthly', 'Annually', 'Special', 'Dhanur Masa'] as const).map(t => (
+                {(['Daily', 'Weekly', 'Monthly', 'Annually', 'Special', 'Dhanur Masa'] as const).map(tOpt => (
                   <button
-                    key={t}
+                    key={tOpt}
                     type="button"
-                    onClick={() => setNewSeva({ ...newSeva, type: t })}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-all cursor-pointer ${newSeva.type === t
+                    onClick={() => setNewSeva({ ...newSeva, type: tOpt })}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-all cursor-pointer ${newSeva.type === tOpt
                       ? 'bg-primary-container/20 text-primary border-primary'
                       : 'bg-white border-outline-variant text-on-surface-variant hover:border-primary'
                       }`}
                   >
-                    {t}
+                    {getCategoryLabel(tOpt)}
                   </button>
                 ))}
               </div>
@@ -493,7 +522,7 @@ export default function SevaMaster({ onBack }: SevaMasterProps) {
             <div className="p-4 bg-white border border-outline-variant/25 rounded-2xl max-w-md space-y-4 shadow-sm animate-[fadeIn_0.15s_ease-out]">
               {newSeva.type === 'Weekly' && (
                 <div className="space-y-2">
-                  <label className="block text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Day selection *</label>
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">{t('sevaMaster.daySelection', 'Day selection')} *</label>
                   <div className="flex gap-1.5 flex-wrap">
                     {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => {
                       const isSelected = newSeva.selectedDays.includes(day);
@@ -512,7 +541,7 @@ export default function SevaMaster({ onBack }: SevaMasterProps) {
                             : 'bg-white border-outline-variant text-on-surface-variant hover:bg-surface-container-low'
                             }`}
                         >
-                          {day}
+                          {getDayLabel(day)}
                         </button>
                       );
                     })}
@@ -522,7 +551,7 @@ export default function SevaMaster({ onBack }: SevaMasterProps) {
 
               {(newSeva.type === 'Monthly' || newSeva.type === 'Special' || newSeva.type === 'Annually') && (
                 <div className="space-y-1.5">
-                  <label className="block text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Date selection *</label>
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">{t('sevaMaster.dateSelection', 'Date selection')} *</label>
                   <input
                     type="date"
                     required
@@ -535,10 +564,10 @@ export default function SevaMaster({ onBack }: SevaMasterProps) {
 
               {newSeva.type === 'Dhanur Masa' && (
                 <div className="space-y-1.5">
-                  <label className="block text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Date selection *</label>
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">{t('sevaMaster.dateSelection', 'Date selection')} *</label>
                   <div className="flex items-center gap-2">
                     <div className="flex-1 flex flex-col gap-0.5">
-                      <span className="text-[9px] font-bold text-on-surface-variant/70 uppercase">From</span>
+                      <span className="text-[9px] font-bold text-on-surface-variant/70 uppercase">{t('sevaMaster.from', 'From')}</span>
                       <input
                         type="date"
                         required
@@ -547,9 +576,9 @@ export default function SevaMaster({ onBack }: SevaMasterProps) {
                         className="w-full px-2 py-1.5 bg-white border border-outline rounded-lg text-xs focus:outline-none focus:border-primary font-mono"
                       />
                     </div>
-                    <span className="text-on-surface-variant/40 font-bold self-end pb-1.5 text-xs">to</span>
+                    <span className="text-on-surface-variant/40 font-bold self-end pb-1.5 text-xs">{t('sevaMaster.to', 'to')}</span>
                     <div className="flex-1 flex flex-col gap-0.5">
-                      <span className="text-[9px] font-bold text-on-surface-variant/70 uppercase">To</span>
+                      <span className="text-[9px] font-bold text-on-surface-variant/70 uppercase">{t('sevaMaster.to', 'To')}</span>
                       <input
                         type="date"
                         required
@@ -567,7 +596,7 @@ export default function SevaMaster({ onBack }: SevaMasterProps) {
                 <TimeRangePicker
                   value={newSeva.timeRange}
                   onChange={(val) => setNewSeva({ ...newSeva, timeRange: val })}
-                  label="Seva duration / Performance Timing"
+                  label={t('sevaMaster.performanceTiming', 'Seva duration / Performance Timing')}
                 />
               </div>
             </div>
@@ -580,7 +609,7 @@ export default function SevaMaster({ onBack }: SevaMasterProps) {
               onClick={() => handleCreateSeva(false)}
               className="px-4 py-2.5 bg-surface-container-low hover:bg-primary-container/10 border border-outline-variant/40 text-on-surface-variant hover:text-primary text-xs font-bold rounded-xl shadow-sm cursor-pointer transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Save as Draft
+              {t('sevaMaster.saveDraft', 'Save as Draft')}
             </button>
             <button
               type="button"
@@ -593,7 +622,7 @@ export default function SevaMaster({ onBack }: SevaMasterProps) {
               onClick={() => handleCreateSeva(true)}
               className="px-5 py-2.5 bg-primary hover:bg-on-primary-container text-on-primary text-xs font-bold rounded-xl shadow-sm cursor-pointer transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Save & Publish
+              {t('sevaMaster.savePublish', 'Save & Publish')}
             </button>
           </div>
         </form>
@@ -603,19 +632,19 @@ export default function SevaMaster({ onBack }: SevaMasterProps) {
       <div className="bg-surface-container-lowest rounded-2xl shadow-sacred border border-outline-variant/30 overflow-hidden">
         {/* Search and Table Actions Header Row */}
         <div className="p-4 bg-surface-container/10 border-b border-outline-variant/20 flex flex-col xl:flex-row gap-4 items-center justify-between">
-          {/* Search bar on left */}
+          {/* Search bar */}
           <div className="relative w-full xl:max-w-xs shrink-0">
             <input
               type="text"
-              placeholder="Search by Seva name or type..."
+              placeholder={t('sevaMaster.searchPlaceholder', 'Search by Seva name or type...')}
               value={searchQuery}
               onChange={(e) => {
                 setSearchQuery(e.target.value);
                 setCurrentPage(1);
               }}
-              className="w-full pl-9 pr-4 py-2 bg-white border border-outline rounded-xl text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+              className="w-full pl-4 pr-10 py-2 bg-white border border-outline rounded-xl text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
             />
-            <div className="absolute left-3 top-2.5 text-on-surface-variant/40">
+            <div className="absolute right-3.5 top-1/2 -translate-y-1/2 text-on-surface-variant/40 pointer-events-none">
               <Search size={16} />
             </div>
           </div>
@@ -637,7 +666,7 @@ export default function SevaMaster({ onBack }: SevaMasterProps) {
                     : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low'
                     }`}
                 >
-                  {typeOpt}
+                  {getCategoryLabel(typeOpt)}
                 </button>
               );
             })}
@@ -650,7 +679,7 @@ export default function SevaMaster({ onBack }: SevaMasterProps) {
             className="inline-flex items-center gap-1.5 px-4 py-2 bg-primary hover:bg-on-primary-container text-on-primary text-xs font-bold rounded-xl shadow-sm transition-all cursor-pointer shrink-0 w-full xl:w-auto justify-center"
           >
             <Download size={14} />
-            <span>Export CSV</span>
+            <span>{t('sevaMaster.exportCsv', 'Export CSV')}</span>
           </button>
         </div>
 
@@ -658,13 +687,13 @@ export default function SevaMaster({ onBack }: SevaMasterProps) {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-surface-container-low border-b divider-gold text-[11px] font-bold text-on-surface-variant uppercase tracking-wider">
-                <th className="py-4 px-6">Offering ID</th>
-                <th className="py-4 px-6">Ritual Offering Name</th>
-                <th className="py-4 px-6">Category Type</th>
-                <th className="py-4 px-6">Price Ticket (₹)</th>
-                <th className="py-4 px-6 text-center">Daily Limit Capacity</th>
-                <th className="py-4 px-6 text-center">Status Offer</th>
-                <th className="py-4 px-6 text-center">Actions</th>
+                <th className="py-4 px-6">{t('sevaMaster.colOfferingId', 'Offering ID')}</th>
+                <th className="py-4 px-6">{t('sevaMaster.colOfferingName', 'Ritual Offering Name')}</th>
+                <th className="py-4 px-6">{t('sevaMaster.colCategory', 'Category Type')}</th>
+                <th className="py-4 px-6">{t('sevaMaster.colPriceTicket', 'Price Ticket (₹)')}</th>
+                <th className="py-4 px-6 text-center">{t('sevaMaster.colCapacity', 'Daily Limit Capacity')}</th>
+                <th className="py-4 px-6 text-center">{t('sevaMaster.colStatus', 'Status Offer')}</th>
+                <th className="py-4 px-6 text-center">{t('sevaMaster.colActions', 'Actions')}</th>
               </tr>
             </thead>
             <tbody className="text-sm font-medium text-on-surface divide-y divide-outline-variant/10">
@@ -680,7 +709,7 @@ export default function SevaMaster({ onBack }: SevaMasterProps) {
                       {isEditing && editForm ? (
                         <div className="space-y-2 py-1">
                           <div>
-                            <label className="text-[10px] text-on-surface-variant font-bold block mb-0.5">Seva Name</label>
+                            <label className="text-[10px] text-on-surface-variant font-bold block mb-0.5">{t('sevaMaster.sevaName', 'Seva Name')}</label>
                             <input
                               type="text"
                               value={editForm.name}
@@ -689,7 +718,7 @@ export default function SevaMaster({ onBack }: SevaMasterProps) {
                             />
                           </div>
                           <div>
-                            <label className="text-[10px] text-on-surface-variant font-bold block mb-0.5">Perform Timings</label>
+                            <label className="text-[10px] text-on-surface-variant font-bold block mb-0.5">{t('sevaMaster.performanceTiming', 'Perform Timings')}</label>
                             <input
                               type="text"
                               value={editForm.timeRange ?? ''}
@@ -702,7 +731,7 @@ export default function SevaMaster({ onBack }: SevaMasterProps) {
                           {/* Edit Schedule parameters */}
                           {editForm.type === 'Weekly' && (
                             <div>
-                              <label className="text-[10px] text-on-surface-variant font-bold block mb-0.5">Days (comma separated)</label>
+                              <label className="text-[10px] text-on-surface-variant font-bold block mb-0.5">{t('sevaMaster.daySelection', 'Days (comma separated)')}</label>
                               <input
                                 type="text"
                                 value={editForm.selectedDays?.join(', ') ?? ''}
@@ -715,7 +744,7 @@ export default function SevaMaster({ onBack }: SevaMasterProps) {
 
                           {(editForm.type === 'Monthly' || editForm.type === 'Special' || editForm.type === 'Annually') && (
                             <div>
-                              <label className="text-[10px] text-on-surface-variant font-bold block mb-0.5">Selected Date</label>
+                              <label className="text-[10px] text-on-surface-variant font-bold block mb-0.5">{t('sevaMaster.dateSelection', 'Selected Date')}</label>
                               <input
                                 type="date"
                                 value={editForm.selectedDate ?? ''}
@@ -728,7 +757,7 @@ export default function SevaMaster({ onBack }: SevaMasterProps) {
                           {editForm.type === 'Dhanur Masa' && (
                             <div className="grid grid-cols-2 gap-1.5">
                               <div>
-                                <label className="text-[10px] text-on-surface-variant font-bold block mb-0.5">From Date</label>
+                                <label className="text-[10px] text-on-surface-variant font-bold block mb-0.5">{t('sevaMaster.from', 'From Date')}</label>
                                 <input
                                   type="date"
                                   value={editForm.dateFrom ?? ''}
@@ -737,7 +766,7 @@ export default function SevaMaster({ onBack }: SevaMasterProps) {
                                 />
                               </div>
                               <div>
-                                <label className="text-[10px] text-on-surface-variant font-bold block mb-0.5">To Date</label>
+                                <label className="text-[10px] text-on-surface-variant font-bold block mb-0.5">{t('sevaMaster.to', 'To Date')}</label>
                                 <input
                                   type="date"
                                   value={editForm.dateTo ?? ''}
@@ -749,7 +778,7 @@ export default function SevaMaster({ onBack }: SevaMasterProps) {
                           )}
                           <div className="grid grid-cols-1 gap-2">
                             <div>
-                              <label className="text-[10px] text-on-surface-variant font-bold block mb-0.5">No. of Persons</label>
+                              <label className="text-[10px] text-on-surface-variant font-bold block mb-0.5">{t('sevaMaster.noOfPersons', 'No. of Persons')}</label>
                               <input
                                 type="number"
                                 min={1}
@@ -760,7 +789,7 @@ export default function SevaMaster({ onBack }: SevaMasterProps) {
                             </div>
                           </div>
                           <div>
-                            <label className="text-[10px] text-on-surface-variant font-bold block mb-0.5">Trust Resolution (Date & Time)</label>
+                            <label className="text-[10px] text-on-surface-variant font-bold block mb-0.5">{t('sevaMaster.trustResolution', 'Trust Resolution (Date & Time)')}</label>
                             <input
                               type="datetime-local"
                               value={editForm.trustResolutionDateTime ?? ''}
@@ -769,7 +798,7 @@ export default function SevaMaster({ onBack }: SevaMasterProps) {
                             />
                           </div>
                           <div>
-                            <label className="text-[10px] text-on-surface-variant font-bold block mb-0.5">About Seva</label>
+                            <label className="text-[10px] text-on-surface-variant font-bold block mb-0.5">{t('sevaMaster.aboutSeva', 'About Seva')}</label>
                             <textarea
                               value={editForm.aboutSeva ?? ''}
                               onChange={(e) => setEditForm({ ...editForm, aboutSeva: e.target.value })}
@@ -778,7 +807,7 @@ export default function SevaMaster({ onBack }: SevaMasterProps) {
                             />
                           </div>
                           <div>
-                            <label className="text-[10px] text-on-surface-variant font-bold block mb-0.5">Instructions</label>
+                            <label className="text-[10px] text-on-surface-variant font-bold block mb-0.5">{t('sevaMaster.instructions', 'Instructions')}</label>
                             <textarea
                               value={editForm.instructions ?? ''}
                               onChange={(e) => setEditForm({ ...editForm, instructions: e.target.value })}
@@ -798,27 +827,27 @@ export default function SevaMaster({ onBack }: SevaMasterProps) {
                             )}
                             {s.trustResolutionDateTime && (
                               <span className="text-[10px] text-amber-800 bg-amber-500/10 px-2 py-0.5 border border-amber-500/20 rounded-full font-semibold font-mono">
-                                Resolution: {new Date(s.trustResolutionDateTime).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}
+                                {t('sevaMaster.trustResolution', 'Resolution')}: {new Date(s.trustResolutionDateTime).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}
                               </span>
                             )}
                             {s.type === 'Weekly' && s.selectedDays && s.selectedDays.length > 0 && (
                               <span className="text-[10px] text-secondary bg-secondary-container/20 px-2 py-0.5 border border-secondary/10 rounded-full font-semibold">
-                                Days: {s.selectedDays.join(', ')}
+                                {t('sevaMaster.daySelection', 'Days')}: {s.selectedDays.map(d => getDayLabel(d)).join(', ')}
                               </span>
                             )}
                             {(s.type === 'Monthly' || s.type === 'Special' || s.type === 'Annually') && s.selectedDate && (
                               <span className="text-[10px] text-secondary bg-secondary-container/20 px-2 py-0.5 border border-secondary/10 rounded-full font-semibold font-mono">
-                                Date: {s.selectedDate}
+                                {t('sevaMaster.dateSelection', 'Date')}: {s.selectedDate}
                               </span>
                             )}
                             {s.type === 'Dhanur Masa' && s.dateFrom && s.dateTo && (
                               <span className="text-[10px] text-secondary bg-secondary-container/20 px-2 py-0.5 border border-secondary/10 rounded-full font-semibold font-mono">
-                                Range: {s.dateFrom} to {s.dateTo}
+                                {t('sevaMaster.dateSelection', 'Range')}: {s.dateFrom} {t('sevaMaster.to', 'to')} {s.dateTo}
                               </span>
                             )}
                             {s.personsPerSeva && (
                               <span className="text-[10px] text-primary bg-primary/10 px-2 py-0.5 rounded-full font-bold">
-                                {s.personsPerSeva} {s.personsPerSeva === 1 ? 'person' : 'persons'} max
+                                {s.personsPerSeva} {t('sevaMaster.personsAllowed', 'persons allowed')}
                               </span>
                             )}
                           </div>
@@ -829,7 +858,7 @@ export default function SevaMaster({ onBack }: SevaMasterProps) {
                           )}
                           {s.instructions && (
                             <p className="text-[11px] text-on-surface-variant/65 italic leading-relaxed max-w-sm">
-                              <span className="font-bold not-italic text-[10px] text-on-surface-variant/85 uppercase">Instr:</span> {s.instructions}
+                              <span className="font-bold not-italic text-[10px] text-on-surface-variant/85 uppercase">{t('sevaMaster.instructions', 'Instr')}:</span> {s.instructions}
                             </p>
                           )}
                         </div>
@@ -843,16 +872,16 @@ export default function SevaMaster({ onBack }: SevaMasterProps) {
                           onChange={(e) => setEditForm({ ...editForm, type: e.target.value as Seva['type'] })}
                           className="px-2 py-1 bg-white border border-outline rounded-lg text-sm focus:outline-none focus:border-primary"
                         >
-                          <option value="Daily">Daily</option>
-                          <option value="Weekly">Weekly</option>
-                          <option value="Monthly">Monthly</option>
-                          <option value="Annually">Annually</option>
-                          <option value="Special">Special</option>
-                          <option value="Dhanur Masa">Dhanur Masa</option>
+                          <option value="Daily">{t('sevaMaster.catDaily', 'Daily')}</option>
+                          <option value="Weekly">{t('sevaMaster.catWeekly', 'Weekly')}</option>
+                          <option value="Monthly">{t('sevaMaster.catMonthly', 'Monthly')}</option>
+                          <option value="Annually">{t('sevaMaster.catAnnually', 'Annually')}</option>
+                          <option value="Special">{t('sevaMaster.catSpecial', 'Special')}</option>
+                          <option value="Dhanur Masa">{t('sevaMaster.catDhanurMasa', 'Dhanur Masa')}</option>
                         </select>
                       ) : (
                         <span className="px-2.5 py-1 rounded-full bg-surface-container-high border border-outline-variant/20 text-xs font-semibold text-on-surface-variant">
-                          {s.type}
+                          {getCategoryLabel(s.type)}
                         </span>
                       )}
                     </td>
@@ -861,7 +890,7 @@ export default function SevaMaster({ onBack }: SevaMasterProps) {
                       {isEditing && editForm ? (
                         <div className="space-y-2 py-1">
                           <div>
-                            <label className="text-[10px] text-on-surface-variant font-bold block mb-0.5">Base Price</label>
+                            <label className="text-[10px] text-on-surface-variant font-bold block mb-0.5">{t('sevaMaster.basePrice', 'Base Price')}</label>
                             <input
                               type="number"
                               min={0}
@@ -871,7 +900,7 @@ export default function SevaMaster({ onBack }: SevaMasterProps) {
                             />
                           </div>
                           <div>
-                            <label className="text-[10px] text-on-surface-variant font-bold block mb-0.5">Extra Person</label>
+                            <label className="text-[10px] text-on-surface-variant font-bold block mb-0.5">{t('sevaMaster.extraPerson', 'Extra Person')}</label>
                             <input
                               type="number"
                               min={0}
@@ -886,7 +915,7 @@ export default function SevaMaster({ onBack }: SevaMasterProps) {
                           <span className="font-bold text-on-surface block text-sm">₹{s.price.toLocaleString()}</span>
                           {s.extraPersonCost && s.extraPersonCost > 0 ? (
                             <span className="text-[10px] text-on-surface-variant/75 font-medium block whitespace-nowrap">
-                              +₹{s.extraPersonCost.toLocaleString()}/extra person
+                              +₹{s.extraPersonCost.toLocaleString()} / {t('sevaMaster.extraPerHead', 'extra person')}
                             </span>
                           ) : null}
                         </div>
@@ -916,7 +945,7 @@ export default function SevaMaster({ onBack }: SevaMasterProps) {
                         </div>
                       ) : (
                         <span className="font-mono text-xs font-bold text-on-surface-variant">
-                          {s.capacity === 999999 ? 'Unlimited' : `${s.capacity} bookings/day`}
+                          {s.capacity === 999999 ? t('sevaMaster.unlimited', 'Unlimited') : `${s.capacity} ${t('sevaMaster.slotsPerDay', 'bookings / day')}`}
                         </span>
                       )}
                     </td>
@@ -930,11 +959,11 @@ export default function SevaMaster({ onBack }: SevaMasterProps) {
                             : 'bg-red-50 text-red-700 border-red-200'
                             }`}
                         >
-                          {s.isActive ? 'Active' : 'Suspended'}
+                          {s.isActive ? t('sevaMaster.statusActive', 'Active') : t('sevaMaster.statusSuspended', 'Suspended')}
                         </button>
                         {s.isDraft && (
                           <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/10 text-amber-700 border border-amber-500/20">
-                            Draft
+                            {t('sevaMaster.statusDraft', 'Draft')}
                           </span>
                         )}
                       </div>
@@ -961,12 +990,14 @@ export default function SevaMaster({ onBack }: SevaMasterProps) {
                           <button
                             onClick={() => handleStartEdit(s)}
                             className="p-1.5 hover:bg-primary-container/10 text-primary rounded-lg transition-colors cursor-pointer"
+                            title={t('sevaMaster.edit', 'Edit')}
                           >
                             <Edit size={14} />
                           </button>
                           <button
                             onClick={() => handleDeleteSeva(s.id)}
                             className="p-1.5 hover:bg-error-container text-error rounded-lg transition-colors cursor-pointer"
+                            title={t('sevaMaster.delete', 'Delete')}
                           >
                             <Trash2 size={14} />
                           </button>
@@ -984,16 +1015,16 @@ export default function SevaMaster({ onBack }: SevaMasterProps) {
         <div className="p-4 bg-surface-container/5 border-t border-outline-variant/15 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="text-xs text-on-surface-variant font-medium">
             {totalItems > 0 ? (
-              <span>Showing {startIndex + 1} to {endIndex} of {totalItems} entries</span>
+              <span>{t('sevaMaster.showing', 'Showing')} {startIndex + 1} {t('sevaMaster.to', 'to')} {endIndex} {t('sevaMaster.of', 'of')} {totalItems} {t('sevaMaster.entries', 'entries')}</span>
             ) : (
-              <span>No entries found</span>
+              <span>{t('sevaMaster.noEntriesFound', 'No entries found')}</span>
             )}
           </div>
 
           <div className="flex flex-col sm:flex-row items-center gap-4">
             {/* Show entries select */}
             <div className="flex items-center gap-2 text-xs font-bold text-on-surface-variant shrink-0">
-              <span>Show</span>
+              <span>{t('sevaMaster.show', 'Show')}</span>
               <select
                 value={rowsPerPage}
                 onChange={(e) => {
@@ -1007,7 +1038,7 @@ export default function SevaMaster({ onBack }: SevaMasterProps) {
                 <option value={20}>20</option>
                 <option value={50}>50</option>
               </select>
-              <span>entries</span>
+              <span>{t('sevaMaster.entries', 'entries')}</span>
             </div>
 
             {totalPages > 1 && (
@@ -1056,7 +1087,7 @@ export default function SevaMaster({ onBack }: SevaMasterProps) {
       <div className="bg-primary-container/10 border border-primary/20 p-4 rounded-xl flex gap-3">
         <Info className="text-primary shrink-0" size={18} />
         <p className="font-sans text-xs text-on-surface-variant leading-relaxed">
-          <strong>Setup Compliance:</strong> Changing the ticket price of any seva will instantly propagate to the live online booking terminal. Existing pre-booked receipts will remain valid at their purchase values. Daily slot capacity limit resets automatically at midnight IST.
+          {t('sevaMaster.complianceNotice', 'Setup Compliance: Changing the ticket price of any seva will instantly propagate to the live online booking terminal. Existing pre-booked receipts will remain valid at their purchase values. Daily slot capacity limit resets automatically at midnight IST.')}
         </p>
       </div>
     </div>

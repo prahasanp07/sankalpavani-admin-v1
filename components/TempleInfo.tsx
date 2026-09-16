@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import TimeRangePicker from './TimeRangePicker';
+import { useLanguage } from '../contexts/LanguageContext';
 import {
   ArrowLeft,
   Clock,
@@ -111,6 +112,7 @@ const NEW_TEMPLE_DETAILS: TempleDetails = {
 };
 
 export default function TempleInfo({ onBack, isCreationMode = false, trustId = 'trust_sringeri', onSaveSuccess }: TempleInfoProps) {
+  const { t } = useLanguage();
   const [details, setDetails] = useState<TempleDetails>(() => {
     if (isCreationMode) {
       return { ...NEW_TEMPLE_DETAILS };
@@ -416,7 +418,7 @@ export default function TempleInfo({ onBack, isCreationMode = false, trustId = '
       {success && (
         <div className="fixed top-6 right-6 z-50 bg-green-100 text-green-800 border border-green-200 px-5 py-3 rounded-xl shadow-xl flex items-center gap-3">
           <CheckCircle size={18} className="text-green-600 animate-bounce" />
-          <span className="font-sans text-sm font-semibold">Temple Details updated successfully!</span>
+          <span className="font-sans text-sm font-semibold">{t('templeInfo.updateSuccess', 'Temple Details updated successfully!')}</span>
         </div>
       )}
 
@@ -432,11 +434,11 @@ export default function TempleInfo({ onBack, isCreationMode = false, trustId = '
           </button>
           <div>
             <div className="flex items-center gap-1.5 text-xs font-bold text-primary tracking-wider uppercase mb-0.5">
-              <span>Masters</span>
+              <span>{t('templeInfo.breadcrumbMasters', 'Masters')}</span>
               <ChevronRight size={12} className="text-on-surface-variant" />
-              <span>Temple Core Info</span>
+              <span>{t('templeInfo.breadcrumbCoreInfo', 'Temple Core Info')}</span>
             </div>
-            <h2 className="font-serif text-3xl font-semibold text-primary">Temple Information</h2>
+            <h2 className="font-serif text-3xl font-semibold text-primary">{t('templeInfo.title', 'Temple Information')}</h2>
           </div>
         </div>
       </div>
@@ -455,7 +457,7 @@ export default function TempleInfo({ onBack, isCreationMode = false, trustId = '
               className="w-full flex items-center justify-between px-6 py-4 bg-surface-container/15 hover:bg-surface-container/30 transition-all text-left font-serif cursor-pointer select-none border-b border-outline-variant/20"
             >
               <h3 className="text-xl font-bold text-primary flex items-center gap-2">
-                General Identity
+                {t('templeInfo.generalIdentity', 'General Identity')}
               </h3>
               {openSections.generalIdentity ? <ChevronDown size={20} className="text-primary" /> : <ChevronRight size={20} className="text-on-surface-variant" />}
             </button>
@@ -465,12 +467,12 @@ export default function TempleInfo({ onBack, isCreationMode = false, trustId = '
                   {/* Code - Placed before Temple Name */}
                   <div>
                     <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1">
-                      Code (Unique ID) <span className="text-red-500">*</span>
+                      {t('templeInfo.code', 'Code (Unique ID)')} <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
                       required
-                      placeholder="e.g. VST-01"
+                      placeholder={t('templeInfo.codePlaceholder', 'e.g. VST-01')}
                       value={details.code ?? ''}
                       onChange={(e) => setDetails({ ...details, code: e.target.value.toUpperCase() })}
                       className="w-full px-4 py-2.5 bg-surface-container-low border border-outline rounded-xl text-sm font-mono uppercase placeholder:text-on-surface-variant/60 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
@@ -480,12 +482,12 @@ export default function TempleInfo({ onBack, isCreationMode = false, trustId = '
                   {/* Temple Name */}
                   <div className="md:col-span-2">
                     <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1">
-                      Temple Official Name <span className="text-red-500">*</span>
+                      {t('templeInfo.templeName', 'Temple Official Name')} <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
                       required
-                      placeholder="e.g. Sri Vidyashankara Temple / Sri Sharadamba Devasthanam"
+                      placeholder={t('templeInfo.templeNamePlaceholder', 'e.g. Sri Vidyashankara Temple / Sri Sharadamba Devasthanam')}
                       value={details.templeName}
                       onChange={(e) => setDetails({ ...details, templeName: e.target.value })}
                       className="w-full px-4 py-2.5 bg-surface-container-low border border-outline rounded-xl text-sm placeholder:text-on-surface-variant/60 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
@@ -497,11 +499,11 @@ export default function TempleInfo({ onBack, isCreationMode = false, trustId = '
                   {/* Primary Deity / Sanctum */}
                   <div>
                     <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1">
-                      Primary Deity / Sanctum
+                      {t('templeInfo.primaryDeity', 'Primary Deity / Sanctum')}
                     </label>
                     <input
                       type="text"
-                      placeholder="e.g. Lord Vidyashankara (Shiva Linga) / Goddess Sharadamba"
+                      placeholder={t('templeInfo.primaryDeityPlaceholder', 'e.g. Lord Vidyashankara (Shiva Linga) / Goddess Sharadamba')}
                       value={details.primaryDeity ?? ''}
                       onChange={(e) => setDetails({ ...details, primaryDeity: e.target.value })}
                       className="w-full px-4 py-2.5 bg-surface-container-low border border-outline rounded-xl text-sm placeholder:text-on-surface-variant/60 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
@@ -511,27 +513,27 @@ export default function TempleInfo({ onBack, isCreationMode = false, trustId = '
                   {/* Initial Status / Sanctum Status Dropdown */}
                   <div>
                     <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1">
-                      Sanctum Initial Status <span className="text-red-500">*</span>
+                      {t('templeInfo.sanctumStatus', 'Sanctum Initial Status')} <span className="text-red-500">*</span>
                     </label>
                     <select
                       value={details.status || 'ACTIVE'}
                       onChange={(e) => setDetails({ ...details, status: e.target.value as any })}
                       className="w-full px-4 py-2.5 bg-surface-container-low border border-outline rounded-xl text-sm text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary cursor-pointer font-medium"
                     >
-                      <option value="ACTIVE">Active</option>
-                      <option value="OPERATIONAL">Operational</option>
-                      <option value="MAINTENANCE">Maintenance</option>
-                      <option value="SUSPENDED">Suspended</option>
+                      <option value="ACTIVE">{t('templeInfo.statusActive', 'Active')}</option>
+                      <option value="OPERATIONAL">{t('templeInfo.statusOperational', 'Operational')}</option>
+                      <option value="MAINTENANCE">{t('templeInfo.statusMaintenance', 'Maintenance')}</option>
+                      <option value="SUSPENDED">{t('templeInfo.statusSuspended', 'Suspended')}</option>
                     </select>
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1">Physical Address</label>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1">{t('templeInfo.physicalAddress', 'Physical Address')}</label>
                   <textarea
                     rows={3}
                     required
-                    placeholder="e.g. Sri Sringeri Math, Harihara Street, Sringeri, Chikkamagaluru, Karnataka 577139"
+                    placeholder={t('templeInfo.addressPlaceholder', 'e.g. Sri Sringeri Math, Harihara Street, Sringeri, Chikkamagaluru, Karnataka 577139')}
                     value={details.address}
                     onChange={(e) => setDetails({ ...details, address: e.target.value })}
                     className="w-full px-4 py-2.5 bg-surface-container-low border border-outline rounded-xl text-sm placeholder:text-on-surface-variant/60 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
@@ -541,12 +543,12 @@ export default function TempleInfo({ onBack, isCreationMode = false, trustId = '
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1 flex items-center gap-1">
-                      <Phone size={12} className="text-primary" /> Telephone Hotline
+                      <Phone size={12} className="text-primary" /> {t('templeInfo.hotline', 'Telephone Hotline')}
                     </label>
                     <input
                       type="text"
                       required
-                      placeholder="e.g. +91 82652 50123 / +91 98450 12345"
+                      placeholder={t('templeInfo.hotlinePlaceholder', 'e.g. +91 82652 50123 / +91 98450 12345')}
                       value={details.phone}
                       onChange={(e) => setDetails({ ...details, phone: e.target.value })}
                       className="w-full px-4 py-2.5 bg-surface-container-low border border-outline rounded-xl text-sm placeholder:text-on-surface-variant/60 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
@@ -555,12 +557,12 @@ export default function TempleInfo({ onBack, isCreationMode = false, trustId = '
 
                   <div>
                     <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1 flex items-center gap-1">
-                      <Mail size={12} className="text-primary" /> Official Email
+                      <Mail size={12} className="text-primary" /> {t('templeInfo.officialEmail', 'Official Email')}
                     </label>
                     <input
                       type="email"
                       required
-                      placeholder="e.g. info@vidyashankara.org / info@sringeri.org"
+                      placeholder={t('templeInfo.emailPlaceholder', 'e.g. info@vidyashankara.org / info@sringeri.org')}
                       value={details.email}
                       onChange={(e) => setDetails({ ...details, email: e.target.value })}
                       className="w-full px-4 py-2.5 bg-surface-container-low border border-outline rounded-xl text-sm placeholder:text-on-surface-variant/60 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
@@ -569,12 +571,12 @@ export default function TempleInfo({ onBack, isCreationMode = false, trustId = '
 
                   <div className="md:col-span-2">
                     <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1 flex items-center gap-1">
-                      <Globe size={12} className="text-primary" /> Digital Portal Address URL
+                      <Globe size={12} className="text-primary" /> {t('templeInfo.digitalPortal', 'Digital Portal Address URL')}
                     </label>
                     <input
                       type="url"
                       required
-                      placeholder="e.g. https://sringeri.net/temples/vidyashankara"
+                      placeholder={t('templeInfo.portalPlaceholder', 'e.g. https://sringeri.net/temples/vidyashankara')}
                       value={details.website}
                       onChange={(e) => setDetails({ ...details, website: e.target.value })}
                       className="w-full px-4 py-2.5 bg-surface-container-low border border-outline rounded-xl text-sm placeholder:text-on-surface-variant/60 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
@@ -582,12 +584,12 @@ export default function TempleInfo({ onBack, isCreationMode = false, trustId = '
                   </div>
                   <div className="md:col-span-2">
                     <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1 flex items-center gap-1">
-                      <MapPin size={12} className="text-primary" /> Google Maps Link
+                      <MapPin size={12} className="text-primary" /> {t('templeInfo.mapsLink', 'Google Maps Link')}
                     </label>
                     <input
                       type="url"
                       required
-                      placeholder="e.g. https://maps.google.com/?q=Sri+Vidyashankara+Temple+Sringeri"
+                      placeholder={t('templeInfo.mapsPlaceholder', 'e.g. https://maps.google.com/?q=Sri+Vidyashankara+Temple+Sringeri')}
                       value={details.googleMapsLink}
                       onChange={(e) => setDetails({ ...details, googleMapsLink: e.target.value })}
                       className="w-full px-4 py-2.5 bg-surface-container-low border border-outline rounded-xl text-sm placeholder:text-on-surface-variant/60 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
@@ -595,11 +597,11 @@ export default function TempleInfo({ onBack, isCreationMode = false, trustId = '
                   </div>
                 </div>
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1">Sthala Mahime</label>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1">{t('templeInfo.sthalaMahime', 'Sthala Mahime')}</label>
                   <textarea
                     rows={3}
                     required
-                    placeholder="e.g. Consecrated by Jagadguru Sri Adi Shankaracharya, this historic sanctum offers a serene spiritual haven with 12 zodiac stone pillars aligning with the solar calendar..."
+                    placeholder={t('templeInfo.sthalaMahimePlaceholder', 'e.g. Consecrated by Jagadguru Sri Adi Shankaracharya, this historic sanctum offers a serene spiritual haven with 12 zodiac stone pillars aligning with the solar calendar...')}
                     value={details.sthalaMahime ?? ''}
                     onChange={(e) => setDetails({ ...details, sthalaMahime: e.target.value })}
                     className="w-full px-4 py-2.5 bg-surface-container-low border border-outline rounded-xl text-sm placeholder:text-on-surface-variant/60 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
@@ -624,7 +626,7 @@ export default function TempleInfo({ onBack, isCreationMode = false, trustId = '
               className="w-full flex items-center justify-between px-6 py-4 bg-surface-container/15 hover:bg-surface-container/30 transition-all text-left font-serif cursor-pointer select-none border-b border-outline-variant/20"
             >
               <h3 className="text-xl font-bold text-primary flex items-center gap-2">
-                Darshan Timings
+                {t('templeInfo.darshanTimings', 'Darshan Timings')}
               </h3>
               {openSections.darshanTimings ? <ChevronDown size={20} className="text-primary" /> : <ChevronRight size={20} className="text-on-surface-variant" />}
             </button>
@@ -640,14 +642,14 @@ export default function TempleInfo({ onBack, isCreationMode = false, trustId = '
                     >
                       <span className="text-xs font-bold uppercase tracking-wider text-primary flex items-center gap-1.5">
                         <span className="w-1.5 h-1.5 rounded-full bg-primary"></span>
-                        Normal Days (General Weekdays)
+                        {t('templeInfo.normalDays', 'Normal Days (General Weekdays)')}
                       </span>
                       {openPanels.normal ? <ChevronDown size={16} className="text-primary" /> : <ChevronRight size={16} className="text-on-surface-variant" />}
                     </button>
                     {openPanels.normal && (
                       <div className="p-4 bg-surface-container-lowest border-t border-outline-variant/20 grid grid-cols-1 md:grid-cols-2 gap-6 animate-[fadeIn_0.2s_ease-out]">
                         <TimeRangePicker
-                          label="Morning Slots"
+                          label={t('templeInfo.morningSlots', 'Morning Slots')}
                           value={details.timingsNormal?.morning ?? ''}
                           onChange={(val) => setDetails({
                             ...details,
@@ -655,7 +657,7 @@ export default function TempleInfo({ onBack, isCreationMode = false, trustId = '
                           })}
                         />
                         <TimeRangePicker
-                          label="Evening Slots"
+                          label={t('templeInfo.eveningSlots', 'Evening Slots')}
                           value={details.timingsNormal?.evening ?? ''}
                           onChange={(val) => setDetails({
                             ...details,
@@ -675,14 +677,14 @@ export default function TempleInfo({ onBack, isCreationMode = false, trustId = '
                     >
                       <span className="text-xs font-bold uppercase tracking-wider text-primary flex items-center gap-1.5">
                         <span className="w-1.5 h-1.5 rounded-full bg-primary"></span>
-                        Weekends (Saturdays & Sundays)
+                        {t('templeInfo.weekends', 'Weekends (Saturdays & Sundays)')}
                       </span>
                       {openPanels.weekends ? <ChevronDown size={16} className="text-primary" /> : <ChevronRight size={16} className="text-on-surface-variant" />}
                     </button>
                     {openPanels.weekends && (
                       <div className="p-4 bg-surface-container-lowest border-t border-outline-variant/20 grid grid-cols-1 md:grid-cols-2 gap-6 animate-[fadeIn_0.2s_ease-out]">
                         <TimeRangePicker
-                          label="Morning Slots"
+                          label={t('templeInfo.morningSlots', 'Morning Slots')}
                           value={details.timingsWeekends?.morning ?? ''}
                           onChange={(val) => setDetails({
                             ...details,
@@ -690,7 +692,7 @@ export default function TempleInfo({ onBack, isCreationMode = false, trustId = '
                           })}
                         />
                         <TimeRangePicker
-                          label="Evening Slots"
+                          label={t('templeInfo.eveningSlots', 'Evening Slots')}
                           value={details.timingsWeekends?.evening ?? ''}
                           onChange={(val) => setDetails({
                             ...details,
@@ -710,14 +712,14 @@ export default function TempleInfo({ onBack, isCreationMode = false, trustId = '
                     >
                       <span className="text-xs font-bold uppercase tracking-wider text-primary flex items-center gap-1.5">
                         <span className="w-1.5 h-1.5 rounded-full bg-primary"></span>
-                        Dhanur Masa Season (Special Month)
+                        {t('templeInfo.dhanurMasa', 'Dhanur Masa Season (Special Month)')}
                       </span>
                       {openPanels.dhanur ? <ChevronDown size={16} className="text-primary" /> : <ChevronRight size={16} className="text-on-surface-variant" />}
                     </button>
                     {openPanels.dhanur && (
                       <div className="p-4 bg-surface-container-lowest border-t border-outline-variant/20 grid grid-cols-1 md:grid-cols-2 gap-6 animate-[fadeIn_0.2s_ease-out]">
                         <TimeRangePicker
-                          label="Morning Slots"
+                          label={t('templeInfo.morningSlots', 'Morning Slots')}
                           value={details.timingsDhanurMasa?.morning ?? ''}
                           onChange={(val) => setDetails({
                             ...details,
@@ -725,7 +727,7 @@ export default function TempleInfo({ onBack, isCreationMode = false, trustId = '
                           })}
                         />
                         <TimeRangePicker
-                          label="Evening Slots"
+                          label={t('templeInfo.eveningSlots', 'Evening Slots')}
                           value={details.timingsDhanurMasa?.evening ?? ''}
                           onChange={(val) => setDetails({
                             ...details,
@@ -745,14 +747,14 @@ export default function TempleInfo({ onBack, isCreationMode = false, trustId = '
                     >
                       <span className="text-xs font-bold uppercase tracking-wider text-primary flex items-center gap-1.5">
                         <span className="w-1.5 h-1.5 rounded-full bg-primary"></span>
-                        Special Occasion Days (Festivals, Utsavas)
+                        {t('templeInfo.specialOccasions', 'Special Occasion Days (Festivals, Utsavas)')}
                       </span>
                       {openPanels.special ? <ChevronDown size={16} className="text-primary" /> : <ChevronRight size={16} className="text-on-surface-variant" />}
                     </button>
                     {openPanels.special && (
                       <div className="p-4 bg-surface-container-lowest border-t border-outline-variant/20 grid grid-cols-1 md:grid-cols-2 gap-6 animate-[fadeIn_0.2s_ease-out]">
                         <TimeRangePicker
-                          label="Morning Slots"
+                          label={t('templeInfo.morningSlots', 'Morning Slots')}
                           value={details.timingsSpecialOccasions?.morning ?? ''}
                           onChange={(val) => setDetails({
                             ...details,
@@ -760,7 +762,7 @@ export default function TempleInfo({ onBack, isCreationMode = false, trustId = '
                           })}
                         />
                         <TimeRangePicker
-                          label="Evening Slots"
+                          label={t('templeInfo.eveningSlots', 'Evening Slots')}
                           value={details.timingsSpecialOccasions?.evening ?? ''}
                           onChange={(val) => setDetails({
                             ...details,
@@ -773,11 +775,11 @@ export default function TempleInfo({ onBack, isCreationMode = false, trustId = '
 
                   {/* Max Hourly Queue Capacity */}
                   <div className="pt-2">
-                    <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1">Max Hourly Queue Capacity (Devotees/Slot)</label>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1">{t('templeInfo.maxQueueCapacity', 'Max Hourly Queue Capacity (Devotees/Slot)')}</label>
                     <input
                       type="number"
                       required
-                      placeholder="e.g. 150"
+                      placeholder={t('templeInfo.capacityPlaceholder', 'e.g. 150')}
                       value={details.capacityPerSlot}
                       onChange={(e) => setDetails({ ...details, capacityPerSlot: Number(e.target.value) })}
                       className="w-full px-4 py-2.5 bg-surface-container-low border border-outline rounded-xl text-sm placeholder:text-on-surface-variant/60 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
@@ -850,7 +852,7 @@ export default function TempleInfo({ onBack, isCreationMode = false, trustId = '
               className="w-full flex items-center justify-between px-6 py-4 bg-surface-container/15 hover:bg-surface-container/30 transition-all text-left font-serif cursor-pointer select-none border-b border-outline-variant/20"
             >
               <h3 className="text-xl font-bold text-primary flex items-center gap-2">
-                Upload your photos
+                {t('templeInfo.uploadPhotos', 'Upload your photos')}
               </h3>
               {openSections.uploadPhotos ? <ChevronDown size={16} className="text-primary" /> : <ChevronRight size={16} className="text-on-surface-variant" />}
             </button>
@@ -867,7 +869,7 @@ export default function TempleInfo({ onBack, isCreationMode = false, trustId = '
                         {isPrimaryBanner && (
                           <div className="absolute top-2 left-2 bg-primary text-on-primary text-[9px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 shadow-md z-10">
                             <Sparkles size={9} className="fill-current" />
-                            <span>Banner Selected</span>
+                            <span>{t('templeInfo.bannerSelected', 'Banner Selected')}</span>
                           </div>
                         )}
 
@@ -880,7 +882,7 @@ export default function TempleInfo({ onBack, isCreationMode = false, trustId = '
                               ? 'bg-primary text-on-primary'
                               : 'bg-white text-on-surface hover:bg-primary hover:text-on-primary'
                               }`}
-                            title="Set as Dashboard Banner"
+                            title={t('templeInfo.setBanner', 'Set as Dashboard Banner')}
                           >
                             <Sparkles size={12} className={isPrimaryBanner ? 'fill-current' : ''} />
                           </button>
@@ -888,7 +890,7 @@ export default function TempleInfo({ onBack, isCreationMode = false, trustId = '
                             type="button"
                             onClick={() => handleDeletePhoto(primaryIndex)}
                             className="p-1.5 bg-red-600 text-white rounded-full hover:bg-red-700 transition-all cursor-pointer shadow-md flex items-center justify-center"
-                            title="Delete Image"
+                            title={t('templeInfo.deleteImage', 'Delete Image')}
                           >
                             <Trash2 size={12} />
                           </button>
@@ -901,7 +903,7 @@ export default function TempleInfo({ onBack, isCreationMode = false, trustId = '
                           className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/45 backdrop-blur-md text-white border border-white/20 px-3 py-1.5 rounded-full text-[10px] font-semibold flex items-center gap-1 hover:bg-black/60 transition-all shadow-md cursor-pointer whitespace-nowrap z-10"
                         >
                           <Camera size={10} />
-                          <span>Change Photo</span>
+                          <span>{t('templeInfo.changePhoto', 'Change Photo')}</span>
                         </button>
                       </>
                     ) : (
@@ -913,7 +915,7 @@ export default function TempleInfo({ onBack, isCreationMode = false, trustId = '
                           className="bg-primary text-on-primary text-[10px] font-bold px-3 py-1.5 rounded-full flex items-center gap-1 hover:scale-105 active:scale-95 transition-all shadow-sm cursor-pointer"
                         >
                           <Plus size={10} />
-                          <span>Add Primary</span>
+                          <span>{t('templeInfo.addPrimary', 'Add Primary')}</span>
                         </button>
                       </div>
                     )}
@@ -942,7 +944,7 @@ export default function TempleInfo({ onBack, isCreationMode = false, trustId = '
                               type="button"
                               onClick={() => handleSetPrimary(photoItem.originalIndex)}
                               className="p-1.5 bg-white text-on-surface hover:bg-primary hover:text-on-primary rounded-full transition-all cursor-pointer shadow-md flex items-center justify-center"
-                              title="Set as Primary"
+                              title={t('templeInfo.setPrimary', 'Set as Primary')}
                             >
                               <Star size={11} />
                             </button>
@@ -953,7 +955,7 @@ export default function TempleInfo({ onBack, isCreationMode = false, trustId = '
                                 ? 'bg-primary text-on-primary'
                                 : 'bg-white text-on-surface hover:bg-primary hover:text-on-primary'
                                 }`}
-                              title="Set as Dashboard Banner"
+                              title={t('templeInfo.setBanner', 'Set as Dashboard Banner')}
                             >
                               <Sparkles size={11} className={isPhotoBanner ? 'fill-current' : ''} />
                             </button>
@@ -961,7 +963,7 @@ export default function TempleInfo({ onBack, isCreationMode = false, trustId = '
                               type="button"
                               onClick={() => handleDeletePhoto(photoItem.originalIndex)}
                               className="p-1.5 bg-red-600 text-white rounded-full hover:bg-red-700 transition-all cursor-pointer shadow-md flex items-center justify-center"
-                              title="Delete Photo"
+                              title={t('templeInfo.deletePhoto', 'Delete Photo')}
                             >
                               <Trash2 size={11} />
                             </button>
@@ -985,7 +987,7 @@ export default function TempleInfo({ onBack, isCreationMode = false, trustId = '
                             className="bg-[#8F4E00] text-white hover:bg-[#7a4300] text-[8px] font-bold px-2 py-0.5 rounded-full flex items-center gap-0.5 shadow-sm transition-all hover:scale-105 active:scale-95 cursor-pointer whitespace-nowrap"
                           >
                             <Plus size={8} />
-                            <span>Add</span>
+                            <span>{t('templeInfo.add', 'Add')}</span>
                           </button>
                         </div>
                       );
@@ -1011,25 +1013,6 @@ export default function TempleInfo({ onBack, isCreationMode = false, trustId = '
             />
           </div>
 
-          {/* Commented out Verification Badges
-          <div className="bg-surface-container-lowest rounded-2xl shadow-sacred border border-outline-variant/30 p-6 space-y-4">
-            <h4 className="font-sans text-sm font-bold text-on-surface flex items-center gap-1.5 text-primary">
-              <Sparkles size={14} /> Verification Badges
-            </h4>
-            <div className="space-y-3 font-sans text-xs font-semibold text-on-surface-variant">
-              <div className="flex items-center justify-between p-2 rounded-lg bg-surface-container-low">
-                <span>Google Maps API</span>
-                <span className="text-green-600 font-bold flex items-center gap-1">
-                  <span className="w-2 h-2 rounded-full bg-green-500"></span> Synced
-                </span>
-              </div>
-            </div>
-          </div>
-          */}
-
-
-
-
         </div>
 
         {/* Sticky Bottom Actions Bar */}
@@ -1039,9 +1022,9 @@ export default function TempleInfo({ onBack, isCreationMode = false, trustId = '
               temple_hindu
             </span>
             <div>
-              <h4 className="font-serif text-sm font-bold text-on-surface">Temple Core Info</h4>
+              <h4 className="font-serif text-sm font-bold text-on-surface">{t('templeInfo.footerTitle', 'Temple Core Info')}</h4>
               <p className="font-sans text-[10px] text-on-surface-variant font-medium hidden md:block">
-                Propagate changes live to mobile apps, kiosks, and online bookings.
+                {t('templeInfo.footerSubtitle', 'Propagate changes live to mobile apps, kiosks, and online bookings.')}
               </p>
             </div>
           </div>
@@ -1054,7 +1037,7 @@ export default function TempleInfo({ onBack, isCreationMode = false, trustId = '
               className="bg-surface-container-low hover:bg-primary-container/10 border border-outline-variant/40 text-on-surface-variant hover:text-primary px-4 py-2.5 rounded-xl font-bold text-xs shadow-sm transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed active:scale-95"
             >
               <Save size={14} />
-              <span>Save as Draft</span>
+              <span>{t('templeInfo.saveDraft', 'Save as Draft')}</span>
             </button>
 
             <button
@@ -1064,7 +1047,7 @@ export default function TempleInfo({ onBack, isCreationMode = false, trustId = '
               className="bg-primary hover:bg-on-primary-container text-on-primary px-5 py-2.5 rounded-xl font-bold text-xs shadow-sm hover:shadow transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed active:scale-95"
             >
               <CheckCircle size={14} />
-              <span>Save & Publish</span>
+              <span>{t('templeInfo.savePublish', 'Save & Publish')}</span>
             </button>
           </div>
         </div>

@@ -356,14 +356,14 @@ export default function RolesGovernance({
         <div className="space-y-4">
           <div className="flex items-center justify-between gap-4">
             <div className="relative flex-1 max-w-md">
-              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search custom roles by name, key or description..."
-                className="w-full pl-9 pr-4 py-2 bg-surface-container-low border border-outline rounded-xl text-xs placeholder:text-on-surface-variant/60 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                className="w-full pl-4 pr-9 py-2 bg-surface-container-low border border-outline rounded-xl text-xs placeholder:text-on-surface-variant/60 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
               />
+              <Search size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none" />
             </div>
           </div>
 

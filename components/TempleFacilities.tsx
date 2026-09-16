@@ -21,6 +21,7 @@ import {
   Trash2,
   XCircle
 } from 'lucide-react';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface TempleFacilitiesProps {
   onBack: () => void;
@@ -114,6 +115,34 @@ const normalizeFacility = (facility: Partial<FacilityItem> & { icon?: unknown },
 };
 
 export default function TempleFacilities({ onBack }: TempleFacilitiesProps) {
+  const { t } = useLanguage();
+
+  const getFacilityName = (facility: FacilityItem) => {
+    switch (facility.id) {
+      case 'function-hall': return t('templeFacilities.facFunctionHall', facility.name);
+      case 'rest-rooms': return t('templeFacilities.facRestRooms', facility.name);
+      case 'accommodation': return t('templeFacilities.facAccommodation', facility.name);
+      case 'dining-hall': return t('templeFacilities.facDiningHall', facility.name);
+      case 'private-poojas': return t('templeFacilities.facPrivatePoojas', facility.name);
+      case 'drinking-water': return t('templeFacilities.facDrinkingWater', facility.name);
+      case 'prasadam': return t('templeFacilities.facPrasadam', facility.name);
+      default: return facility.name;
+    }
+  };
+
+  const getFacilityDesc = (facility: FacilityItem) => {
+    switch (facility.id) {
+      case 'function-hall': return t('templeFacilities.facFunctionHallDesc', facility.description);
+      case 'rest-rooms': return t('templeFacilities.facRestRoomsDesc', facility.description);
+      case 'accommodation': return t('templeFacilities.facAccommodationDesc', facility.description);
+      case 'dining-hall': return t('templeFacilities.facDiningHallDesc', facility.description);
+      case 'private-poojas': return t('templeFacilities.facPrivatePoojasDesc', facility.description);
+      case 'drinking-water': return t('templeFacilities.facDrinkingWaterDesc', facility.description);
+      case 'prasadam': return t('templeFacilities.facPrasadamDesc', facility.description);
+      default: return facility.description;
+    }
+  };
+
   const [facilities, setFacilities] = useState<FacilityItem[]>(() => {
     if (typeof window !== 'undefined') {
       const cached = localStorage.getItem('sankalpvani_temple_facilities');
@@ -263,7 +292,7 @@ export default function TempleFacilities({ onBack }: TempleFacilitiesProps) {
       {success && (
         <div className="fixed top-6 right-6 z-50 bg-green-100 text-green-800 border border-green-200 px-5 py-3 rounded-xl shadow-xl flex items-center gap-3">
           <CheckCircle size={18} className="text-green-600 animate-bounce" />
-          <span className="font-sans text-sm font-semibold">Temple facilities updated successfully!</span>
+          <span className="font-sans text-sm font-semibold">{t('templeFacilities.updateSuccess', 'Temple facilities updated successfully!')}</span>
         </div>
       )}
 
@@ -278,19 +307,19 @@ export default function TempleFacilities({ onBack }: TempleFacilitiesProps) {
           </button>
           <div>
             <div className="flex items-center gap-1.5 text-xs font-bold text-primary tracking-wider uppercase mb-0.5">
-              <span>Masters</span>
+              <span>{t('templeFacilities.breadcrumbMasters', 'Masters')}</span>
               <ChevronRight size={12} className="text-on-surface-variant" />
-              <span>Temple Facilities Master</span>
+              <span>{t('templeFacilities.breadcrumbFacilities', 'Temple Facilities Master')}</span>
             </div>
             <div className="flex items-center gap-3">
-              <h2 className="font-serif text-3xl font-semibold text-primary">Temple Facilities Setup</h2>
+              <h2 className="font-serif text-3xl font-semibold text-primary">{t('templeFacilities.title', 'Temple Facilities Setup')}</h2>
               {isDraft ? (
                 <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-500/10 text-amber-600 border border-amber-500/20">
-                  Draft
+                  {t('templeFacilities.draft', 'Draft')}
                 </span>
               ) : (
                 <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-green-500/10 text-green-600 border border-green-500/20">
-                  Published
+                  {t('templeFacilities.published', 'Published')}
                 </span>
               )}
             </div>
@@ -303,7 +332,7 @@ export default function TempleFacilities({ onBack }: TempleFacilitiesProps) {
           className="bg-primary hover:bg-on-primary-container text-on-primary text-sm font-bold py-2.5 px-4 rounded-xl flex items-center gap-2 shadow-sm transition-all cursor-pointer"
         >
           <Plus size={16} />
-          <span>{showAddForm ? 'Close Setup Form' : 'Create New Facility'}</span>
+          <span>{showAddForm ? t('templeFacilities.closeSetupForm', 'Close Setup Form') : t('templeFacilities.createNewFacility', 'Create New Facility')}</span>
         </button>
       </div>
 
@@ -313,15 +342,15 @@ export default function TempleFacilities({ onBack }: TempleFacilitiesProps) {
           <div className="bg-surface-container-lowest rounded-2xl shadow-sacred border border-outline-variant/30 p-6 animate-[scaleIn_0.15s_ease-out]">
             <div className="flex items-center gap-2 mb-4">
               <PlusCircle size={18} className="text-primary" />
-              <h3 className="font-serif text-lg font-bold text-primary">Add New Facility</h3>
+              <h3 className="font-serif text-lg font-bold text-primary">{t('templeFacilities.addNewFacility', 'Add New Facility')}</h3>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
               <div className="md:col-span-4">
-                <label className="block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">Facility Name</label>
+                <label className="block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">{t('templeFacilities.facilityName', 'Facility Name')}</label>
                 <input
                   type="text"
-                  placeholder="e.g., Cloak Room, Library"
+                  placeholder={t('templeFacilities.facilityPlaceholder', 'e.g., Cloak Room, Library')}
                   value={newFacilityName}
                   onChange={(e) => {
                     setNewFacilityName(e.target.value);
@@ -335,10 +364,10 @@ export default function TempleFacilities({ onBack }: TempleFacilitiesProps) {
               </div>
               
               <div className="md:col-span-5">
-                <label className="block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">Description</label>
+                <label className="block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">{t('templeFacilities.description', 'Description')}</label>
                 <input
                   type="text"
-                  placeholder="e.g., Secure room to store bags & shoes"
+                  placeholder={t('templeFacilities.descPlaceholder', 'e.g., Secure room to store bags & shoes')}
                   value={newFacilityDesc}
                   onChange={(e) => setNewFacilityDesc(e.target.value)}
                   className="w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-primary transition-all text-on-surface"
@@ -347,20 +376,20 @@ export default function TempleFacilities({ onBack }: TempleFacilitiesProps) {
               
               <div className="md:col-span-3 flex gap-2">
                 <div className="flex-grow">
-                  <label className="block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">Icon</label>
+                  <label className="block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">{t('templeFacilities.icon', 'Icon')}</label>
                   <select
                     value={newFacilityIcon}
                     onChange={(e) => setNewFacilityIcon(e.target.value as FacilityIconName)}
                     className="w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-primary transition-all text-on-surface"
                   >
-                    <option value="building2">🏢 Choultry/Hall</option>
-                    <option value="bath">🚿 Restrooms</option>
-                    <option value="hotel">🏨 Accommodation</option>
-                    <option value="utensils">🍴 Dining Hall</option>
-                    <option value="sparkles">✨ Special Pooja</option>
-                    <option value="droplets">💧 Drinking Water</option>
-                    <option value="gift">🎁 Prasadam Counter</option>
-                    <option value="home">🏡 General/Home</option>
+                    <option value="building2">🏢 {t('templeFacilities.optChoultry', 'Choultry/Hall')}</option>
+                    <option value="bath">🚿 {t('templeFacilities.optRestrooms', 'Restrooms')}</option>
+                    <option value="hotel">🏨 {t('templeFacilities.optAccommodation', 'Accommodation')}</option>
+                    <option value="utensils">🍴 {t('templeFacilities.optDiningHall', 'Dining Hall')}</option>
+                    <option value="sparkles">✨ {t('templeFacilities.optSpecialPooja', 'Special Pooja')}</option>
+                    <option value="droplets">💧 {t('templeFacilities.optDrinkingWater', 'Drinking Water')}</option>
+                    <option value="gift">🎁 {t('templeFacilities.optPrasadamCounter', 'Prasadam Counter')}</option>
+                    <option value="home">🏡 {t('templeFacilities.optGeneralHome', 'General/Home')}</option>
                   </select>
                 </div>
                 <button
@@ -369,7 +398,7 @@ export default function TempleFacilities({ onBack }: TempleFacilitiesProps) {
                   className="bg-primary text-on-primary hover:bg-on-primary-container px-5 h-[42px] rounded-xl font-bold text-sm shadow-sm transition-all cursor-pointer flex items-center justify-center gap-1 shrink-0 self-end"
                 >
                   <Plus size={16} />
-                  <span>Add</span>
+                  <span>{t('templeFacilities.addToList', 'Add')}</span>
                 </button>
               </div>
             </div>
@@ -380,10 +409,10 @@ export default function TempleFacilities({ onBack }: TempleFacilitiesProps) {
         <div className="bg-surface-container-lowest rounded-2xl shadow-sacred border border-outline-variant/30 p-6">
           <div className="flex items-center gap-2 mb-4">
             <Home size={18} className="text-primary" />
-            <h3 className="font-serif text-xl font-bold text-primary">Available Guest Facilities</h3>
+            <h3 className="font-serif text-xl font-bold text-primary">{t('templeFacilities.activeAmenities', 'Available Guest Facilities')}</h3>
           </div>
           <p className="text-sm text-on-surface-variant mb-6">
-            Enable, disable, update, or remove temple amenities available to devotees and guests.
+            {t('templeFacilities.amenitiesSubtitle', 'Enable, disable, update, or remove temple amenities available to devotees and guests.')}
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -401,7 +430,7 @@ export default function TempleFacilities({ onBack }: TempleFacilitiesProps) {
                   {isEditing ? (
                     <div className="space-y-3">
                       <div>
-                        <label className="block text-[10px] font-bold text-on-surface-variant uppercase mb-1">Facility Name</label>
+                        <label className="block text-[10px] font-bold text-on-surface-variant uppercase mb-1">{t('templeFacilities.facilityName', 'Facility Name')}</label>
                         <input
                           type="text"
                           value={editName}
@@ -410,7 +439,7 @@ export default function TempleFacilities({ onBack }: TempleFacilitiesProps) {
                         />
                       </div>
                       <div>
-                        <label className="block text-[10px] font-bold text-on-surface-variant uppercase mb-1">Description</label>
+                        <label className="block text-[10px] font-bold text-on-surface-variant uppercase mb-1">{t('templeFacilities.description', 'Description')}</label>
                         <textarea
                           rows={2}
                           value={editDesc}
@@ -420,20 +449,20 @@ export default function TempleFacilities({ onBack }: TempleFacilitiesProps) {
                       </div>
                       <div className="flex gap-2 items-center">
                         <div className="flex-grow">
-                          <label className="block text-[10px] font-bold text-on-surface-variant uppercase mb-1">Icon</label>
+                          <label className="block text-[10px] font-bold text-on-surface-variant uppercase mb-1">{t('templeFacilities.icon', 'Icon')}</label>
                           <select
                             value={editIcon}
                             onChange={(e) => setEditIcon(e.target.value as FacilityIconName)}
                             className="w-full bg-surface-container-lowest border border-outline-variant/50 rounded-lg px-3 py-1.5 text-xs text-on-surface"
                           >
-                            <option value="building2">🏢 Choultry/Hall</option>
-                            <option value="bath">🚿 Restrooms</option>
-                            <option value="hotel">🏨 Accommodation</option>
-                            <option value="utensils">🍴 Dining Hall</option>
-                            <option value="sparkles">✨ Special Pooja</option>
-                            <option value="droplets">💧 Drinking Water</option>
-                            <option value="gift">🎁 Prasadam Counter</option>
-                            <option value="home">🏡 General/Home</option>
+                            <option value="building2">🏢 {t('templeFacilities.optChoultry', 'Choultry/Hall')}</option>
+                            <option value="bath">🚿 {t('templeFacilities.optRestrooms', 'Restrooms')}</option>
+                            <option value="hotel">🏨 {t('templeFacilities.optAccommodation', 'Accommodation')}</option>
+                            <option value="utensils">🍴 {t('templeFacilities.optDiningHall', 'Dining Hall')}</option>
+                            <option value="sparkles">✨ {t('templeFacilities.optSpecialPooja', 'Special Pooja')}</option>
+                            <option value="droplets">💧 {t('templeFacilities.optDrinkingWater', 'Drinking Water')}</option>
+                            <option value="gift">🎁 {t('templeFacilities.optPrasadamCounter', 'Prasadam Counter')}</option>
+                            <option value="home">🏡 {t('templeFacilities.optGeneralHome', 'General/Home')}</option>
                           </select>
                         </div>
                         <div className="flex gap-1.5 self-end">
@@ -442,14 +471,14 @@ export default function TempleFacilities({ onBack }: TempleFacilitiesProps) {
                             onClick={() => saveEdit(facility.id)}
                             className="bg-green-600 hover:bg-green-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm cursor-pointer"
                           >
-                            Save
+                            {t('common.save', 'Save')}
                           </button>
                           <button
                             type="button"
                             onClick={() => setEditingId(null)}
                             className="bg-surface-container-high hover:bg-surface-container text-on-surface-variant text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm cursor-pointer"
                           >
-                            Cancel
+                            {t('common.cancel', 'Cancel')}
                           </button>
                         </div>
                       </div>
@@ -461,8 +490,8 @@ export default function TempleFacilities({ onBack }: TempleFacilitiesProps) {
                           {React.createElement(iconMap[facility.icon as FacilityIconName] || iconMap.home, { size: 16 })}
                         </div>
                         <div>
-                          <h4 className="font-sans text-sm font-bold text-on-surface">{facility.name}</h4>
-                          <p className="text-xs text-on-surface-variant mt-1 leading-relaxed">{facility.description}</p>
+                          <h4 className="font-sans text-sm font-bold text-on-surface">{getFacilityName(facility)}</h4>
+                          <p className="text-xs text-on-surface-variant mt-1 leading-relaxed">{getFacilityDesc(facility)}</p>
                         </div>
                       </div>
                       
@@ -472,7 +501,7 @@ export default function TempleFacilities({ onBack }: TempleFacilitiesProps) {
                             type="button"
                             onClick={() => startEdit(facility)}
                             className="p-1 text-on-surface-variant hover:text-primary rounded hover:bg-surface-container transition-all cursor-pointer"
-                            title="Edit Facility"
+                            title={t('templeFacilities.edit', 'Edit')}
                           >
                             <Edit2 size={13} />
                           </button>
@@ -480,7 +509,7 @@ export default function TempleFacilities({ onBack }: TempleFacilitiesProps) {
                             type="button"
                             onClick={() => handleDeleteFacility(facility.id)}
                             className="p-1 text-red-500 hover:text-red-700 rounded hover:bg-red-50/50 transition-all cursor-pointer"
-                            title="Delete Facility"
+                            title={t('templeFacilities.delete', 'Delete')}
                           >
                             <Trash2 size={13} />
                           </button>
@@ -505,7 +534,7 @@ export default function TempleFacilities({ onBack }: TempleFacilitiesProps) {
         <div className="bg-surface-container-high rounded-2xl p-6 border border-outline-variant/30 text-center flex flex-col items-center">
           <ShieldCheck size={20} className="text-primary mb-2" />
           <p className="font-sans text-xs text-on-surface-variant leading-relaxed mb-4">
-            These facility settings will be reflected in temple visitor-facing modules and admin summaries.
+            {t('templeFacilities.facilityNotice', 'These facility settings will be reflected in temple visitor-facing modules and admin summaries.')}
           </p>
           <div className="flex flex-col sm:flex-row gap-3.5 justify-center w-full max-w-md">
             <button
@@ -515,7 +544,7 @@ export default function TempleFacilities({ onBack }: TempleFacilitiesProps) {
               className="flex-1 bg-surface-container-low hover:bg-primary-container/10 border border-outline-variant/40 text-on-surface-variant hover:text-primary py-3 rounded-xl font-bold text-sm shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
               <Save size={16} />
-              <span>Save as Draft</span>
+              <span>{t('templeFacilities.saveDraft', 'Save as Draft')}</span>
             </button>
 
             <button
@@ -525,7 +554,7 @@ export default function TempleFacilities({ onBack }: TempleFacilitiesProps) {
               className="flex-grow bg-primary hover:bg-on-primary-container text-on-primary py-3 px-6 rounded-xl font-bold text-sm shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
               <CheckCircle size={16} />
-              <span>Save & Publish</span>
+              <span>{t('templeFacilities.savePublish', 'Save & Publish')}</span>
             </button>
           </div>
         </div>

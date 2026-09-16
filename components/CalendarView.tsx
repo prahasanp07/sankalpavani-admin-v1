@@ -26,6 +26,7 @@ import {
   ArrowRight
 } from 'lucide-react';
 import RequirePermission from './RequirePermission';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface Pilgrim {
   name: string;
@@ -159,6 +160,8 @@ const shiftMockBookingsToToday = (bookingsList: Booking[]): Booking[] => {
 };
 
 export default function CalendarView() {
+  const { t } = useLanguage();
+
   // Calendar Navigation
   const [currentDate, setCurrentDate] = useState<Date>(() => new Date());
 
@@ -788,9 +791,9 @@ export default function CalendarView() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <div className="flex items-center gap-1 text-xs font-bold text-primary tracking-wider uppercase mb-1">
-            <span>Home</span>
+            <span>{t('calendar.home', 'Home')}</span>
             <span className="text-on-surface-variant/40">/</span>
-            <span>Calendar</span>
+            <span>{t('calendar.calendar', 'Calendar')}</span>
           </div>
           <h2 className="font-serif text-3xl font-semibold text-primary">{monthName}</h2>
         </div>
@@ -808,7 +811,7 @@ export default function CalendarView() {
               onClick={snapToToday}
               className="px-4 py-2 text-xs font-bold text-primary hover:bg-primary-container/5 transition-colors cursor-pointer border-x border-outline-variant/20"
             >
-              Today
+              {t('calendar.today', 'Today')}
             </button>
             <button
               onClick={nextMonth}
@@ -826,7 +829,7 @@ export default function CalendarView() {
                 ? 'bg-primary text-on-primary shadow-sm'
                 : 'text-on-surface-variant hover:text-primary'
                 }`}
-              title="Month Grid"
+              title={t('calendar.monthGrid', 'Month Grid')}
             >
               <Calendar size={15} />
             </button>
@@ -836,7 +839,7 @@ export default function CalendarView() {
                 ? 'bg-primary text-on-primary shadow-sm'
                 : 'text-on-surface-variant hover:text-primary'
                 }`}
-              title="Agenda List"
+              title={t('calendar.agendaList', 'Agenda List')}
             >
               <List size={15} />
             </button>
@@ -853,7 +856,7 @@ export default function CalendarView() {
               className="flex items-center gap-1.5 bg-primary hover:bg-on-primary-container text-on-primary font-bold px-4 py-2.5 rounded-xl text-xs shadow-sm hover:shadow-md transition-all cursor-pointer w-full sm:w-auto justify-center"
             >
               <Plus size={14} />
-              <span>Add Booking</span>
+              <span>{t('calendar.addBooking', 'Add Booking')}</span>
             </button>
           </RequirePermission>
         </div>
