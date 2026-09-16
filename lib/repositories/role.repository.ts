@@ -408,7 +408,7 @@ export class RoleRepository {
         { key: 'temple.logistics.manage', namespace: 'temple', resource: 'logistics', action: 'manage', desc: 'Dispatch remote holy prasadam and print postage labels' },
         { key: 'temple.audit.view', namespace: 'temple', resource: 'audit', action: 'view', desc: 'Audit immutable activity logs' },
         { key: 'trust.governance.manage', namespace: 'trust', resource: 'governance', action: 'manage', desc: 'Author dynamic roles, designations, and trust policies' },
-        { key: 'trust.temple.create', namespace: 'trust', resource: 'temple', action: 'create', desc: 'Dynamically create new temples under the Trust umbrella' }
+        { key: 'trust.temple.create', namespace: 'trust', resource: 'temple', action: 'create', desc: 'Dynamically create new temples under the Trust' }
       ];
 
       const inserted = await Promise.all(

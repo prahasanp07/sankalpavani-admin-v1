@@ -127,7 +127,7 @@ export class DesignationRepository {
           boundRoleName = r?.name || '';
         }
 
-        let scopeName = 'Trust Umbrella';
+        let scopeName = 'Trust-Wide';
         if (d.scopeType === 'TEMPLE') {
           const t = await db.query.temples.findFirst({ where: eq(temples.id, d.scopeId) });
           scopeName = t?.name || d.scopeId;
@@ -373,7 +373,7 @@ export class DesignationRepository {
           where: eq(designations.id, ob.designationId)
         });
 
-        let scopeName = 'Trust Umbrella';
+        let scopeName = 'Trust-Wide';
         if (ob.scopeId !== ctx.trustId) {
           const t = await db.query.temples.findFirst({ where: eq(temples.id, ob.scopeId) });
           scopeName = t?.name || ob.scopeId;

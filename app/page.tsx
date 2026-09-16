@@ -55,11 +55,17 @@ interface NavigationState {
 }
 
 function AdminPortalContent() {
-  const { session, isLoggedIn, isMounted, login, logout, updateSession, resetToSuperAdmin, activeScope, activeTrustId } = useAuth();
+  const { session, isLoggedIn, isMounted, login, logout, updateSession, resetToSuperAdmin, activeScope, activeTrustId, switchScope } = useAuth();
   const { t } = useLanguage();
 
   const [navigationState, setNavigationState] = useState<NavigationState>(() => {
     if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      const tabParam = urlParams.get('tab');
+      if (tabParam) {
+        return { activeTab: tabParam, parentTab: null };
+      }
+
       const storedState = localStorage.getItem('sankalpvani_navigation_state');
       if (storedState) {
         try {
@@ -102,6 +108,22 @@ function AdminPortalContent() {
       localStorage.setItem('sankalpvani_navigation_state', JSON.stringify(navigationState));
     }
   }, [navigationState]);
+
+  // Sync URL search parameters on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      const tabParam = urlParams.get('tab');
+      const scopeParam = urlParams.get('scope');
+      const templeIdParam = urlParams.get('templeId');
+      if (scopeParam === 'TRUST' || scopeParam === 'TEMPLE') {
+        switchScope(scopeParam, templeIdParam || undefined);
+      }
+      if (tabParam && tabParam !== navigationState.activeTab) {
+        handleNavigate(tabParam);
+      }
+    }
+  }, []);
 
   // Dynamic Clock update
   useEffect(() => {
@@ -239,6 +261,10 @@ function AdminPortalContent() {
                 <TrustDashboardPortfolio
                   trustId={activeTrustId || 'trust_sringeri'}
                   onNavigate={handleNavigate}
+                  onEnterTemple={(templeId) => {
+                    switchScope('TEMPLE', templeId);
+                    handleNavigate('dashboard');
+                  }}
                 />
               ) : (
                 <DashboardPortal onNavigate={handleNavigate} />

@@ -128,7 +128,11 @@ export default function TrustDashboardPortfolio({
       onEnterTemple(temple.id);
     } else {
       switchScope('TEMPLE', temple.id);
-      router.push(`/trusts/${trustId}/temples/${temple.id}/dashboard`);
+      if (onNavigate) {
+        onNavigate('dashboard');
+      } else {
+        router.push('/');
+      }
     }
   };
 
@@ -136,7 +140,7 @@ export default function TrustDashboardPortfolio({
     if (onNavigate) {
       onNavigate('add_temple');
     } else {
-      router.push(`/trusts/${trustId}/temples/new`);
+      router.push('/?tab=add_temple');
     }
   };
 

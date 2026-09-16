@@ -226,7 +226,7 @@ export default function MemberCard({
               ))
             ) : (
               <span className="text-[10px] text-on-surface-variant italic">
-                {t('members.trustUmbrella', 'Trust Umbrella (No localized temple assigned)')}
+                {t('members.trustWide', 'Trust-Wide (No localized temple assigned)')}
               </span>
             )}
           </div>

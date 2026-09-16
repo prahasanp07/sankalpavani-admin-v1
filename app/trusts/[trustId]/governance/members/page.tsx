@@ -1,24 +1,36 @@
 'use client';
 
-import React from 'react';
+import { useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import MembersGovernance from '@/components/MembersGovernance';
+import { useAuth } from '@/contexts/AuthContext';
 
-export default function MembersDirectoryPage() {
+export default function MembersDirectoryRedirect() {
   const params = useParams();
   const router = useRouter();
   const trustId = (params?.trustId as string) || 'trust_sringeri';
+  const { switchScope, updateSession } = useAuth();
+
+  useEffect(() => {
+    updateSession({ trustId, scope: 'TRUST' });
+    switchScope('TRUST');
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem(
+          'sankalpvani_navigation_state',
+          JSON.stringify({ activeTab: 'members', parentTab: null })
+        );
+      } catch (e) {}
+    }
+    router.replace('/?tab=members');
+  }, [trustId, router, switchScope, updateSession]);
 
   return (
-    <div className="min-h-screen bg-background text-on-surface p-4 md:p-8 font-sans">
-      <div className="max-w-7xl mx-auto">
-        <MembersGovernance
-          trustId={trustId}
-          onBack={() => router.push(`/trusts/${trustId}/dashboard`)}
-          onNavigate={(tab) => {
-            if (tab === 'dashboard') router.push(`/trusts/${trustId}/dashboard`);
-          }}
-        />
+    <div className="min-h-screen bg-background flex items-center justify-center p-6 text-primary">
+      <div className="flex flex-col items-center gap-3">
+        <div className="w-8 h-8 rounded-full border-2 border-primary border-t-transparent animate-spin" />
+        <p className="font-sans text-xs text-on-surface-variant font-medium">
+          Loading Members in Integrated Workspace...
+        </p>
       </div>
     </div>
   );

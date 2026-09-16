@@ -146,13 +146,7 @@ export default function Sidebar({
       } catch (e) { }
 
       if (window.location.pathname !== '/') {
-        if (id === 'dashboard') {
-          router.push('/');
-        } else if (id === 'designations') {
-          router.push(`/trusts/${currentTrustId}/governance/designations`);
-        } else {
-          router.push('/');
-        }
+        router.push('/');
       }
     }
     if (setMobileOpen) setMobileOpen(false);
@@ -324,14 +318,21 @@ export default function Sidebar({
               <p className="text-[9px] font-mono font-bold uppercase tracking-wider text-on-surface-variant/70 mb-1.5 px-3">
                 {t('sidebar.trustControlCenter', 'Trust Control Center')}
               </p>
-              <a
-                href={`/trusts/${currentTrustId}/dashboard`}
-                className="w-full flex items-center gap-2 px-3.5 py-2 rounded-xl font-sans text-xs font-bold text-amber-800 hover:bg-amber-500/10 transition-colors"
+              <button
+                type="button"
+                onClick={() => {
+                  switchScope('TRUST');
+                  setActiveTab('dashboard');
+                  if (typeof window !== 'undefined' && window.location.pathname !== '/') {
+                    router.push('/');
+                  }
+                }}
+                className="w-full flex items-center gap-2 px-3.5 py-2 rounded-xl font-sans text-xs font-bold text-amber-800 hover:bg-amber-500/10 transition-colors cursor-pointer text-left"
                 title="Open Trust Dashboard"
               >
                 <Landmark size={14} className="shrink-0" />
                 <span>{t('sidebar.dashboard', 'Trust Dashboard')}</span>
-              </a>
+              </button>
             </div>
           )}
         </nav>
