@@ -13,8 +13,10 @@ import {
   MessageSquare,
   Mail
 } from 'lucide-react';
+import { useLanguage } from '../contexts/LanguageContext';
 
 export default function Settings() {
+  const { t } = useLanguage();
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   // SMS Gateway Config
@@ -105,9 +107,9 @@ export default function Settings() {
 
       {/* Header */}
       <div>
-        <h2 className="font-serif text-3xl font-semibold text-primary">Temple Notifications & Configuration</h2>
+        <h2 className="font-serif text-3xl font-semibold text-primary">{t('settings.title', 'Administrative Settings & Notifications')}</h2>
         <p className="font-sans text-sm text-on-surface-variant font-medium mt-1">
-          Control operational defaults, SMS/WhatsApp/Email notification gateways, user access privileges, and master backups.
+          {t('settings.subtitle', 'Configure automated SMS/WhatsApp alerts, email gateways, session timeouts, and database resets.')}
         </p>
       </div>
 
@@ -121,10 +123,10 @@ export default function Settings() {
             <div className="border-b divider-gold pb-3 flex justify-between items-center">
               <h3 className="font-serif text-xl font-bold text-primary flex items-center gap-2">
                 <Bell size={18} className="text-primary" />
-                General Notifications
+                {t('settings.notificationsHeader', 'General Notifications')}
               </h3>
               <span className="text-[11px] text-on-surface-variant font-semibold">
-                Configure notification sender accounts
+                {t('settings.notificationsSubtitle', 'Configure notification sender accounts')}
               </span>
             </div>
 
@@ -138,8 +140,8 @@ export default function Settings() {
                       <Smartphone size={18} />
                     </div>
                     <div>
-                      <h4 className="text-on-surface font-bold text-sm">SMS Gateway</h4>
-                      <p className="text-xs text-on-surface-variant font-medium">Sends instant booking confirmation SMS &amp; barcode links to devotees.</p>
+                      <h4 className="text-on-surface font-bold text-sm">{t('settings.smsGateway', 'Devotee SMS Notification Gateway')}</h4>
+                      <p className="text-xs text-on-surface-variant font-medium">{t('settings.smsDesc', 'Transmit instant confirmation SMS to devotees upon seva booking settlement.')}</p>
                     </div>
                   </div>
                   <input
@@ -154,7 +156,7 @@ export default function Settings() {
                 {smsEnabled && (
                   <div className="pt-3 border-t border-outline-variant/20 animate-[fadeIn_0.2s_ease-out]">
                     <label className="block text-[10px] font-bold uppercase tracking-wider text-primary mb-1">
-                      SMS Sending Phone Number / Virtual No. *
+                      {t('settings.smsSenderPhone', 'Sending Phone / Sender ID')} *
                     </label>
                     <input
                       type="text"
@@ -164,7 +166,7 @@ export default function Settings() {
                       className="w-full px-3 py-2.5 bg-surface-container border border-outline rounded-xl text-xs focus:outline-none focus:border-primary font-mono font-semibold text-on-surface"
                     />
                     <span className="text-[10px] text-on-surface-variant/70 mt-1 block">
-                      Outbound sender phone number used to dispatch automated SMS booking confirmations &amp; barcode links.
+                      {t('settings.smsHelp', 'Outbound sender phone number used to dispatch automated SMS booking confirmations & barcode links.')}
                     </span>
                   </div>
                 )}
@@ -178,8 +180,8 @@ export default function Settings() {
                       <MessageSquare size={18} />
                     </div>
                     <div>
-                      <h4 className="text-on-surface font-bold text-sm">WhatsApp Business API</h4>
-                      <p className="text-xs text-on-surface-variant font-medium">Sends automated WhatsApp seva e-passes, seva timings, &amp; prasadam tracking.</p>
+                      <h4 className="text-on-surface font-bold text-sm">{t('settings.whatsappGateway', 'WhatsApp Business API Gateway')}</h4>
+                      <p className="text-xs text-on-surface-variant font-medium">{t('settings.whatsappDesc', 'Deliver QR code e-tickets, pooja reminders, and postal tracking links via WhatsApp.')}</p>
                     </div>
                   </div>
                   <input
@@ -194,7 +196,7 @@ export default function Settings() {
                 {whatsappEnabled && (
                   <div className="pt-3 border-t border-outline-variant/20 animate-[fadeIn_0.2s_ease-out]">
                     <label className="block text-[10px] font-bold uppercase tracking-wider text-green-700 mb-1">
-                      WhatsApp Sending Phone Number *
+                      {t('settings.whatsappNumber', 'Registered WhatsApp Business Number')} *
                     </label>
                     <input
                       type="text"
@@ -204,7 +206,7 @@ export default function Settings() {
                       className="w-full px-3 py-2.5 bg-surface-container border border-outline rounded-xl text-xs focus:outline-none focus:border-green-600 font-mono font-semibold text-on-surface"
                     />
                     <span className="text-[10px] text-on-surface-variant/70 mt-1 block">
-                      Verified WhatsApp Business phone number used to send automated e-passes &amp; seva alerts.
+                      {t('settings.whatsappHelp', 'Verified WhatsApp Business phone number used to send automated e-passes & seva alerts.')}
                     </span>
                   </div>
                 )}
@@ -218,8 +220,8 @@ export default function Settings() {
                       <Mail size={18} />
                     </div>
                     <div>
-                      <h4 className="text-on-surface font-bold text-sm">Email (SMTP) Gateway</h4>
-                      <p className="text-xs text-on-surface-variant font-medium">Dispatches PDF tax receipts, Sankalpa confirmations, &amp; monthly statements.</p>
+                      <h4 className="text-on-surface font-bold text-sm">{t('settings.emailGateway', 'SMTP / Email Dispatch Gateway')}</h4>
+                      <p className="text-xs text-on-surface-variant font-medium">{t('settings.emailDesc', 'Dispatch official receipts and financial audit statements to devotees and trustees.')}</p>
                     </div>
                   </div>
                   <input
@@ -234,7 +236,7 @@ export default function Settings() {
                 {emailEnabled && (
                   <div className="pt-3 border-t border-outline-variant/20 animate-[fadeIn_0.2s_ease-out]">
                     <label className="block text-[10px] font-bold uppercase tracking-wider text-blue-700 mb-1">
-                      Sender&apos;s Email ID (From Address) *
+                      {t('settings.emailSender', 'Sender Email Address')} *
                     </label>
                     <input
                       type="email"
@@ -244,7 +246,7 @@ export default function Settings() {
                       className="w-full px-3 py-2.5 bg-surface-container border border-outline rounded-xl text-xs focus:outline-none focus:border-blue-600 font-semibold text-on-surface"
                     />
                     <span className="text-[10px] text-on-surface-variant/70 mt-1 block">
-                      Official temple email ID from which devotees will receive tax receipts and Sankalpa confirmations.
+                      {t('settings.emailHelp', 'Official temple email ID from which devotees will receive tax receipts and Sankalpa confirmations.')}
                     </span>
                   </div>
                 )}
@@ -294,7 +296,7 @@ export default function Settings() {
               onClick={handleSaveSettings}
               className="bg-primary hover:bg-on-primary-container text-on-primary font-bold py-2.5 px-6 rounded-xl text-sm shadow-sm hover:shadow-md transition-all cursor-pointer"
             >
-              Apply Configurations
+              {t('settings.applyConfigs', 'Apply Configurations')}
             </button>
           </div>
 
@@ -305,11 +307,11 @@ export default function Settings() {
 
           <div className="bg-surface-container rounded-2xl p-6 border border-outline-variant/30 space-y-4">
             <h3 className="font-serif text-lg font-bold text-primary flex items-center gap-2">
-              <Database size={16} /> Data Factory Diagnostics
+              <Database size={16} /> {t('settings.dataDiagnostics', 'Data Factory Diagnostics')}
             </h3>
 
             <p className="font-sans text-xs text-on-surface-variant leading-relaxed">
-              If the system cache becomes corrupted or you wish to revert custom edits back to high-fidelity factory presets, use the control below. This wipes local storage registries securely.
+              {t('settings.dangerDesc', 'Clear browser cache and reload original temple configurations and sample rosters.')}
             </p>
 
             <button
@@ -317,7 +319,7 @@ export default function Settings() {
               className="w-full bg-error-container hover:bg-red-200 text-on-error-container border border-red-300 py-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer shadow-sm"
             >
               <Trash2 size={14} />
-              <span>Reset Factory Presets</span>
+              <span>{t('settings.resetPresets', 'Reset Factory Presets')}</span>
             </button>
           </div>
 

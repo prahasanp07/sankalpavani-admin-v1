@@ -451,10 +451,10 @@ function AdminPortalContent() {
                 <div>
                   <h3 className="font-serif text-xl font-bold text-primary flex items-center gap-2">
                     <User size={20} className="text-primary" />
-                    Modify Administrator Profile
+                    {t('adminProfile.modalTitle', 'Modify Administrator Profile')}
                   </h3>
                   <p className="font-sans text-xs text-on-surface-variant font-medium mt-1">
-                    Update your system access credentials, administrative persona, and contact defaults.
+                    {t('adminProfile.modalSubtitle', 'Update your system access credentials, administrative persona, and contact defaults.')}
                   </p>
                 </div>
                 <button
@@ -494,7 +494,7 @@ function AdminPortalContent() {
                 });
 
                 setProfileModalOpen(false);
-                setToastMessage('Administrative credentials and profile updated successfully!');
+                setToastMessage(t('adminProfile.successToast', 'Administrative credentials and profile updated successfully!'));
                 setTimeout(() => setToastMessage(null), 3500);
               }} className="flex-1 overflow-y-auto p-6 space-y-6">
 
@@ -502,13 +502,13 @@ function AdminPortalContent() {
                   {/* Left Column: Basic Details */}
                   <div className="space-y-4">
                     <h4 className="font-serif text-sm font-bold text-primary border-b border-outline-variant/30 pb-1.5 uppercase tracking-wider flex items-center gap-1.5">
-                      <User size={14} /> Basic Information
+                      <User size={14} /> {t('adminProfile.basicInfo', 'Basic Information')}
                     </h4>
 
                     {/* Name Input */}
                     <div className="flex flex-col gap-1.5">
                       <label className="font-sans text-[11px] font-bold text-on-surface-variant uppercase tracking-wider">
-                        Full Administrator Name
+                        {t('adminProfile.fullName', 'Full Administrator Name')}
                       </label>
                       <input
                         type="text"
@@ -523,7 +523,7 @@ function AdminPortalContent() {
                     {/* Email Input */}
                     <div className="flex flex-col gap-1.5">
                       <label className="font-sans text-[11px] font-bold text-on-surface-variant uppercase tracking-wider">
-                        Registered Email Address
+                        {t('adminProfile.email', 'Official Email Address')}
                       </label>
                       <input
                         type="email"
@@ -538,7 +538,7 @@ function AdminPortalContent() {
                     {/* Designation / Role Input */}
                     <div className="flex flex-col gap-1.5">
                       <label className="font-sans text-[11px] font-bold text-on-surface-variant uppercase tracking-wider">
-                        Custom Designation / Title
+                        {t('adminProfile.role', 'Administrative Role / Title')}
                       </label>
                       <input
                         type="text"
@@ -553,7 +553,7 @@ function AdminPortalContent() {
                     {/* Phone Input */}
                     <div className="flex flex-col gap-1.5">
                       <label className="font-sans text-[11px] font-bold text-on-surface-variant uppercase tracking-wider">
-                        Emergency Contact Number
+                        {t('adminProfile.phone', 'Contact Mobile Phone')}
                       </label>
                       <input
                         type="text"
@@ -570,7 +570,7 @@ function AdminPortalContent() {
                     {/* Presets Grid */}
                     <div className="space-y-3">
                       <h4 className="font-serif text-sm font-bold text-primary border-b border-outline-variant/30 pb-1.5 uppercase tracking-wider flex items-center gap-1.5">
-                        <Camera size={14} /> Profile Icon
+                        <Camera size={14} /> {t('adminProfile.profileIcon', 'Profile Icon')}
                       </h4>
 
                       <div className="grid grid-cols-4 gap-3">
@@ -604,7 +604,7 @@ function AdminPortalContent() {
                       {/* Custom Avatar URL */}
                       <div className="flex flex-col gap-1 mt-2">
                         <label className="font-sans text-[10px] font-bold text-on-surface-variant/85 uppercase">
-                          Or custom avatar image URL
+                          {t('adminProfile.customAvatarUrl', 'Or custom avatar image URL')}
                         </label>
                         <input
                           type="text"
@@ -619,7 +619,7 @@ function AdminPortalContent() {
                     {/* Change Password Section */}
                     <div className="space-y-3 pt-2">
                       <h4 className="font-serif text-sm font-bold text-primary border-b border-outline-variant/30 pb-1.5 uppercase tracking-wider flex items-center gap-1.5">
-                        <Key size={14} /> Security Credentials
+                        <Key size={14} /> {t('adminProfile.security', 'Security & Password Update')}
                       </h4>
 
                       {passwordError && (
@@ -632,7 +632,7 @@ function AdminPortalContent() {
                       <div className="space-y-3.5">
                         <div className="flex flex-col gap-1">
                           <label className="font-sans text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">
-                            Current Password
+                            {t('adminProfile.currentPassword', 'Current Password')}
                           </label>
                           <input
                             type="password"
@@ -649,7 +649,7 @@ function AdminPortalContent() {
                         <div className="grid grid-cols-2 gap-3">
                           <div className="flex flex-col gap-1">
                             <label className="font-sans text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">
-                              New Password
+                              {t('adminProfile.newPassword', 'New Password (Min 6 Characters)')}
                             </label>
                             <input
                               type="password"
@@ -665,7 +665,7 @@ function AdminPortalContent() {
 
                           <div className="flex flex-col gap-1">
                             <label className="font-sans text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">
-                              Confirm Password
+                              {t('adminProfile.confirmPassword', 'Confirm New Password')}
                             </label>
                             <input
                               type="password"
@@ -691,14 +691,14 @@ function AdminPortalContent() {
                     onClick={() => setProfileModalOpen(false)}
                     className="px-5 py-2.5 rounded-xl text-xs font-bold text-on-surface-variant hover:bg-surface-container border border-outline-variant/40 transition-all cursor-pointer"
                   >
-                    Discard Changes
+                    {t('adminProfile.discard', 'Discard Changes')}
                   </button>
                   <button
                     type="submit"
                     className="px-6 py-2.5 bg-primary hover:bg-on-primary-container text-on-primary rounded-xl text-xs font-bold shadow-sm hover:shadow-md transition-all cursor-pointer flex items-center gap-1.5"
                   >
                     <Check size={14} />
-                    <span>Synchronize Profile</span>
+                    <span>{t('adminProfile.syncProfile', 'Synchronize Profile')}</span>
                   </button>
                 </div>
               </form>

@@ -4,12 +4,14 @@ import React, { useState } from 'react';
 import { motion } from 'motion/react';
 import { Lock, Mail, ArrowRight } from 'lucide-react';
 import { UserSession } from '../contexts/AuthContext';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface LoginScreenProps {
   onLoginSuccess: (email: string, customProps?: Partial<UserSession>) => void;
 }
 
 export default function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
+  const { t } = useLanguage();
   const [email, setEmail] = useState('admin@temple1.com');
   const [password, setPassword] = useState('password');
   const [isLoading, setIsLoading] = useState(false);
@@ -79,10 +81,10 @@ export default function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
               </span>
             </motion.div>
             <h1 className="font-serif font-bold text-3xl md:text-4xl text-primary mb-1">
-              SankalpVani
+              {t('login.brandName', 'SankalpVani')}
             </h1>
             <p className="font-sans text-xs text-on-surface-variant font-bold tracking-wider uppercase">
-              Unified Trust & Temple Portal Login
+              {t('login.portalTitle', 'Unified Trust & Temple Portal Login')}
             </p>
           </div>
 
@@ -100,7 +102,7 @@ export default function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
                 htmlFor="email"
                 className="font-sans text-xs font-bold text-on-surface-variant uppercase tracking-wider"
               >
-                Email Address (User Identity)
+                {t('login.emailLabel', 'Email Address (User Identity)')}
               </label>
               <input
                 id="email"
@@ -108,7 +110,7 @@ export default function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="block w-full px-4 py-3 bg-white/50 border border-outline rounded-lg text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors text-sm font-sans"
-                placeholder="dharmadhikari@sringeri.org or eo@vidyashankara.org"
+                placeholder={t('login.emailPlaceholder', 'Enter official email')}
                 required
               />
             </div>
@@ -119,7 +121,7 @@ export default function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
                 htmlFor="password"
                 className="font-sans text-xs font-bold text-on-surface-variant uppercase tracking-wider"
               >
-                Password
+                {t('login.passwordLabel', 'Password')}
               </label>
               <input
                 id="password"
@@ -127,7 +129,7 @@ export default function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="block w-full px-4 py-3 bg-white/50 border border-outline rounded-lg text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors text-sm font-sans"
-                placeholder="••••••••"
+                placeholder={t('login.passwordPlaceholder', 'Enter security password')}
                 required
               />
 
@@ -137,7 +139,7 @@ export default function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
                   onClick={(e) => { e.preventDefault(); alert('Please contact the Trust Governance Administrator to reset your credentials.'); }} 
                   className="font-sans text-xs text-primary hover:text-on-primary-container transition-colors"
                 >
-                  Forgot password?
+                  {t('login.forgotPassword', 'Forgot credentials?')}
                 </a>
               </div>
             </div>
@@ -148,7 +150,7 @@ export default function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
               disabled={isLoading}
               className="w-full bg-primary hover:bg-on-primary-container text-on-primary font-bold py-3 px-4 rounded-lg shadow-sm transition-all duration-200 active:scale-95 flex items-center justify-center gap-2 cursor-pointer text-sm"
             >
-              <span>{isLoading ? 'Authenticating & Resolving Roles...' : 'Sign In to Workspace'}</span>
+              <span>{isLoading ? t('login.signingIn', 'Authenticating & Resolving Roles...') : t('login.signIn', 'Sign In to Workspace')}</span>
               {!isLoading && <ArrowRight size={18} />}
             </button>
 
@@ -156,15 +158,15 @@ export default function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
             <div className="pt-3 border-t border-outline-variant/30 space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">
-                  Quick Stakeholder Logins:
+                  {t('login.quickStakeholderLogins', 'Quick Stakeholder Logins:')}
                 </span>
-                <span className="text-[9px] text-primary font-bold">Dynamic RBAC</span>
+                <span className="text-[9px] text-primary font-bold">{t('login.dynamicRbac', 'Dynamic RBAC')}</span>
               </div>
 
               {/* Trust Level Logins */}
               <div className="space-y-1">
                 <p className="text-[9px] font-mono font-bold uppercase text-amber-800 tracking-wider">
-                  Tier 1: Trust Governance Logins
+                  {t('login.tier1Title', 'Tier 1: Trust Governance Logins')}
                 </p>
                 <div className="grid grid-cols-2 gap-1.5">
                   <button
@@ -181,8 +183,8 @@ export default function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
                     }}
                     className="p-2 bg-amber-500/10 hover:bg-amber-500/20 text-primary border border-primary/30 rounded-xl text-[10px] font-bold text-left transition-all cursor-pointer flex flex-col"
                   >
-                    <span className="truncate">Trust Apex Trustee</span>
-                    <span className="text-[8px] text-on-surface-variant font-normal">Full Trust Oversight</span>
+                    <span className="truncate">{t('login.personaTrustApex', 'Trust Apex Trustee')}</span>
+                    <span className="text-[8px] text-on-surface-variant font-normal">{t('login.personaTrustApexDesc', 'Full Trust Oversight')}</span>
                   </button>
 
                   <button
@@ -199,8 +201,8 @@ export default function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
                     }}
                     className="p-2 bg-surface-container hover:bg-surface-container-high text-on-surface border border-outline-variant/30 rounded-xl text-[10px] font-bold text-left transition-all cursor-pointer flex flex-col"
                   >
-                    <span className="truncate">Statutory Auditor</span>
-                    <span className="text-[8px] text-on-surface-variant font-normal">Read-Only Financials</span>
+                    <span className="truncate">{t('login.personaAuditor', 'Statutory Auditor')}</span>
+                    <span className="text-[8px] text-on-surface-variant font-normal">{t('login.personaAuditorDesc', 'Read-Only Financials')}</span>
                   </button>
                 </div>
               </div>
@@ -208,7 +210,7 @@ export default function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
               {/* Temple Level Logins */}
               <div className="space-y-1 pt-1">
                 <p className="text-[9px] font-mono font-bold uppercase text-primary tracking-wider">
-                  Tier 2: Temple Workplace Logins
+                  {t('login.tier2Title', 'Tier 2: Temple Workplace Logins')}
                 </p>
                 <div className="grid grid-cols-2 gap-1.5">
                   <button
@@ -224,8 +226,8 @@ export default function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
                     }}
                     className="p-2 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/30 rounded-xl text-[10px] font-bold text-left transition-all cursor-pointer flex flex-col"
                   >
-                    <span className="truncate">Executive Officer (EO)</span>
-                    <span className="text-[8px] text-on-surface-variant font-normal">Temple Admin</span>
+                    <span className="truncate">{t('login.personaEO', 'Executive Officer (EO)')}</span>
+                    <span className="text-[8px] text-on-surface-variant font-normal">{t('login.personaEODesc', 'Temple Admin')}</span>
                   </button>
 
                   <button
@@ -246,8 +248,8 @@ export default function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
                     }}
                     className="p-2 bg-surface-container hover:bg-surface-container-high text-on-surface border border-outline-variant/30 rounded-xl text-[10px] font-bold text-left transition-all cursor-pointer flex flex-col"
                   >
-                    <span className="truncate">Chief Archaka</span>
-                    <span className="text-[8px] text-on-surface-variant font-normal">Rituals & Rostering</span>
+                    <span className="truncate">{t('login.personaChiefArchaka', 'Chief Archaka')}</span>
+                    <span className="text-[8px] text-on-surface-variant font-normal">{t('login.personaChiefArchakaDesc', 'Rituals & Rostering')}</span>
                   </button>
 
                   <button
@@ -264,8 +266,8 @@ export default function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
                     }}
                     className="p-2 bg-surface-container hover:bg-surface-container-high text-on-surface border border-outline-variant/30 rounded-xl text-[10px] font-bold text-left transition-all cursor-pointer flex flex-col"
                   >
-                    <span className="truncate">Counter Clerk</span>
-                    <span className="text-[8px] text-on-surface-variant font-normal">Bookings & Receipts</span>
+                    <span className="truncate">{t('login.personaCounterClerk', 'Counter Clerk')}</span>
+                    <span className="text-[8px] text-on-surface-variant font-normal">{t('login.personaCounterClerkDesc', 'Bookings & Receipts')}</span>
                   </button>
 
                   <button
@@ -282,8 +284,8 @@ export default function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
                     }}
                     className="p-2 bg-surface-container hover:bg-surface-container-high text-on-surface border border-outline-variant/30 rounded-xl text-[10px] font-bold text-left transition-all cursor-pointer flex flex-col"
                   >
-                    <span className="truncate">Prasadam Manager</span>
-                    <span className="text-[8px] text-on-surface-variant font-normal">Remote Dispatch</span>
+                    <span className="truncate">{t('login.personaPrasadamManager', 'Prasadam Manager')}</span>
+                    <span className="text-[8px] text-on-surface-variant font-normal">{t('login.personaPrasadamManagerDesc', 'Remote Dispatch')}</span>
                   </button>
                 </div>
               </div>
@@ -291,7 +293,7 @@ export default function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
 
             <div className="text-center pt-1">
               <p className="font-sans text-[11px] text-on-surface-variant font-medium tracking-wide">
-                Authorized Devasthanam personnel only.
+                {t('login.authorizedOnly', 'Authorized Devasthanam personnel only.')}
               </p>
             </div>
           </form>

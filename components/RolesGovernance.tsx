@@ -23,6 +23,7 @@ import {
   Lock,
   CheckCircle2
 } from 'lucide-react';
+import { useLanguage } from '../contexts/LanguageContext';
 
 export interface RoleItem {
   id: string;
@@ -57,6 +58,7 @@ export default function RolesGovernance({
   onBack,
   onNavigate
 }: RolesGovernanceProps) {
+  const { t } = useLanguage();
   const currentTrustName = (
     trustName ||
     (trustId === 'trust_ahobila'
@@ -292,17 +294,17 @@ export default function RolesGovernance({
         <div className="space-y-1.5">
           <div className="flex items-center gap-2">
             <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-primary px-2.5 py-1 rounded-full bg-primary/10 border border-primary/20">
-              Trust Governance & RBAC
+              {t('roles.badge', 'Trust Governance & RBAC')}
             </span>
             <span className="text-xs font-bold font-sans text-on-surface uppercase tracking-wide">
               {currentTrustName}
             </span>
           </div>
           <h1 className="font-serif text-2xl md:text-3xl font-bold text-primary">
-            Dynamic Roles & Access Control
+            {t('roles.title', 'Dynamic Roles & Access Control')}
           </h1>
           <p className="font-sans text-xs text-on-surface-variant max-w-2xl leading-relaxed">
-            Administer hierarchical software permissions, custom role definitions, cascading temple policies, and real-time PDP authorization simulation.
+            {t('roles.subtitle', 'Administer hierarchical software permissions, custom role definitions, cascading temple policies, and real-time PDP authorization simulation.')}
           </p>
         </div>
 
@@ -311,7 +313,7 @@ export default function RolesGovernance({
             type="button"
             onClick={loadData}
             className="p-2.5 rounded-2xl bg-surface-container hover:bg-surface-container-high border border-outline-variant/30 text-on-surface-variant hover:text-primary transition-colors cursor-pointer shadow-xs"
-            title="Refresh Role Definitions"
+            title={t('roles.refreshTitle', 'Refresh Role Definitions')}
           >
             <RefreshCw size={15} className={isLoading ? 'animate-spin' : ''} />
           </button>
@@ -321,7 +323,7 @@ export default function RolesGovernance({
             className="px-4 py-2.5 bg-primary hover:bg-on-primary-container text-on-primary rounded-2xl font-sans text-xs font-bold shadow-sacred hover:shadow-lg transition-all cursor-pointer flex items-center gap-2"
           >
             <Plus size={15} />
-            <span>Create Custom Role</span>
+            <span>{t('roles.createRole', 'Create Custom Role')}</span>
           </button>
         </div>
       </div>
@@ -336,7 +338,7 @@ export default function RolesGovernance({
               : 'text-on-surface-variant hover:bg-surface-container'
             }`}
         >
-          Configured Roles ({roles.length})
+          {t('roles.tabConfiguredRoles', 'Configured Roles')} ({roles.length})
         </button>
         <button
           type="button"
@@ -347,7 +349,7 @@ export default function RolesGovernance({
             }`}
         >
           <Sparkles size={14} />
-          <span>Real-Time Access Simulator</span>
+          <span>{t('roles.tabAccessSimulator', 'Real-Time Access Simulator')}</span>
         </button>
       </div>
 
@@ -360,7 +362,7 @@ export default function RolesGovernance({
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search custom roles by name, key or description..."
+                placeholder={t('roles.searchPlaceholder', 'Search custom roles by name, key or description...')}
                 className="w-full pl-4 pr-9 py-2 bg-surface-container-low border border-outline rounded-xl text-xs placeholder:text-on-surface-variant/60 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
               />
               <Search size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none" />
@@ -377,7 +379,7 @@ export default function RolesGovernance({
                   <div className="flex items-center justify-between gap-2 mb-2">
                     <span className={`text-[9px] font-mono font-bold uppercase px-2 py-0.5 rounded ${role.scopeType === 'TRUST' ? 'bg-amber-500/10 text-amber-700 border border-amber-400/20' : 'bg-primary/10 text-primary border border-primary/20'
                       }`}>
-                      {role.scopeType} SCOPED
+                      {role.scopeType === 'TRUST' ? t('roles.trustWide', 'Trust-Wide') : t('roles.templeLocal', 'Temple-Local')} {t('roles.scoped', 'SCOPED')}
                     </span>
                     <span className="text-[10px] font-bold text-emerald-700 bg-emerald-500/10 px-2 py-0.5 rounded">
                       {role.status}
@@ -392,14 +394,14 @@ export default function RolesGovernance({
                 <div className="border-t divider-gold pt-3 mt-4 flex items-center justify-between">
                   <span className="text-xs font-bold text-on-surface flex items-center gap-1.5">
                     <Key size={13} className="text-primary" />
-                    <span>{role.permissionsCount || 0} Capabilities</span>
+                    <span>{role.permissionsCount || 0} {t('roles.capabilities', 'Capabilities')}</span>
                   </span>
                   <button
                     type="button"
                     onClick={() => handleOpenEditRole(role)}
                     className="text-xs font-bold text-primary hover:underline cursor-pointer flex items-center gap-1 hover:text-primary-dark transition-colors"
                   >
-                    <span>Edit Permissions</span>
+                    <span>{t('roles.editPermissions', 'Edit Permissions')}</span>
                   </button>
                 </div>
               </div>
@@ -413,17 +415,17 @@ export default function RolesGovernance({
         <div className="bg-surface-container/60 backdrop-blur-md rounded-3xl border border-outline-variant/40 p-6 md:p-8 shadow-sacred space-y-6">
           <div>
             <h2 className="font-serif text-xl font-bold text-primary flex items-center gap-2">
-              <Sparkles size={20} /> Authoritative Access Decision Simulator
+              <Sparkles size={20} /> {t('roles.simTitle', 'Authoritative Access Decision Simulator')}
             </h2>
             <p className="font-sans text-xs text-on-surface-variant mt-1">
-              Evaluate the Policy Decision Point (PDP) in real-time across user assignments, role inheritance trees, scope cascades, and explicit denies.
+              {t('roles.simDesc', 'Evaluate the Policy Decision Point (PDP) in real-time across user assignments, role inheritance trees, scope cascades, and explicit denies.')}
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
               <label className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">
-                Requested Action (Granular Capability)
+                {t('roles.reqAction', 'Requested Action (Granular Capability)')}
               </label>
               <select
                 value={simAction}
@@ -440,7 +442,7 @@ export default function RolesGovernance({
 
             <div className="flex flex-col gap-1.5">
               <label className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">
-                Target Scope (Temple ID)
+                {t('roles.targetScope', 'Target Scope (Temple ID)')}
               </label>
               <select
                 value={simScopeId}
@@ -462,7 +464,7 @@ export default function RolesGovernance({
               className="px-6 py-2.5 rounded-xl bg-primary text-on-primary font-sans text-xs font-bold shadow-sacred hover:shadow-md transition-all cursor-pointer flex items-center gap-2"
             >
               {simLoading && <div className="w-4 h-4 border-2 border-on-primary border-t-transparent rounded-full animate-spin" />}
-              <span>Evaluate Policy Decision</span>
+              <span>{t('roles.evalBtn', 'Evaluate Policy Decision')}</span>
             </button>
           </div>
 
@@ -490,7 +492,7 @@ export default function RolesGovernance({
               {simResult.matchedGrants?.length > 0 && (
                 <div className="space-y-2 mt-3 pt-3 border-t border-outline-variant/30">
                   <p className="text-[11px] font-bold text-on-surface uppercase tracking-wider">
-                    Matched Policy Grants:
+                    {t('roles.matchedGrants', 'Matched Policy Grants:')}
                   </p>
                   {simResult.matchedGrants.map((grant: any, idx: number) => (
                     <div key={idx} className="flex items-center justify-between text-xs bg-surface-container-low p-2.5 rounded-xl">
@@ -520,12 +522,12 @@ export default function RolesGovernance({
             <div className="flex items-center justify-between border-b divider-gold pb-4 mb-4">
               <div>
                 <h3 className="font-serif text-xl font-bold text-primary">
-                  {editingRole ? `Edit Role: ${editingRole.name}` : 'Create Custom Dynamic Role'}
+                  {editingRole ? `${t('roles.editRoleTitle', 'Edit Role:')} ${editingRole.name}` : t('roles.createRoleTitle', 'Create Custom Dynamic Role')}
                 </h3>
                 <p className="font-sans text-xs text-on-surface-variant mt-0.5">
                   {editingRole
-                    ? 'Modify role scope and toggle granular software capability permissions.'
-                    : 'Define dynamic designation and assign granular capability flags.'}
+                    ? t('roles.editRoleDesc', 'Modify role scope and toggle granular software capability permissions.')
+                    : t('roles.createRoleDesc', 'Define dynamic designation and assign granular capability flags.')}
                 </p>
               </div>
               <button
@@ -543,13 +545,13 @@ export default function RolesGovernance({
             <form onSubmit={handleSaveRole} className="flex-1 overflow-y-auto space-y-4 pr-1">
               <div className="flex flex-col gap-1">
                 <label className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">
-                  Role Display Name *
+                  {t('roles.roleName', 'Role Display Name *')}
                 </label>
                 <input
                   type="text"
                   value={roleName}
                   onChange={(e) => setRoleName(e.target.value)}
-                  placeholder="e.g. Festival Agamic Supervisor"
+                  placeholder={t('roles.roleNamePlaceholder', 'e.g. Festival Agamic Supervisor')}
                   className="w-full px-3.5 py-2.5 bg-surface-container-low border border-outline rounded-xl text-xs placeholder:text-on-surface-variant/60 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
                   required
                 />
@@ -557,12 +559,12 @@ export default function RolesGovernance({
 
               <div className="flex flex-col gap-1">
                 <label className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">
-                  Role Description *
+                  {t('roles.roleDesc', 'Role Description *')}
                 </label>
                 <textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  placeholder="e.g. Oversees special utsavam pooja schedules, priest rosters, and festival hundi collections..."
+                  placeholder={t('roles.roleDescPlaceholder', 'e.g. Oversees special utsavam pooja schedules, priest rosters, and festival hundi collections...')}
                   className="w-full px-3.5 py-2.5 bg-surface-container-low border border-outline rounded-xl text-xs placeholder:text-on-surface-variant/60 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary h-20"
                   required
                 />
@@ -571,30 +573,30 @@ export default function RolesGovernance({
               <div className="grid grid-cols-2 gap-3">
                 <div className="flex flex-col gap-1">
                   <label className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">
-                    Scope Authority
+                    {t('roles.scopeAuthority', 'Scope Authority')}
                   </label>
                   <select
                     value={scopeType}
                     onChange={(e) => setScopeType(e.target.value as any)}
                     className="w-full px-3 py-2 bg-surface-container-low border border-outline rounded-xl text-xs focus:outline-none cursor-pointer"
                   >
-                    <option value="TRUST">Trust-Wide Authority</option>
-                    <option value="TEMPLE">Temple-Local Authority</option>
+                    <option value="TRUST">{t('roles.trustWide', 'Trust-Wide Authority')}</option>
+                    <option value="TEMPLE">{t('roles.templeLocal', 'Temple-Local Authority')}</option>
                   </select>
                 </div>
 
                 <div className="flex flex-col gap-1">
                   <label className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">
-                    Cascade Mode
+                    {t('roles.cascadeMode', 'Cascade Mode')}
                   </label>
                   <select
                     value={scopeMode}
                     onChange={(e) => setScopeMode(e.target.value)}
                     className="w-full px-3 py-2 bg-surface-container-low border border-outline rounded-xl text-xs focus:outline-none cursor-pointer"
                   >
-                    <option value="ALL_DESCENDANTS">Cascade to All Temples</option>
-                    <option value="EXACT">Exact Scope Only</option>
-                    <option value="TRUST_ONLY">Trust-Only (No Temples)</option>
+                    <option value="ALL_DESCENDANTS">{t('roles.cascadeAll', 'Cascade to All Temples')}</option>
+                    <option value="EXACT">{t('roles.exactScope', 'Exact Scope Only')}</option>
+                    <option value="TRUST_ONLY">{t('roles.trustOnly', 'Trust-Only (No Temples)')}</option>
                   </select>
                 </div>
               </div>
@@ -602,7 +604,7 @@ export default function RolesGovernance({
               <div className="space-y-2 pt-2">
                 <div className="flex items-center justify-between">
                   <label className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">
-                    Grant Capabilities ({selectedPerms.length} Selected)
+                    {t('roles.grantCapabilities', 'Grant Capabilities')} ({selectedPerms.length} {t('roles.selected', 'Selected')})
                   </label>
                   <div className="flex items-center gap-2 text-[10px]">
                     <button
@@ -610,7 +612,7 @@ export default function RolesGovernance({
                       onClick={() => setSelectedPerms(permissions.map(p => p.id))}
                       className="text-primary hover:underline font-bold cursor-pointer"
                     >
-                      Select All
+                      {t('roles.selectAll', 'Select All')}
                     </button>
                     <span className="text-on-surface-variant/30">•</span>
                     <button
@@ -618,7 +620,7 @@ export default function RolesGovernance({
                       onClick={() => setSelectedPerms([])}
                       className="text-on-surface-variant hover:underline cursor-pointer"
                     >
-                      Deselect All
+                      {t('roles.deselectAll', 'Deselect All')}
                     </button>
                   </div>
                 </div>
@@ -667,13 +669,13 @@ export default function RolesGovernance({
                   }}
                   className="px-4 py-2 rounded-xl text-xs font-bold text-on-surface-variant hover:bg-surface-container cursor-pointer transition-colors"
                 >
-                  Cancel
+                  {t('common.cancel', 'Cancel')}
                 </button>
                 <button
                   type="submit"
                   className="px-5 py-2 rounded-xl bg-primary hover:bg-primary/90 text-on-primary text-xs font-bold shadow-sacred hover:shadow-md cursor-pointer transition-all active:scale-95"
                 >
-                  {editingRole ? 'Save Changes' : 'Save & Publish Role'}
+                  {editingRole ? t('roles.saveChanges', 'Save Changes') : t('roles.savePublish', 'Save & Publish Role')}
                 </button>
               </div>
             </form>
