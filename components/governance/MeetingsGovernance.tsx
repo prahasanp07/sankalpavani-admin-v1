@@ -265,97 +265,176 @@ export default function MeetingsGovernance({
         </div>
       </div>
 
-      {/* Controls: Search, Committee Filter & Sliding Tabs */}
-      <div className="bg-surface-container-lowest p-3 sm:p-4 rounded-3xl border border-outline-variant/30 shadow-xs flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 sm:gap-4">
-        {/* Framer Motion Sliding Tabs: "Upcoming Meetings" and "Past Meetings & MoMs" */}
-        <div className="w-full md:w-auto grid grid-cols-2 p-1 bg-surface-container-low border border-outline-variant/40 rounded-2xl relative">
-          <button
-            type="button"
-            onClick={() => setActiveTab('upcoming')}
-            className={`relative px-2 sm:px-4 py-2 rounded-xl text-xs font-bold transition-colors cursor-pointer flex items-center justify-center gap-1.5 sm:gap-2 z-10 ${
-              activeTab === 'upcoming' ? 'text-amber-950' : 'text-on-surface-variant hover:text-on-surface'
-            }`}
-          >
-            {activeTab === 'upcoming' && (
-              <motion.div
-                layoutId="meetingActiveTab"
-                className="absolute inset-0 bg-white rounded-xl shadow-xs border border-amber-900/15"
-                transition={{ type: 'spring', stiffness: 450, damping: 35 }}
-              />
-            )}
-            <Clock size={14} className="relative z-10 shrink-0" />
-            <span className="relative z-10 hidden sm:inline">Upcoming Meetings</span>
-            <span className="relative z-10 sm:hidden">Upcoming</span>
-            <span className="relative z-10 text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-amber-500/15 text-amber-900 font-bold ml-0.5 shrink-0">
-              {upcomingMeetings.length}
-            </span>
-          </button>
+      {/* =========================================================================
+          UNIFIED GOVERNANCE PROCEEDINGS CONSOLE
+          Houses Selection Parameters, Classification Controls, and Meeting Dossiers
+          within a single cohesive container.
+         ========================================================================= */}
+      <div className="bg-surface-container-lowest rounded-3xl border border-amber-900/15 shadow-sm overflow-hidden">
+        {/* Selection Parameters & Classifications Header Console */}
+        <div className="p-4 sm:p-5 bg-gradient-to-b from-amber-500/8 via-amber-500/[0.02] to-transparent border-b border-amber-900/10 space-y-3.5">
+          {/* Main Controls Row */}
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3.5">
+            {/* Classification 1: Lifecycle Proceedings Selector */}
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+              <span className="text-[10px] font-mono uppercase tracking-wider text-amber-900/80 font-bold flex items-center gap-1">
+                <Layers size={11} className="text-amber-700" /> Lifecycle Status:
+              </span>
+              <div className="grid grid-cols-2 p-1 bg-surface-container-low border border-amber-900/15 rounded-2xl relative shadow-inner">
+                {/* Upcoming Meetings Tab */}
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('upcoming')}
+                  className={`relative px-3 sm:px-4 py-2 rounded-xl text-xs font-bold transition-colors cursor-pointer flex items-center justify-center gap-1.5 z-10 ${
+                    activeTab === 'upcoming' ? 'text-amber-950 font-extrabold' : 'text-on-surface-variant hover:text-on-surface'
+                  }`}
+                >
+                  {activeTab === 'upcoming' && (
+                    <motion.div
+                      layoutId="meetingActiveTab"
+                      className="absolute inset-0 bg-white rounded-xl shadow-xs border border-amber-900/20"
+                      transition={{ type: 'spring', stiffness: 450, damping: 35 }}
+                    />
+                  )}
+                  <Clock size={13} className="relative z-10 shrink-0 text-amber-700" />
+                  <span className="relative z-10 hidden sm:inline">Upcoming Meetings</span>
+                  <span className="relative z-10 sm:hidden">Upcoming</span>
+                  <span className="relative z-10 text-[10px] font-mono px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-950 font-bold ml-0.5 shrink-0">
+                    {upcomingMeetings.length}
+                  </span>
+                </button>
 
-          <button
-            type="button"
-            onClick={() => setActiveTab('past')}
-            className={`relative px-2 sm:px-4 py-2 rounded-xl text-xs font-bold transition-colors cursor-pointer flex items-center justify-center gap-1.5 sm:gap-2 z-10 ${
-              activeTab === 'past' ? 'text-amber-950' : 'text-on-surface-variant hover:text-on-surface'
-            }`}
-          >
-            {activeTab === 'past' && (
-              <motion.div
-                layoutId="meetingActiveTab"
-                className="absolute inset-0 bg-white rounded-xl shadow-xs border border-amber-900/15"
-                transition={{ type: 'spring', stiffness: 450, damping: 35 }}
-              />
-            )}
-            <FileCheck size={14} className="relative z-10 shrink-0" />
-            <span className="relative z-10 hidden sm:inline">Past Meetings & MoMs</span>
-            <span className="relative z-10 sm:hidden">Past MoMs</span>
-            <span className="relative z-10 text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-amber-500/15 text-amber-900 font-bold ml-0.5 shrink-0">
-              {pastMeetings.length}
-            </span>
-          </button>
-        </div>
+                {/* Past Meetings & MoMs Tab */}
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('past')}
+                  className={`relative px-3 sm:px-4 py-2 rounded-xl text-xs font-bold transition-colors cursor-pointer flex items-center justify-center gap-1.5 z-10 ${
+                    activeTab === 'past' ? 'text-amber-950 font-extrabold' : 'text-on-surface-variant hover:text-on-surface'
+                  }`}
+                >
+                  {activeTab === 'past' && (
+                    <motion.div
+                      layoutId="meetingActiveTab"
+                      className="absolute inset-0 bg-white rounded-xl shadow-xs border border-amber-900/20"
+                      transition={{ type: 'spring', stiffness: 450, damping: 35 }}
+                    />
+                  )}
+                  <FileCheck size={13} className="relative z-10 shrink-0 text-amber-700" />
+                  <span className="relative z-10 hidden sm:inline">Past Meetings & MoMs</span>
+                  <span className="relative z-10 sm:hidden">Past MoMs</span>
+                  <span className="relative z-10 text-[10px] font-mono px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-950 font-bold ml-0.5 shrink-0">
+                    {pastMeetings.length}
+                  </span>
+                </button>
+              </div>
+            </div>
 
-        {/* Search & Filter Bar */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 w-full md:w-auto">
-          {/* Search Box */}
-          <div className="relative w-full sm:w-64">
-            <Search
-              size={14}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant"
-            />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search meetings, topics, resolutions..."
-              className="w-full pl-9 pr-7 py-2 bg-surface-container-low border border-outline-variant/50 rounded-xl text-xs font-sans text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all"
-            />
-            {searchQuery && (
+            {/* Classification 2 & 3: Keyword Search & Governing Committee Filter */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+              {/* Search Box with explicit parameter label */}
+              <div className="relative w-full sm:w-64">
+                <Search
+                  size={14}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-amber-800/70"
+                />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search by topic, agenda, resolutions..."
+                  className="w-full pl-9 pr-7 py-2 bg-white/90 border border-amber-900/20 rounded-xl text-xs font-sans text-on-surface placeholder:text-on-surface-variant/60 focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500/30 transition-all shadow-2xs"
+                />
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery('')}
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface p-0.5 cursor-pointer"
+                  >
+                    <X size={12} />
+                  </button>
+                )}
+              </div>
+
+              {/* Committee Taxonomy Dropdown with Classification Indicator */}
+              <div className="relative w-full sm:w-auto">
+                <select
+                  value={selectedCommitteeFilter}
+                  onChange={(e) => setSelectedCommitteeFilter(e.target.value)}
+                  className="w-full sm:w-auto px-3.5 py-2 bg-white/90 border border-amber-900/20 rounded-xl text-xs font-sans font-bold text-amber-950 focus:outline-none focus:border-amber-600 cursor-pointer shadow-2xs pr-8"
+                >
+                  <option value="ALL">Classification: All Governing Bodies</option>
+                  <optgroup label="Apex Wings">
+                    {MOCK_GOVERNANCE_COMMITTEES.filter(c => c.category === 'STANDING' || c.name.toLowerCase().includes('apex') || c.name.toLowerCase().includes('board')).map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.name}
+                      </option>
+                    ))}
+                  </optgroup>
+                  <optgroup label="Standing & Ad-Hoc Committees">
+                    {MOCK_GOVERNANCE_COMMITTEES.filter(c => !(c.category === 'STANDING' || c.name.toLowerCase().includes('apex') || c.name.toLowerCase().includes('board'))).map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.name}
+                      </option>
+                    ))}
+                  </optgroup>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          {/* Active Classification & Scope Metadata Strip */}
+          <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-amber-900/10 text-xs">
+            <div className="flex items-center gap-2 flex-wrap text-[11px] text-on-surface-variant">
+              <span className="font-semibold text-amber-950">
+                Active Classification:
+              </span>
+              <span className="font-mono font-bold text-amber-900 bg-amber-500/15 px-2 py-0.5 rounded-md border border-amber-600/30">
+                {activeTab === 'upcoming' ? 'Scheduled Sessions' : 'Archived MoMs & Gazette'}
+              </span>
+              <span>•</span>
+              <span>
+                Showing <strong>{activeTab === 'upcoming' ? filteredUpcoming.length : filteredPast.length}</strong> {activeTab === 'upcoming' ? 'Upcoming Sessions' : 'Official MoMs'}
+              </span>
+              {selectedCommitteeFilter !== 'ALL' && (
+                <>
+                  <span>•</span>
+                  <span className="inline-flex items-center gap-1 text-amber-900 bg-amber-500/20 px-2 py-0.5 rounded-full font-bold">
+                    <span>Committee: {MOCK_GOVERNANCE_COMMITTEES.find(c => c.id === selectedCommitteeFilter)?.name || selectedCommitteeFilter}</span>
+                    <button onClick={() => setSelectedCommitteeFilter('ALL')} className="hover:text-error ml-0.5 cursor-pointer">
+                      <X size={10} />
+                    </button>
+                  </span>
+                </>
+              )}
+              {searchQuery && (
+                <>
+                  <span>•</span>
+                  <span className="inline-flex items-center gap-1 text-amber-900 bg-amber-500/20 px-2 py-0.5 rounded-full font-bold">
+                    <span>Query: "{searchQuery}"</span>
+                    <button onClick={() => setSearchQuery('')} className="hover:text-error ml-0.5 cursor-pointer">
+                      <X size={10} />
+                    </button>
+                  </span>
+                </>
+              )}
+            </div>
+
+            {(selectedCommitteeFilter !== 'ALL' || searchQuery) && (
               <button
-                onClick={() => setSearchQuery('')}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface p-0.5"
+                type="button"
+                onClick={() => {
+                  setSelectedCommitteeFilter('ALL');
+                  setSearchQuery('');
+                }}
+                className="text-[11px] text-amber-800 hover:text-amber-950 underline font-semibold cursor-pointer"
               >
-                <X size={12} />
+                Reset Filter Parameters
               </button>
             )}
           </div>
-
-          {/* Committee Filter */}
-          <div className="relative w-full sm:w-auto">
-            <select
-              value={selectedCommitteeFilter}
-              onChange={(e) => setSelectedCommitteeFilter(e.target.value)}
-              className="w-full sm:w-auto px-3 py-2 bg-surface-container-low border border-outline-variant/50 rounded-xl text-xs font-sans font-medium text-on-surface focus:outline-none focus:border-primary cursor-pointer pr-8"
-            >
-              <option value="ALL">All Committees</option>
-              {MOCK_GOVERNANCE_COMMITTEES.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
-          </div>
         </div>
-      </div>
+
+        {/* Content Section: Classified Meeting Cards */}
+        <div className="p-4 sm:p-6 bg-surface-container-lowest">
 
       {/* Content Area with Animated Switcher */}
       <AnimatePresence mode="wait">
@@ -393,54 +472,83 @@ export default function MeetingsGovernance({
                 return (
                   <div
                     key={meeting.id}
-                    className="bg-surface-container-lowest border border-amber-900/15 rounded-3xl p-4 sm:p-5 shadow-xs hover:shadow-md transition-all space-y-3 sm:space-y-4"
+                    className="bg-white border border-amber-900/15 rounded-2xl p-4 sm:p-5 shadow-2xs hover:shadow-xs transition-all space-y-3.5"
                   >
+                    {/* Parameter Classification Strip */}
+                    <div className="flex flex-wrap items-center justify-between gap-2 pb-2.5 border-b border-amber-900/10 text-xs">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        {/* 1. Governing Body Classification */}
+                        <span className="text-[10px] font-mono uppercase tracking-wider px-2.5 py-0.5 rounded-full font-bold bg-amber-500/15 text-amber-950 border border-amber-600/30 flex items-center gap-1 shadow-2xs">
+                          <Layers size={10} className="text-amber-700" />
+                          <span>Wing: {meeting.committeeName || 'Apex Board'}</span>
+                        </span>
+
+                        {/* 2. Urgency / Schedule Classification */}
+                        <span className={`text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full border shadow-2xs flex items-center gap-1 ${
+                          countdown.includes('Hours') || countdown.includes('Tomorrow') || countdown.includes('In 2 Days')
+                            ? 'bg-amber-100 text-amber-950 border-amber-400/50'
+                            : 'bg-emerald-500/15 text-emerald-950 border-emerald-500/30'
+                        }`}>
+                          <Clock size={10} />
+                          <span>Timeline: {countdown}</span>
+                        </span>
+
+                        {/* 3. Meeting Format Classification */}
+                        <span className="text-[10px] font-mono font-medium px-2 py-0.5 rounded-full bg-surface-container-low text-on-surface-variant border border-outline-variant/40 flex items-center gap-1">
+                          <Building2 size={10} />
+                          <span>Format: {meeting.location?.toLowerCase().includes('virtual') || meeting.location?.toLowerCase().includes('video') ? 'Hybrid / Virtual' : 'In-Person Boardroom'}</span>
+                        </span>
+
+                        {/* 4. Quorum Status Classification */}
+                        <span className="text-[10px] font-mono font-medium px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-900 border border-amber-600/20 flex items-center gap-1">
+                          <UserCheck size={10} />
+                          <span>Quorum: {meeting.invitees.length} Confirmed</span>
+                        </span>
+
+                        {meeting.status === 'CANCELLED' && (
+                          <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-error-container text-error">
+                            Status: Cancelled
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Card Session ID / Audit Reference */}
+                      <span className="text-[10px] font-mono text-on-surface-variant/70">
+                        Ref: {meeting.id}
+                      </span>
+                    </div>
+
+                    {/* Left: Date Badge + Title & Logistics, Right: Action Buttons */}
                     <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-4">
                       {/* Left: Date Badge + Title & Meta */}
                       <div className="flex items-start gap-3 sm:gap-4 flex-1 min-w-0">
                         {/* Sacred Gold Calendar Badge */}
-                        <div className="w-14 sm:w-16 h-16 sm:h-18 rounded-2xl bg-gradient-to-b from-amber-500/15 via-amber-600/10 to-amber-700/15 border border-amber-600/30 flex flex-col items-center justify-center p-1.5 sm:p-2 text-center shrink-0 shadow-inner">
-                          <span className="text-[9px] sm:text-[10px] font-mono uppercase tracking-wider text-amber-800 font-bold leading-tight">
+                        <div className="w-14 sm:w-16 h-16 sm:h-18 rounded-2xl bg-gradient-to-b from-amber-500/20 via-amber-600/10 to-amber-700/20 border border-amber-600/40 flex flex-col items-center justify-center p-1.5 sm:p-2 text-center shrink-0 shadow-sm">
+                          <span className="text-[9px] sm:text-[10px] font-mono uppercase tracking-wider text-amber-900 font-extrabold leading-tight">
                             {day}
                           </span>
                           <span className="font-serif text-lg sm:text-xl font-bold text-amber-950 leading-none my-0.5">
                             {date.split(' ')[0]}
                           </span>
-                          <span className="text-[8px] sm:text-[9px] font-mono text-amber-900/80 font-bold">
+                          <span className="text-[8px] sm:text-[9px] font-mono text-amber-900 font-bold">
                             {date.split(' ')[1]}
                           </span>
                         </div>
 
-                        {/* Title and Metadata */}
+                        {/* Title and Logistics */}
                         <div className="space-y-1.5 min-w-0 flex-1">
-                          <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
-                            <span className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-full font-bold bg-amber-500/15 text-amber-900 border border-amber-500/30 flex items-center gap-1">
-                              <Layers size={10} /> {meeting.committeeName || 'Apex Board'}
-                            </span>
-
-                            <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-900 border border-emerald-500/30">
-                              {countdown}
-                            </span>
-
-                            {meeting.status === 'CANCELLED' && (
-                              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-error-container text-error">
-                                Cancelled
-                              </span>
-                            )}
-                          </div>
-
                           <h3 className="font-serif text-sm sm:text-base font-bold text-amber-950 tracking-tight leading-snug">
                             {meeting.title}
                           </h3>
 
-                          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-on-surface-variant font-sans">
-                            <span className="flex items-center gap-1 text-on-surface whitespace-nowrap">
-                              <Clock size={12} className="text-amber-700 shrink-0" />
-                              <strong>{time}</strong> IST
+                          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-on-surface-variant font-sans">
+                            <span className="flex items-center gap-1.5 text-on-surface whitespace-nowrap">
+                              <Clock size={13} className="text-amber-800 shrink-0" />
+                              <span>Time: <strong>{time}</strong> IST</span>
                             </span>
-                            <span className="flex items-center gap-1 min-w-0">
-                              <MapPin size={12} className="text-amber-700 shrink-0" />
-                              <span className="truncate max-w-[180px] sm:max-w-xs">{meeting.location}</span>
+                            <span className="flex items-center gap-1.5 min-w-0">
+                              <MapPin size={13} className="text-amber-800 shrink-0" />
+                              <span className="truncate max-w-[200px] sm:max-w-md">Venue: <strong>{meeting.location}</strong></span>
                             </span>
                           </div>
                         </div>
@@ -455,7 +563,7 @@ export default function MeetingsGovernance({
                             setTargetMeetingForMoM(meeting);
                             setPublishModalOpen(true);
                           }}
-                          className="flex-1 sm:flex-initial px-4 py-2 bg-gradient-to-r from-amber-700 to-amber-800 hover:from-amber-800 hover:to-amber-900 text-white rounded-xl text-xs font-bold shadow-xs hover:shadow transition-all cursor-pointer flex items-center justify-center gap-1.5 whitespace-nowrap"
+                          className="flex-1 sm:flex-initial px-4 py-2 bg-gradient-to-r from-amber-700 to-amber-800 hover:from-amber-800 hover:to-amber-950 text-white rounded-xl text-xs font-bold shadow-xs hover:shadow transition-all cursor-pointer flex items-center justify-center gap-1.5 whitespace-nowrap"
                           title="Record proceedings and publish official MoM"
                         >
                           <FileCheck size={14} />
@@ -475,12 +583,18 @@ export default function MeetingsGovernance({
                       </div>
                     </div>
 
-                    {/* Agenda Snippet */}
+                    {/* Agenda Snippet with Classification Header */}
                     {meeting.agenda && (
-                      <div className="bg-surface-container-low/70 p-3 rounded-2xl border border-outline-variant/20 text-xs font-sans text-on-surface/90">
-                        <span className="font-bold text-[10px] uppercase font-mono text-amber-900 block mb-1">
-                          Agenda / Key Points:
-                        </span>
+                      <div className="bg-amber-500/[0.04] p-3.5 rounded-2xl border border-amber-900/10 text-xs font-sans text-on-surface/90 space-y-1.5">
+                        <div className="flex items-center justify-between">
+                          <span className="font-bold text-[10px] uppercase font-mono text-amber-950 flex items-center gap-1.5">
+                            <FileText size={12} className="text-amber-700" />
+                            <span>Agenda & Key Deliberation Points:</span>
+                          </span>
+                          <span className="text-[10px] font-mono text-amber-900/70">
+                            Circulated to Invitees
+                          </span>
+                        </div>
                         {meeting.agenda.includes('<') ? (
                           <div
                             className="prose prose-amber max-w-none text-xs leading-relaxed [&_ul]:my-1 [&_ol]:my-1 [&_p]:my-0.5 [&_h1]:text-sm [&_h2]:text-xs [&_h3]:text-xs"
@@ -492,8 +606,8 @@ export default function MeetingsGovernance({
                       </div>
                     )}
 
-                    {/* Invitees & Host Footer */}
-                    <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-outline-variant/20 text-xs">
+                    {/* Invitees & Host Footer with Classifications */}
+                    <div className="flex flex-wrap items-center justify-between gap-3 pt-2.5 border-t border-amber-900/10 text-xs">
                       {/* Host Info */}
                       <div className="flex items-center gap-2">
                         <img
@@ -502,14 +616,15 @@ export default function MeetingsGovernance({
                           className="w-6 h-6 rounded-full object-cover border border-amber-600/30"
                         />
                         <span className="text-[11px] text-on-surface-variant">
-                          Convened by <strong className="text-on-surface">{meeting.hostName}</strong> ({meeting.hostDesignation})
+                          Convened by: <strong className="text-on-surface">{meeting.hostName}</strong> ({meeting.hostDesignation})
                         </span>
                       </div>
 
                       {/* Invitees Avatar Stack */}
                       <div className="flex items-center gap-1.5">
-                        <span className="text-[11px] text-on-surface-variant font-medium mr-1">
-                          Invitees ({meeting.invitees.length}):
+                        <span className="text-[11px] text-on-surface-variant font-medium mr-1 flex items-center gap-1">
+                          <Users size={12} className="text-amber-700" />
+                          <span>Attendees ({meeting.invitees.length}):</span>
                         </span>
                         <div className="flex -space-x-1.5 overflow-hidden">
                           {meeting.invitees.slice(0, 5).map((inv) => (
@@ -561,29 +676,34 @@ export default function MeetingsGovernance({
                 return (
                   <div
                     key={meeting.id}
-                    className="bg-surface-container-lowest border border-amber-900/20 rounded-3xl p-6 shadow-sm hover:shadow-md transition-all space-y-4"
+                    className="bg-white border border-amber-900/15 rounded-2xl p-4 sm:p-5 shadow-2xs hover:shadow-xs transition-all space-y-4"
                   >
-                    {/* Header Strip */}
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-3 border-b border-outline-variant/30">
+                    {/* Header Strip with Classifications */}
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-3 border-b border-amber-900/10">
                       <div className="space-y-1">
                         <div className="flex flex-wrap items-center gap-2">
-                          <span className="text-[10px] font-mono uppercase tracking-wider px-2.5 py-0.5 rounded-full font-bold bg-amber-500/15 text-amber-950 border border-amber-500/30">
-                            {meeting.committeeName || 'Apex Board'}
+                          <span className="text-[10px] font-mono uppercase tracking-wider px-2.5 py-0.5 rounded-full font-bold bg-amber-500/15 text-amber-950 border border-amber-500/30 flex items-center gap-1">
+                            <Layers size={10} className="text-amber-700" />
+                            <span>Wing: {meeting.committeeName || 'Apex Board'}</span>
                           </span>
 
                           {meeting.notes?.resolutionNumber && (
                             <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-amber-900 text-amber-100 flex items-center gap-1 shadow-xs">
                               <ShieldCheck size={11} className="text-amber-300" />
-                              {meeting.notes.resolutionNumber}
+                              Resolution: {meeting.notes.resolutionNumber}
                             </span>
                           )}
 
-                          <span className="text-[10px] font-mono text-emerald-800 font-bold px-2 py-0.5 rounded-full bg-emerald-500/15">
+                          <span className="text-[10px] font-mono text-emerald-800 font-bold px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/20">
                             Conducted on {date}
+                          </span>
+
+                          <span className="text-[10px] font-mono text-on-surface-variant font-medium px-2 py-0.5 rounded-full bg-surface-container-low border border-outline-variant/30">
+                            Quorum: {meeting.invitees.length} Attendees
                           </span>
                         </div>
 
-                        <h3 className="font-serif text-lg font-bold text-amber-950 tracking-tight">
+                        <h3 className="font-serif text-base sm:text-lg font-bold text-amber-950 tracking-tight">
                           {meeting.title}
                         </h3>
                       </div>
@@ -757,6 +877,8 @@ export default function MeetingsGovernance({
           </motion.div>
         )}
       </AnimatePresence>
+        </div>
+      </div>
 
       {/* Schedule Meeting Modal */}
       {scheduleModalOpen && (

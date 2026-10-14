@@ -413,16 +413,28 @@ graph TD
     K --> L[Past Meetings & MoMs Tab: prose-amber Reader View]
 ```
 
-### 1. Tabbed Interface Architecture & Mobile-First Layout ([`components/governance/MeetingsGovernance.tsx`](file:///c:/Users/praha/Documents/PraGana%20Innovations%20Projects/Sankalpavani-v1/components/governance/MeetingsGovernance.tsx))
-- **Framer Motion Sliding Navigation**: Built with `motion.div` layout animations toggling between:
-  - **Upcoming Meetings**: Cards displaying sacred gold calendar badges, relative countdown tags (*"Tomorrow"*, *"In 2 Days"*), governing committee pill, host convener details, invitee avatar stacks with `+N` count badges, status flags, and 1-click **"Publish MoM"** triggers.
-  - **Past Meetings & MoMs**: Expanded reader dossiers displaying conducting dates, official resolution stamps (*e.g. `#RES-TR-2026/09-04`*), publishing author attribution, and attachment libraries.
+### 1. Unified Master Container & Classified Console Architecture ([`components/governance/MeetingsGovernance.tsx`](file:///c:/Users/praha/Documents/PraGana%20Innovations%20Projects/Sankalpavani-v1/components/governance/MeetingsGovernance.tsx))
+- **Consolidated Single Master Container**:
+  - The previously fragmented, floating control strip and detached meeting cards have been unified into a single, cohesive master container (`bg-surface-container-lowest rounded-3xl border border-amber-900/15 shadow-sm overflow-hidden`).
+  - Styled with an amber-tinted console header band (`p-4 sm:p-5 bg-gradient-to-b from-amber-500/8 via-amber-500/[0.02] to-transparent border-b border-amber-900/10`) housing all selection parameters, directly coupled to the inner card feed below.
+- **Proper Classification of Selection Parameters**:
+  - **Lifecycle Status Classification**: Distinct parameter header *"Lifecycle Status"* with Framer Motion sliding segmented controls toggling between **Upcoming Meetings** and **Past Meetings & MoMs**, displaying live badge counters.
+  - **Search Query Parameter**: Labeled *"Search Parameter"* with an instant multi-field search box matching titles, agenda points, resolution stamps, and locations.
+  - **Governing Body / Committee Taxonomy**: Labeled *"Governing Body Taxonomy"* featuring an organized dropdown categorizing committees under optgroups: *Apex & Executive Councils* and *Standing Functional Committees*.
+  - **Active Classification & Scope Metadata Bar**: A dedicated metadata strip showing active meeting counts (*"Showing N scheduled sessions"*), active committee filter pills, query tags, and a 1-click **Reset Filter** button.
+- **Proper Classification for All Meeting Cards**:
+  - **4-Badge Classification Strip**: Every meeting card features a classified top badge cluster:
+    1. *Wing / Committee Category*: Distinct amber border pill with landmark icon (`Apex Dharmika Board`, `Jeernodharana`, etc.).
+    2. *Urgency / Timeline Countdown*: Emerald pill displaying precise proximity (*"Today"*, *"Tomorrow"*, *"In 2 Days"*, *"In N Days"*).
+    3. *Session Format*: Blue/Indigo tag distinguishing **In-Person Boardroom** from **Hybrid / Virtual Sync**.
+    4. *Quorum Verification Count*: Slate tag displaying verified roster size (*"Quorum: N Members"*).
+  - **Structured Internal Card Sections**:
+    - **Header Block**: Sacred gold date plaque with weekday/month, prominent title, time, and physical/virtual location.
+    - **Agenda & Key Deliberation Points**: Styled callout box with uppercase classification kicker (`AGENDA / KEY DELIBERATION POINTS:`) and rich HTML prose rendering.
+    - **Delegation & Attendee Roster Protocol**: Footer row displaying convenor attribution with avatar and attendee roster stack with remaining count badge and **Publish MoM** / **Cancel** action buttons.
+  - **Past Meetings & MoMs Dossiers**: Classified with official resolution serial stamps (*e.g. `#RES-TR-2026/09-04`*), quorum counts, published timestamps, and signed PDF document access.
 - **Mobile Responsive Design**:
-  - **Sliding Tab Switcher**: Responsive grid configuration (`grid-cols-2 max-w-xs sm:max-w-md`) ensuring smooth touch navigation on smartphones without horizontal overflow.
-  - **Adaptive Header & Breadcrumb**: Streamlined apex header removing redundant back navigation buttons to maximize vertical clarity, showcasing the governing trust pill alongside the sacred calendar icon.
-  - **Stacking Filters & Action Strips**: Search input and committee taxonomy dropdown stack gracefully on mobile (`flex-col sm:flex-row`), while card action buttons expand to full width on compact viewports.
-- **Rich Text Agenda Rendering**: Upcoming meeting cards detect HTML markup in the `agenda` field and dynamically render formatted rich HTML content using `dangerouslySetInnerHTML` wrapped in `@tailwindcss/typography` (`prose prose-amber prose-sm max-w-none text-on-surface-variant`), providing seamless presentation of formatted lists, headings, and agenda tables.
-- **Search & Committee Filtering**: Dynamic full-text search across titles, discussion points, and resolutions paired with committee taxonomy filters.
+  - Flexible stacking layout on smaller viewports (`flex-col sm:flex-row`), touch-friendly tabs, and full-width card action buttons on compact screens.
 - **Auditable Utilities**: 1-click Print MoM layout, MoM circulation sharing, and attachment downloads.
 
 ### 2. WYSIWYG Rich Text Editor ([`components/governance/RichTextEditor.tsx`](file:///c:/Users/praha/Documents/PraGana%20Innovations%20Projects/Sankalpavani-v1/components/governance/RichTextEditor.tsx))
