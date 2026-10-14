@@ -85,7 +85,7 @@ export default function TrustTenantGuardLayout({
 
           <div className="space-y-2.5 pt-2">
             <button
-              onClick={() => router.push(`/trusts/${userTrustId}/dashboard`)}
+              onClick={() => router.push('/')}
               className="w-full flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-primary text-on-primary font-sans text-xs font-bold shadow-sacred hover:shadow-md transition-all cursor-pointer"
             >
               <Building2 size={16} />

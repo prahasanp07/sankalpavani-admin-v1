@@ -16,6 +16,7 @@ import {
   Download
 } from 'lucide-react';
 import RequirePermission from './RequirePermission';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface PrasadamShipment {
   id: string;
@@ -49,6 +50,7 @@ const DEFAULT_SHIPMENTS: PrasadamShipment[] = [
 ];
 
 export default function Prasadam() {
+  const { t } = useLanguage();
   const [shipments, setShipments] = useState<PrasadamShipment[]>(() => {
     if (typeof window !== 'undefined') {
       const cached = localStorage.getItem('sankalpvani_prasadam');
@@ -386,9 +388,9 @@ export default function Prasadam() {
 
       {/* Header */}
       <div>
-        <h2 className="font-serif text-3xl font-semibold text-primary">Prasadam Logistics Manager</h2>
+        <h2 className="font-serif text-3xl font-semibold text-primary">{t('prasadam.title', 'Prasadam Logistics & Postal Dispatch')}</h2>
         <p className="font-sans text-sm text-on-surface-variant font-medium mt-1">
-          Track preparation, dry packaging, thermal labeling, and postal dispatching of holy offerings to remote pilgrims.
+          {t('prasadam.subtitle', 'Manage remote prasadam packaging, generate India Post speed-post labels, and track devotional deliveries.')}
         </p>
       </div>
 
@@ -400,7 +402,7 @@ export default function Prasadam() {
             <div className="relative w-full sm:max-w-xs">
               <input
                 type="text"
-                placeholder="Search Package ID, Devotee, Contents..."
+                placeholder={t('prasadam.searchPlaceholder', 'Search Pilgrim Name, Address, or Item...')}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="w-full pl-4 pr-10 py-2 bg-white border border-outline rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all"
@@ -418,7 +420,7 @@ export default function Prasadam() {
               }`}
             >
               <Filter size={14} />
-              <span>{showFilters ? 'Hide Filters' : 'Advanced Filters'}</span>
+              <span>{showFilters ? t('prasadam.hideFilters', 'Hide Filters') : t('prasadam.advancedFilters', 'Advanced Filters')}</span>
             </button>
           </div>
 
@@ -435,7 +437,7 @@ export default function Prasadam() {
                       : 'text-on-surface-variant hover:text-primary'
                   }`}
                 >
-                  {f}
+                  {f === 'All' ? t('common.all', 'All') : f === 'Pending' ? t('prasadam.statusPending', 'Pending Packaging') : f === 'Packed' ? t('prasadam.statusPacked', 'Packed & Labeled') : t('prasadam.statusShipped', 'Shipped via Post')}
                 </button>
               ))}
             </div>
@@ -446,7 +448,7 @@ export default function Prasadam() {
               className="w-full sm:w-auto bg-primary hover:bg-on-primary-container text-on-primary text-xs font-bold py-2.5 px-4 rounded-xl flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
             >
               <Download size={14} />
-              <span>Export CSV</span>
+              <span>{t('prasadam.exportCsv', 'Export CSV')}</span>
             </button>
           </div>
         </div>
@@ -456,13 +458,13 @@ export default function Prasadam() {
           <div className="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/20 grid grid-cols-1 md:grid-cols-3 gap-4 animate-[scaleIn_0.15s_ease-out]">
             {/* Item Dropdown */}
             <div>
-              <label className="block text-[10px] font-bold uppercase tracking-wider text-on-surface-variant mb-1">Sacred Content Item</label>
+              <label className="block text-[10px] font-bold uppercase tracking-wider text-on-surface-variant mb-1">{t('prasadam.filterItem', 'Filter by Sacred Item')}</label>
               <select
                 value={filterItem}
                 onChange={(e) => setFilterItem(e.target.value)}
                 className="w-full px-3 py-2 bg-surface-container-low border border-outline rounded-lg text-xs focus:outline-none focus:border-primary"
               >
-                <option value="All">All Content Items</option>
+                <option value="All">{t('prasadam.allItems', 'All Sacred Items')}</option>
                 {allItemsList.map(item => (
                   <option key={item} value={item}>{item}</option>
                 ))}
@@ -471,7 +473,7 @@ export default function Prasadam() {
 
             {/* Start Date */}
             <div>
-              <label className="block text-[10px] font-bold uppercase tracking-wider text-on-surface-variant mb-1">Start Date</label>
+              <label className="block text-[10px] font-bold uppercase tracking-wider text-on-surface-variant mb-1">{t('prasadam.startDate', 'Start Date')}</label>
               <input
                 type="date"
                 value={startDate}
@@ -482,7 +484,7 @@ export default function Prasadam() {
 
             {/* End Date */}
             <div>
-              <label className="block text-[10px] font-bold uppercase tracking-wider text-on-surface-variant mb-1">End Date</label>
+              <label className="block text-[10px] font-bold uppercase tracking-wider text-on-surface-variant mb-1">{t('prasadam.endDate', 'End Date')}</label>
               <input
                 type="date"
                 value={endDate}
@@ -520,36 +522,36 @@ export default function Prasadam() {
                   className="py-4 px-6 cursor-pointer hover:text-primary transition-colors"
                   onClick={() => handleSort('id')}
                 >
-                  Package ID {renderSortIndicator('id')}
+                  {t('prasadam.colPackageId', 'Package ID')} {renderSortIndicator('id')}
                 </th>
                 <th 
                   className="py-4 px-6 cursor-pointer hover:text-primary transition-colors"
                   onClick={() => handleSort('devoteeName')}
                 >
-                  Devotee Pilgrim {renderSortIndicator('devoteeName')}
+                  {t('prasadam.devoteePilgrim', 'Devotee Pilgrim')} {renderSortIndicator('devoteeName')}
                 </th>
-                <th className="py-4 px-6">Dispatch Address</th>
-                <th className="py-4 px-6">Sacred Offerings</th>
+                <th className="py-4 px-6">{t('prasadam.dispatchAddress', 'Dispatch Address')}</th>
+                <th className="py-4 px-6">{t('prasadam.colContents', 'Sacred Contents')}</th>
                 <th 
                   className="py-4 px-6 cursor-pointer hover:text-primary transition-colors"
                   onClick={() => handleSort('bookingDate')}
                 >
-                  Booking Date {renderSortIndicator('bookingDate')}
+                  {t('prasadam.colBookingDate', 'Booking Date')} {renderSortIndicator('bookingDate')}
                 </th>
                 <th 
                   className="py-4 px-6 text-center cursor-pointer hover:text-primary transition-colors"
                   onClick={() => handleSort('status')}
                 >
-                  Status {renderSortIndicator('status')}
+                  {t('common.status', 'Status')} {renderSortIndicator('status')}
                 </th>
-                <th className="py-4 px-6 text-center">Fulfillment Actions</th>
+                <th className="py-4 px-6 text-center">{t('prasadam.fulfillmentActions', 'Fulfillment Actions')}</th>
               </tr>
             </thead>
             <tbody className="text-sm font-medium text-on-surface divide-y divide-outline-variant/10">
               {currentItems.length === 0 ? (
                 <tr>
                   <td colSpan={8} className="py-8 text-center text-on-surface-variant font-medium">
-                    No matching prasadam shipments found.
+                    {t('prasadam.emptyState', 'No prasadam shipments found matching criteria.')}
                   </td>
                 </tr>
               ) : (
@@ -595,7 +597,7 @@ export default function Prasadam() {
                         ) : (
                           <Clock size={12} className="mr-1 shrink-0 text-amber-600" />
                         )}
-                        {s.status}
+                        {s.status === 'Shipped' ? t('prasadam.statusShipped', 'Shipped via Post') : s.status === 'Packed' ? t('prasadam.statusPacked', 'Packed & Labeled') : t('prasadam.statusPending', 'Pending Packaging')}
                       </span>
                     </td>
                     <td className="py-4 px-6 text-center">
@@ -604,7 +606,7 @@ export default function Prasadam() {
                           <button
                             onClick={() => handlePrintLabel(s)}
                             className="p-1.5 hover:bg-primary-container/10 text-primary rounded-lg transition-colors cursor-pointer"
-                            title="Print Shipping label"
+                            title={t('prasadam.printThermalLabel', 'Print Label')}
                           >
                             <Printer size={14} />
                           </button>
@@ -616,7 +618,7 @@ export default function Prasadam() {
                               onClick={() => handleUpdateStatus(s.id, 'Packed')}
                               className="px-2.5 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition-all cursor-pointer shadow-sm"
                             >
-                              Pack
+                              {t('prasadam.pack', 'Pack')}
                             </button>
                           )}
                           {s.status === 'Packed' && (
@@ -624,13 +626,13 @@ export default function Prasadam() {
                               onClick={() => handleUpdateStatus(s.id, 'Shipped')}
                               className="px-2.5 py-1 bg-green-600 hover:bg-green-700 text-white rounded-lg text-xs font-bold transition-all cursor-pointer shadow-sm"
                             >
-                              Ship
+                              {t('prasadam.ship', 'Ship')}
                             </button>
                           )}
                         </RequirePermission>
                         {s.status === 'Shipped' && (
                           <span className="text-xs font-bold text-green-600 flex items-center gap-1">
-                            <Check size={14} /> Sent
+                            <Check size={14} /> {t('prasadam.sent', 'Sent')}
                           </span>
                         )}
                       </div>
@@ -645,9 +647,9 @@ export default function Prasadam() {
         {/* Pagination Bar */}
         <div className="flex flex-col sm:flex-row items-center justify-between px-6 py-4 bg-surface-container-low border-t border-outline-variant/10 gap-4">
           <div className="text-xs text-on-surface-variant font-medium">
-            Showing <span className="font-bold">{totalItems === 0 ? 0 : startIndex + 1}</span> to{' '}
-            <span className="font-bold">{Math.min(startIndex + itemsPerPage, totalItems)}</span> of{' '}
-            <span className="font-bold">{totalItems}</span> entries
+            {t('prasadam.showing', 'Showing')} <span className="font-bold">{totalItems === 0 ? 0 : startIndex + 1}</span> {t('prasadam.to', 'to')}{' '}
+            <span className="font-bold">{Math.min(startIndex + itemsPerPage, totalItems)}</span> {t('prasadam.of', 'of')}{' '}
+            <span className="font-bold">{totalItems}</span> {t('prasadam.entries', 'entries')}
           </div>
           {totalPages > 1 && (
             <div className="flex items-center gap-1">
@@ -657,7 +659,7 @@ export default function Prasadam() {
                 onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                 className="px-2.5 py-1.5 rounded-lg border border-outline-variant/30 text-xs font-bold bg-white text-on-surface-variant hover:border-primary disabled:opacity-50 disabled:hover:border-outline-variant/30 disabled:bg-surface-container transition-all cursor-pointer"
               >
-                Previous
+                {t('common.previous', 'Previous')}
               </button>
               {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
                 <button
@@ -678,7 +680,7 @@ export default function Prasadam() {
                 onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                 className="px-2.5 py-1.5 rounded-lg border border-outline-variant/30 text-xs font-bold bg-white text-on-surface-variant hover:border-primary disabled:opacity-50 disabled:hover:border-outline-variant/30 disabled:bg-surface-container transition-all cursor-pointer"
               >
-                Next
+                {t('common.next', 'Next')}
               </button>
             </div>
           )}
@@ -690,10 +692,10 @@ export default function Prasadam() {
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 bg-surface-container border-2 border-primary/20 px-6 py-4 rounded-2xl shadow-2xl flex flex-col md:flex-row items-center gap-4 animate-[slideUp_0.2s_ease-out] w-[90%] md:w-auto min-w-[320px] md:min-w-[600px]">
           <div className="flex items-center gap-2">
             <span className="bg-primary text-on-primary text-xs font-bold px-2.5 py-1 rounded-full shrink-0">
-              {selectedIds.length} Selected
+              {selectedIds.length} {t('prasadam.bulkSelected', 'Selected')}
             </span>
             <span className="font-sans text-xs text-on-surface-variant font-bold hidden sm:inline">
-              Bulk actions for selected shipments:
+              {t('prasadam.bulkActionsTitle', 'Bulk actions for selected shipments:')}
             </span>
           </div>
 
@@ -703,28 +705,28 @@ export default function Prasadam() {
               className="px-3.5 py-2 bg-surface-container-high border border-outline hover:border-primary text-on-surface-variant hover:text-primary rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer"
             >
               <Printer size={13} />
-              <span>Print Labels</span>
+              <span>{t('prasadam.printLabels', 'Print Labels')}</span>
             </button>
             <button
               onClick={handleBulkMarkPacked}
               className="px-3.5 py-2 bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer"
             >
               <Box size={13} />
-              <span>Pack Items</span>
+              <span>{t('prasadam.packItems', 'Pack Items')}</span>
             </button>
             <button
               onClick={handleBulkMarkShipped}
               className="px-3.5 py-2 bg-green-50 text-green-700 border border-green-200 hover:bg-green-100 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer"
             >
               <Truck size={13} />
-              <span>Ship Items</span>
+              <span>{t('prasadam.shipItems', 'Ship Items')}</span>
             </button>
             <button
               onClick={handleBulkDelete}
               className="px-3.5 py-2 bg-red-50 text-red-700 border border-red-200 hover:bg-red-100 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer"
             >
               <X size={13} />
-              <span>Delete</span>
+              <span>{t('prasadam.deleteSelected', 'Delete')}</span>
             </button>
           </div>
         </div>

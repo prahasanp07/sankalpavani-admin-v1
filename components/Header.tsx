@@ -291,13 +291,22 @@ export default function Header({
                   </button>
                 )}
 
-                <a
-                  href="/trusts/trust_sringeri/governance/roles"
-                  className="w-full flex items-center px-4 py-2.5 font-sans text-xs font-semibold text-primary hover:bg-primary/10 transition-all text-left"
+                <button
+                  type="button"
+                  onClick={() => {
+                    setProfileDropdownOpen(false);
+                    if (activeScope !== 'TRUST') {
+                      switchScope('TRUST');
+                    }
+                    if (onNavigate) {
+                      onNavigate('roles');
+                    }
+                  }}
+                  className="w-full flex items-center px-4 py-2.5 font-sans text-xs font-semibold text-primary hover:bg-primary/10 transition-all text-left cursor-pointer"
                 >
                   <ShieldCheck size={14} className="mr-2.5 text-primary" />
                   <span>{t('header.rolesRbacManager', 'Roles & RBAC Manager')}</span>
-                </a>
+                </button>
               </div>
             </>
           )}

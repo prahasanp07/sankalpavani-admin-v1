@@ -16,6 +16,7 @@ import {
   ChevronDown
 } from 'lucide-react';
 import RequirePermission from './RequirePermission';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface Pilgrim {
   name: string;
@@ -62,6 +63,7 @@ const DEFAULT_BOOKINGS: Booking[] = [
 ];
 
 export default function Transactions() {
+  const { t } = useLanguage();
   const [bookings, setBookings] = useState<Booking[]>(() => {
     if (typeof window !== 'undefined') {
       const cached = localStorage.getItem('sankalpvani_bookings');
@@ -277,9 +279,9 @@ export default function Transactions() {
 
       {/* Header */}
       <div>
-        <h2 className="font-serif text-3xl font-semibold text-primary">Seva Transactions Ledger</h2>
+        <h2 className="font-serif text-3xl font-semibold text-primary">{t('transactions.title', 'Seva Transactions Ledger')}</h2>
         <p className="font-sans text-sm text-on-surface-variant font-medium mt-1">
-          Review devotee pooja receipts, verify payment settlements, and print administrative darshan slips.
+          {t('transactions.subtitle', 'Review devotee pooja receipts, verify payment settlements, and print administrative darshan slips.')}
         </p>
       </div>
 
@@ -291,7 +293,7 @@ export default function Transactions() {
             <div className="relative w-full sm:max-w-xs">
               <input
                 type="text"
-                placeholder="Search Receipt # or Devotee Name..."
+                placeholder={t('transactions.searchPlaceholder', 'Search Receipt # or Devotee Name...')}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="w-full pl-4 pr-10 py-2 bg-white border border-outline rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all"
@@ -308,7 +310,7 @@ export default function Transactions() {
                 }`}
             >
               <Filter size={14} />
-              <span>{showFilters ? 'Hide Filters' : 'Advanced Filters'}</span>
+              <span>{showFilters ? t('transactions.hideFilters', 'Hide Filters') : t('transactions.advancedFilters', 'Advanced Filters')}</span>
             </button>
           </div>
 
@@ -324,7 +326,10 @@ export default function Transactions() {
                       : 'text-on-surface-variant hover:text-primary'
                     }`}
                 >
-                  {status}
+                  {status === 'All' ? t('common.all', 'All') :
+                   status === 'Paid' ? t('transactions.paid', 'Paid') :
+                   status === 'Pending' ? t('transactions.pending', 'Pending') :
+                   t('transactions.refunded', 'Refunded')}
                 </button>
               ))}
             </div>
@@ -335,7 +340,7 @@ export default function Transactions() {
               className="w-full sm:w-auto bg-primary hover:bg-on-primary-container text-on-primary text-xs font-bold py-2.5 px-4 rounded-xl flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
             >
               <Download size={14} />
-              <span>Export CSV</span>
+              <span>{t('transactions.exportCsv', 'Export CSV')}</span>
             </button>
           </div>
         </div>
@@ -345,13 +350,13 @@ export default function Transactions() {
           <div className="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/20 grid grid-cols-1 md:grid-cols-3 gap-4 animate-[scaleIn_0.15s_ease-out]">
             {/* Seva Dropdown */}
             <div>
-              <label className="block text-[10px] font-bold uppercase tracking-wider text-on-surface-variant mb-1">Filter by Seva Offering</label>
+              <label className="block text-[10px] font-bold uppercase tracking-wider text-on-surface-variant mb-1">{t('transactions.filterSeva', 'Filter by Seva Offering')}</label>
               <select
                 value={filterSeva}
                 onChange={(e) => setFilterSeva(e.target.value)}
                 className="w-full px-3 py-2 bg-surface-container-low border border-outline rounded-lg text-xs focus:outline-none focus:border-primary"
               >
-                <option value="All">All Seva Offerings</option>
+                <option value="All">{t('transactions.allSevas', 'All Seva Offerings')}</option>
                 {uniqueSevas.map(name => (
                   <option key={name} value={name}>{name}</option>
                 ))}
@@ -360,7 +365,7 @@ export default function Transactions() {
 
             {/* Start Date */}
             <div>
-              <label className="block text-[10px] font-bold uppercase tracking-wider text-on-surface-variant mb-1">Start Date</label>
+              <label className="block text-[10px] font-bold uppercase tracking-wider text-on-surface-variant mb-1">{t('transactions.startDate', 'Start Date')}</label>
               <input
                 type="date"
                 value={startDate}
@@ -371,7 +376,7 @@ export default function Transactions() {
 
             {/* End Date */}
             <div>
-              <label className="block text-[10px] font-bold uppercase tracking-wider text-on-surface-variant mb-1">End Date</label>
+              <label className="block text-[10px] font-bold uppercase tracking-wider text-on-surface-variant mb-1">{t('transactions.endDate', 'End Date')}</label>
               <input
                 type="date"
                 value={endDate}
@@ -393,40 +398,40 @@ export default function Transactions() {
                   className="py-4 px-6 cursor-pointer hover:text-primary transition-colors"
                   onClick={() => handleSort('receiptNo')}
                 >
-                  Receipt # {renderSortIndicator('receiptNo')}
+                  {t('transactions.colReceipt', 'Receipt #')} {renderSortIndicator('receiptNo')}
                 </th>
                 <th
                   className="py-4 px-6 cursor-pointer hover:text-primary transition-colors"
                   onClick={() => handleSort('devoteeName')}
                 >
-                  Devotee Name {renderSortIndicator('devoteeName')}
+                  {t('transactions.colDevotee', 'Devotee Name')} {renderSortIndicator('devoteeName')}
                 </th>
-                <th className="py-4 px-6">Gotra & Nakshetra</th>
+                <th className="py-4 px-6">{t('transactions.gotra', 'Gotra')} & {t('transactions.nakshatra', 'Nakshetra')}</th>
                 <th
                   className="py-4 px-6 cursor-pointer hover:text-primary transition-colors"
                   onClick={() => handleSort('sevaName')}
                 >
-                  Booked Seva Offer {renderSortIndicator('sevaName')}
+                  {t('transactions.colSeva', 'Booked Seva Offer')} {renderSortIndicator('sevaName')}
                 </th>
                 <th
                   className="py-4 px-6 cursor-pointer hover:text-primary transition-colors"
                   onClick={() => handleSort('bookingDate')}
                 >
-                  Pooja Date {renderSortIndicator('bookingDate')}
+                  {t('transactions.colPoojaDate', 'Pooja Date')} {renderSortIndicator('bookingDate')}
                 </th>
                 <th
                   className="py-4 px-6 cursor-pointer hover:text-primary transition-colors"
                   onClick={() => handleSort('amount')}
                 >
-                  Settled Ticket {renderSortIndicator('amount')}
+                  {t('transactions.colAmount', 'Settled Ticket')} {renderSortIndicator('amount')}
                 </th>
                 <th
                   className="py-4 px-6 text-center cursor-pointer hover:text-primary transition-colors"
                   onClick={() => handleSort('paymentStatus')}
                 >
-                  Status {renderSortIndicator('paymentStatus')}
+                  {t('transactions.colStatus', 'Status')} {renderSortIndicator('paymentStatus')}
                 </th>
-                <th className="py-4 px-6 text-center">Receipt Slips</th>
+                <th className="py-4 px-6 text-center">{t('transactions.colAction', 'Receipt Slips')}</th>
               </tr>
             </thead>
             <tbody className="text-sm font-medium text-on-surface divide-y divide-outline-variant/10">
@@ -473,7 +478,9 @@ export default function Transactions() {
                           ) : (
                             <AlertCircle size={12} className="mr-1 shrink-0 text-red-600" />
                           )}
-                          {b.paymentStatus}
+                          {b.paymentStatus === 'Paid' ? t('transactions.paid', 'Paid') :
+                           b.paymentStatus === 'Pending' ? t('transactions.pending', 'Pending') :
+                           t('transactions.refunded', 'Refunded')}
                         </span>
                       </td>
                       <td className="py-4 px-6 text-center">
@@ -481,7 +488,7 @@ export default function Transactions() {
                           <button
                             onClick={() => setSelectedBooking(b)}
                             className="p-1.5 hover:bg-primary-container/10 text-primary rounded-lg transition-colors cursor-pointer"
-                            title="Inspect ticket details"
+                            title={t('transactions.viewDetails', 'Inspect ticket details')}
                           >
                             <Eye size={14} />
                           </button>
@@ -489,7 +496,7 @@ export default function Transactions() {
                             <button
                               onClick={() => triggerPrint(b)}
                               className="p-1.5 hover:bg-secondary-container/20 text-secondary rounded-lg transition-colors cursor-pointer"
-                              title="Print Thermal slip"
+                              title={t('transactions.printThermal', 'Print Thermal slip')}
                             >
                               <Printer size={14} />
                             </button>
@@ -501,17 +508,17 @@ export default function Transactions() {
                       <tr className="bg-primary/5">
                         <td colSpan={8} className="p-4 px-6">
                           <div className="bg-surface-container-lowest border border-primary/10 rounded-xl p-4 space-y-3">
-                            <h4 className="font-bold text-primary text-[10px] uppercase tracking-wider">Pilgrims Roster & Details</h4>
+                            <h4 className="font-bold text-primary text-[10px] uppercase tracking-wider">{t('transactions.familyPilgrims', 'Family Members / Co-Pilgrims')}</h4>
                             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                               <div className="bg-surface-container-low p-3 rounded-lg border border-outline-variant/20">
                                 <p className="font-bold text-on-surface text-xs">{b.devoteeName} (Primary)</p>
-                                <p className="text-on-surface-variant text-[11px] mt-0.5">Gotra: <span className="font-mono">{b.gotra}</span> | Nakshatra: <span className="font-mono">{b.nakshetra}</span></p>
+                                <p className="text-on-surface-variant text-[11px] mt-0.5">{t('transactions.gotra', 'Gotra:')} <span className="font-mono">{b.gotra}</span> | {t('transactions.nakshatra', 'Nakshatra:')} <span className="font-mono">{b.nakshetra}</span></p>
                                 <p className="text-on-surface-variant text-[11px]">Age: {b.age || 'N/A'} | Gender: {b.gender || 'N/A'}</p>
                               </div>
                               {b.pilgrims && b.pilgrims.map((p, pIdx) => (
                                 <div key={pIdx} className="bg-surface-container-low p-3 rounded-lg border border-outline-variant/20">
                                   <p className="font-bold text-on-surface text-xs">{p.name} ({p.type || 'Family'})</p>
-                                  <p className="text-on-surface-variant text-[11px] mt-0.5">Gotra: <span className="font-mono">{p.gotra || p.gotram}</span> | Nakshatra: <span className="font-mono">{p.nakshetra || p.nakshatram}</span></p>
+                                  <p className="text-on-surface-variant text-[11px] mt-0.5">{t('transactions.gotra', 'Gotra:')} <span className="font-mono">{p.gotra || p.gotram}</span> | {t('transactions.nakshatra', 'Nakshatra:')} <span className="font-mono">{p.nakshetra || p.nakshatram}</span></p>
                                   <p className="text-on-surface-variant text-[11px]">Age: {p.age || 'N/A'} | Gender: {p.gender || 'N/A'}</p>
                                 </div>
                               ))}
@@ -529,9 +536,9 @@ export default function Transactions() {
         {/* Pagination Bar */}
         <div className="flex flex-col sm:flex-row items-center justify-between px-6 py-4 bg-surface-container-low border-t border-outline-variant/10 gap-4">
           <div className="text-xs text-on-surface-variant font-medium">
-            Showing <span className="font-bold">{totalItems === 0 ? 0 : startIndex + 1}</span> to{' '}
-            <span className="font-bold">{Math.min(startIndex + itemsPerPage, totalItems)}</span> of{' '}
-            <span className="font-bold">{totalItems}</span> entries
+            {t('sevaMaster.showing', 'Showing')} <span className="font-bold">{totalItems === 0 ? 0 : startIndex + 1}</span> to{' '}
+            <span className="font-bold">{Math.min(startIndex + itemsPerPage, totalItems)}</span> {t('sevaMaster.of', 'of')}{' '}
+            <span className="font-bold">{totalItems}</span> {t('sevaMaster.entries', 'entries')}
           </div>
           {totalPages > 1 && (
             <div className="flex items-center gap-1">
@@ -541,7 +548,7 @@ export default function Transactions() {
                 onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                 className="px-2.5 py-1.5 rounded-lg border border-outline-variant/30 text-xs font-bold bg-white text-on-surface-variant hover:border-primary disabled:opacity-50 disabled:hover:border-outline-variant/30 disabled:bg-surface-container transition-all cursor-pointer"
               >
-                Previous
+                {t('common.previous', 'Previous')}
               </button>
               {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
                 <button
@@ -562,7 +569,7 @@ export default function Transactions() {
                 onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                 className="px-2.5 py-1.5 rounded-lg border border-outline-variant/30 text-xs font-bold bg-white text-on-surface-variant hover:border-primary disabled:opacity-50 disabled:hover:border-outline-variant/30 disabled:bg-surface-container transition-all cursor-pointer"
               >
-                Next
+                {t('common.next', 'Next')}
               </button>
             </div>
           )}
@@ -598,30 +605,30 @@ export default function Transactions() {
                   ॥ श्रीः शुभमस्तु देवकार्य सिद्ध्यर्थम् ॥
                 </p>
                 <span className="font-sans text-[10px] text-on-surface-variant uppercase tracking-widest font-bold mt-1">
-                  OFFICIAL SEVA DARSHAN SLIP
+                  {t('transactions.receiptTitle', 'DEVOTIONAL SEVA DARSHAN SLIP')}
                 </span>
               </div>
 
               {/* Data Rows */}
               <div className="space-y-2.5 text-left font-sans text-sm border-b divider-gold pb-4">
                 <div className="flex justify-between">
-                  <span className="text-on-surface-variant font-medium">Receipt Number:</span>
+                  <span className="text-on-surface-variant font-medium">{t('transactions.colReceipt', 'Receipt Number:')}</span>
                   <span className="font-bold font-mono text-primary">{selectedBooking.receiptNo}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-on-surface-variant font-medium">Devotee Pilgrim:</span>
+                  <span className="text-on-surface-variant font-medium">{t('transactions.colDevotee', 'Devotee Pilgrim:')}</span>
                   <span className="font-bold text-on-surface">{selectedBooking.devoteeName}</span>
                 </div>
                 <div className="flex justify-between text-xs">
-                  <span className="text-on-surface-variant font-medium">Gotra / Nakshetra:</span>
+                  <span className="text-on-surface-variant font-medium">{t('transactions.gotra', 'Gotra:')} / {t('transactions.nakshatra', 'Nakshatra:')}</span>
                   <span className="font-bold text-on-surface-variant">{selectedBooking.gotra} / {selectedBooking.nakshetra}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-on-surface-variant font-medium">Seva Pooja:</span>
+                  <span className="text-on-surface-variant font-medium">{t('transactions.colSeva', 'Seva Pooja:')}</span>
                   <span className="font-bold text-primary">{selectedBooking.sevaName}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-on-surface-variant font-medium">Reporting Time:</span>
+                  <span className="text-on-surface-variant font-medium">{t('transactions.reportingTime', 'Reporting Time:')}</span>
                   <span className="font-semibold text-on-surface">{selectedBooking.bookingDate} at {selectedBooking.timeSlot}</span>
                 </div>
                 <div className="flex justify-between border-t border-dashed border-outline-variant pt-2 mt-2">
@@ -631,7 +638,7 @@ export default function Transactions() {
                   </span>
                 </div>
                 <div className="flex justify-between border-t border-dashed border-outline-variant pt-2 mt-1">
-                  <span className="text-on-surface-variant font-bold uppercase tracking-wider text-xs">Settled Amount:</span>
+                  <span className="text-on-surface-variant font-bold uppercase tracking-wider text-xs">{t('transactions.colAmount', 'Settled Amount:')}</span>
                   <span className="font-bold text-base text-on-surface">₹{selectedBooking.amount.toLocaleString()}</span>
                 </div>
               </div>
@@ -643,7 +650,7 @@ export default function Transactions() {
                   className="flex-1 bg-primary hover:bg-on-primary-container text-on-primary py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer shadow-sm"
                 >
                   <Printer size={14} />
-                  <span>Print Slip</span>
+                  <span>{t('transactions.printSlip', 'Print Slip')}</span>
                 </button>
                 <button
                   onClick={() => {

@@ -37,13 +37,15 @@ interface TempleOption {
 
 export default function SelectOrganizationPage() {
   const router = useRouter();
-  const { session, updateSession } = useAuth();
+  const { session, updateSession, switchScope } = useAuth();
 
   // Screen 1 Direct Routing: Redirect straight to Trust Dashboard
   useEffect(() => {
     const targetTrustId = session?.trustId || 'trust_sringeri';
-    router.replace(`/trusts/${targetTrustId}/dashboard`);
-  }, [session, router]);
+    updateSession({ trustId: targetTrustId, scope: 'TRUST' });
+    switchScope('TRUST');
+    router.replace('/');
+  }, [session, router, updateSession, switchScope]);
 
   const [trusts, setTrusts] = useState<TrustOption[]>([
     {
@@ -132,15 +134,21 @@ export default function SelectOrganizationPage() {
   const filteredTemples = temples.filter(t => t.trustId === selectedTrustId);
 
   const handleEnterTrustDashboard = (trustId: string) => {
-    router.push(`/trusts/${trustId}/dashboard`);
+    updateSession({ trustId, scope: 'TRUST' });
+    switchScope('TRUST');
+    router.push('/');
   };
 
   const handleEnterTrustRoles = (trustId: string) => {
-    router.push(`/trusts/${trustId}/governance/roles`);
+    updateSession({ trustId, scope: 'TRUST' });
+    switchScope('TRUST');
+    router.push('/?tab=roles');
   };
 
   const handleEnterTempleDashboard = (trustId: string, templeId: string) => {
-    router.push(`/trusts/${trustId}/temples/${templeId}/dashboard`);
+    updateSession({ trustId, scope: 'TEMPLE', templeId });
+    switchScope('TEMPLE', templeId);
+    router.push('/');
   };
 
   const currentRole = session?.designation || 'Trust Apex Trustee';
@@ -303,7 +311,7 @@ export default function SelectOrganizationPage() {
                 Trust Apex Governance
               </h3>
               <p className="text-xs text-on-surface-variant mt-1.5 leading-relaxed">
-                Umbrella administration across all temples, dynamic RBAC role authoring, and consolidated audit trails.
+                Centralized administration across all temples, dynamic RBAC role authoring, and consolidated audit trails.
               </p>
 
               <div className="space-y-2.5 mt-6">

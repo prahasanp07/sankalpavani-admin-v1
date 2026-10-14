@@ -98,7 +98,7 @@ export class CommitteeRepository {
           leadName = u?.name || '';
         }
 
-        let scopeName = 'Trust Umbrella';
+        let scopeName = 'Trust-Wide';
         if (c.scopeType === 'TEMPLE') {
           const t = await db.query.temples.findFirst({ where: eq(temples.id, c.scopeId) });
           scopeName = t?.name || c.scopeId;

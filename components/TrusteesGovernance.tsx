@@ -373,7 +373,7 @@ export default function TrusteesGovernance({
             {t('trustees.title', 'Trustees & Board of Management')}
           </h1>
           <p className="font-sans text-xs text-on-surface-variant max-w-2xl leading-relaxed">
-            Administer the Board of Trustees, custodial office terms, board resolutions, and hereditary appointments across the Trust umbrella.
+            Administer the Board of Trustees, custodial office terms, board resolutions, and hereditary appointments across the Trust.
           </p>
         </div>
 
