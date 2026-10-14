@@ -47,10 +47,11 @@ The codebase has been engineered such that **every entity across the organizatio
   - **Trust Admin Scope**: Clean 7-item sequence (`1. Designation & Titles`, `2. Add new temple`, `3. Members`, `4. Trustees & Board`, `5. Committees`, `6. Meetings & MoMs`, `7. Dynamic RBAC... (opt.)`).
   - **Temple Admin Scope**: Streamlined 7-item operational sequence (`1. Temple Dashboard`, `2. Masters`, `3. Devotee Bookings`, `4. Seva Ledger`, `5. Prasadam Dispatch`, `6. Temple Reports`, `7. Temple Notifications`).
 - **Meetings & Minutes of Meeting (MoM) Subsystem**:
-  - **Dual-Tab Motion Interface**: Built with Framer Motion sliding tabs between **Upcoming Meetings** and **Past Meetings & MoMs**.
-  - **WYSIWYG Rich Text Editor (`RichTextEditor.tsx`)**: Full-featured, React 19-compatible rich text writing canvas with 5 toolbar command clusters (formatting, custom palette, font scaling, headings, indent, bulleted/numbered lists, blockquote, links, text alignment, and tables).
-  - **Smart Scheduling Modal**: Multi-select invitee selector with dynamic **Select All / Unselect All** toggle state and committee linkages.
-  - **AI-Assisted MoM Publishing**: Designed to trigger `@google/genai` (Gemini API) with intelligent sacred temple governance templates, custom Zod `.refine()` enforcing strict 5MB attachment limits, and instant attendee notification workflows.
+  - **Dual-Tab Motion Interface**: Built with Framer Motion sliding tabs between **Upcoming Meetings** and **Past Meetings & MoMs**, fully mobile-responsive with adaptive flex/grid scaling.
+  - **WYSIWYG Rich Text Editor (`RichTextEditor.tsx`)**: Full-featured, React 19-compatible rich text writing canvas with dedicated toolbar command clusters (typography formatting, custom sacred palette, font scaling, headings, indent, bulleted/numbered lists, blockquote, links, text alignment, and dynamic agenda tables).
+  - **Smart Scheduling Modal (`ScheduleMeetingModal.tsx`)**: Committee-aware roster with automatic quorum pre-selection, "+ Add External Guest" drawer for government observers and auditors, uniform `h-8` toolbar controls, and dynamic **Select All / Unselect All** toggle state.
+  - **AI-Assisted MoM Publishing (`PublishMoMModal.tsx`)**: Designed to trigger `@google/genai` (Gemini API) with intelligent sacred temple governance templates, custom Zod `.refine()` enforcing strict 5MB attachment limits, and instant attendee notification workflows.
+  - **Strict Modal Isolation & Zero State Bleeding**: Component-level unique key isolation (`key={targetMeetingForMoM.id}`) and complete lifecycle reset hooks preventing cross-meeting data, draft resolutions, or file attachments from leaking across popups.
   - **Typography Reader View**: Styled with `@tailwindcss/typography` (`prose prose-amber`) for legally auditable, printable, and downloadable meeting proceedings.
 - **Complete Operational Subsystems Suite**:
   - **Masters Hub (5 Sub-Tabs)**: Integrated hub grouping Temple Info, Seva Master, Temple Facilities, Priest Master, and Scheduling.
@@ -412,10 +413,14 @@ graph TD
     K --> L[Past Meetings & MoMs Tab: prose-amber Reader View]
 ```
 
-### 1. Tabbed Interface Architecture ([`components/governance/MeetingsGovernance.tsx`](file:///c:/Users/praha/Documents/PraGana%20Innovations%20Projects/Sankalpavani-v1/components/governance/MeetingsGovernance.tsx))
+### 1. Tabbed Interface Architecture & Mobile-First Layout ([`components/governance/MeetingsGovernance.tsx`](file:///c:/Users/praha/Documents/PraGana%20Innovations%20Projects/Sankalpavani-v1/components/governance/MeetingsGovernance.tsx))
 - **Framer Motion Sliding Navigation**: Built with `motion.div` layout animations toggling between:
   - **Upcoming Meetings**: Cards displaying sacred gold calendar badges, relative countdown tags (*"Tomorrow"*, *"In 2 Days"*), governing committee pill, host convener details, invitee avatar stacks with `+N` count badges, status flags, and 1-click **"Publish MoM"** triggers.
   - **Past Meetings & MoMs**: Expanded reader dossiers displaying conducting dates, official resolution stamps (*e.g. `#RES-TR-2026/09-04`*), publishing author attribution, and attachment libraries.
+- **Mobile Responsive Design**:
+  - **Sliding Tab Switcher**: Responsive grid configuration (`grid-cols-2 max-w-xs sm:max-w-md`) ensuring smooth touch navigation on smartphones without horizontal overflow.
+  - **Adaptive Header & Breadcrumb**: Streamlined apex header removing redundant back navigation buttons to maximize vertical clarity, showcasing the governing trust pill alongside the sacred calendar icon.
+  - **Stacking Filters & Action Strips**: Search input and committee taxonomy dropdown stack gracefully on mobile (`flex-col sm:flex-row`), while card action buttons expand to full width on compact viewports.
 - **Rich Text Agenda Rendering**: Upcoming meeting cards detect HTML markup in the `agenda` field and dynamically render formatted rich HTML content using `dangerouslySetInnerHTML` wrapped in `@tailwindcss/typography` (`prose prose-amber prose-sm max-w-none text-on-surface-variant`), providing seamless presentation of formatted lists, headings, and agenda tables.
 - **Search & Committee Filtering**: Dynamic full-text search across titles, discussion points, and resolutions paired with committee taxonomy filters.
 - **Auditable Utilities**: 1-click Print MoM layout, MoM circulation sharing, and attachment downloads.
@@ -459,14 +464,16 @@ To replace plain textareas with an executive-grade authoring tool, a custom, Rea
     - `👑 Member`: Appointed member of the selected committee.
     - `Special Invitee`: Trust board trustee attending a committee session.
     - `🌐 External`: Outside official, consultant, or guest observer.
-- **Dynamic Select All / Unselect All Toggle State**:
-  - When all members in the roster are selected, the action converts into a high-visibility amber/gold **`Unselect All`** control, allowing 1-click clearing of all selections.
-  - When no members are selected, the action displays **`Select All`**.
-  - When a subset of members is checked, the interface displays both **`Select All`** and **`Unselect All`** alongside a real-time badge showing `(X / Total Selected)`.
-  - Each invitee pill includes member avatar, designation subtitle, and checked checkbox with sacred saffron accent.
+- **Uniform Toolbar Alignment & Dynamic Select All / Unselect All**:
+  - Standardized `h-8` toolbar aligning the **`+ Add External Guest`** trigger and segmented selection controls on a shared horizontal baseline.
+  - Non-wrapping counter badge `(X / Total Selected)` preserving layout structure across compact viewports.
+  - **Adaptive Select / Unselect States**:
+    - When all members are checked, only **`Unselect All`** is active.
+    - When no members are checked, only **`Select All`** is active.
+    - When a partial subset is checked, both **`Select All`** and **`Unselect All`** are independently accessible.
 - **Embedded WYSIWYG Editor**: Directly binds with React Hook Form controller for the *Meeting Agenda & Key Discussion Points* section.
 
-### 4. AI-Assisted MoM Drafting & Strict 5MB Attachment Validation ([`components/governance/PublishMoMModal.tsx`](file:///c:/Users/praha/Documents/PraGana%20Innovations%20Projects/Sankalpavani-v1/components/governance/PublishMoMModal.tsx))
+### 4. AI-Assisted MoM Drafting, 5MB Attachments & Zero-State-Bleeding Architecture ([`components/governance/PublishMoMModal.tsx`](file:///c:/Users/praha/Documents/PraGana%20Innovations%20Projects/Sankalpavani-v1/components/governance/PublishMoMModal.tsx))
 - **"Draft with AI" Button**:
   - Designed to trigger `@google/genai` (Gemini API) using structured prompts.
   - Features intelligent temple governance fallback generator outputting complete proceedings:
@@ -475,7 +482,7 @@ To replace plain textareas with an executive-grade authoring tool, a custom, Rea
     3. *Formal Board Resolutions Passed (with official Resolution Number)*
     4. *Financial Authorizations & Sanctions in INR (`₹`)*
     5. *Action Item Matrix with Assigned Office Bearers and Deadlines*
-- **Strict 5MB Attachment Rule**:
+- **Strict 5MB Attachment Boundary**:
   - Validated by custom Zod `.refine()` rule in `publishMoMSchema`:
     ```typescript
     export const MAX_ATTACHMENT_SIZE_BYTES = 5 * 1024 * 1024; // 5MB
@@ -484,6 +491,31 @@ To replace plain textareas with an executive-grade authoring tool, a custom, Rea
     })
     ```
   - Displays instant client-side file size formatting (`MB/KB`) and UI validation flags.
+- **Zero-State-Bleeding & Strict Modal Isolation Architecture**:
+  - **The Problem Addressed**: When opening the MoM modal for one meeting after another, React Hook Form's static `defaultValues` and uncleared file state caused the prior meeting's *Minutes of Meeting & Resolutions* text and *Upload Official Signed MoM / Gazette Document* to persist or bleed into newly selected meetings.
+  - **Unique React Key Isolation**:
+    In [`MeetingsGovernance.tsx`](file:///c:/Users/praha/Documents/PraGana%20Innovations%20Projects/Sankalpavani-v1/components/governance/MeetingsGovernance.tsx), the modal is conditionally mounted using a dynamic key:
+    ```tsx
+    {publishModalOpen && targetMeetingForMoM && (
+      <PublishMoMModal
+        key={targetMeetingForMoM.id}
+        isOpen={publishModalOpen}
+        onClose={() => {
+          setPublishModalOpen(false);
+          setTargetMeetingForMoM(null);
+        }}
+        meeting={targetMeetingForMoM}
+        onPublishSuccess={handlePublishMoMSuccess}
+      />
+    )}
+    ```
+    This guarantees that whenever a user selects a different meeting, React completely destroys the previous component tree and constructs a pristine, isolated instance.
+  - **Full Lifecycle Form & File State Reset**:
+    Inside `PublishMoMModal.tsx`, a dedicated `useEffect` hook monitors `[isOpen, meeting?.id, reset]` to reset form fields to the target meeting's saved notes (`meeting.notes?.momText || ''`) and clear `selectedFile`, `fileError`, `isDraftingAI`, and `isSubmitting`.
+  - **Native File Input DOM Reset (`useRef<HTMLInputElement>`)**:
+    An explicit DOM reference (`fileInputRef`) synchronously clears `fileInputRef.current.value = ''` upon modal close, cancellation, file removal, or publish completion, preventing browser-cached uploads from persisting.
+  - **Meeting-Scoped Element IDs**:
+    File inputs utilize dynamic IDs (`id={'mom-attachment-input-${meeting.id}'}`) to guarantee zero DOM selector collisions across rapid meeting switches.
 - **"Publish & Email Invitees" Workflow**: Converts status to `COMPLETED`, adds verified resolution metadata, and updates live reactive views.
 
 ### 5. MoM Typography Reader View
