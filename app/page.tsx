@@ -33,6 +33,7 @@ import DesignationsGovernance from '../components/DesignationsGovernance';
 import RolesGovernance from '../components/RolesGovernance';
 import TrusteesGovernance from '../components/TrusteesGovernance';
 import CommitteesGovernance from '../components/CommitteesGovernance';
+import MeetingsGovernance from '../components/governance/MeetingsGovernance';
 import MembersGovernance from '../components/MembersGovernance';
 import MastersHub from '../components/MastersHub';
 import PriestMaster from '../components/PriestMaster';
@@ -189,6 +190,8 @@ function AdminPortalContent() {
         return t('pageTitles.trustees', 'Trustees & Board of Management');
       case 'committees':
         return t('pageTitles.committees', 'Committees & Sub-Committees Management');
+      case 'meetings':
+        return t('pageTitles.meetings', 'Meetings & Minutes of Meeting (MoM)');
       case 'members':
         return t('pageTitles.members', 'Members, Staff & Committee Appointees');
       case 'add_temple':
@@ -323,6 +326,19 @@ function AdminPortalContent() {
                 trustId={activeTrustId || 'trust_sringeri'}
                 onBack={() => handleNavigate('dashboard')}
                 onNavigate={handleNavigate}
+              />
+            </RequirePermission>
+          )}
+
+          {activeTab === 'meetings' && (
+            <RequirePermission
+              permission={['MANAGE_STAFF', 'MANAGE_ORG_CHART', 'VIEW_ORG_CHART', 'SUPER_ADMIN', 'DASHBOARD_VIEW']}
+              mode="any"
+              fallback={<LockedViewFallback requiredPermission="MANAGE_STAFF" title="Meetings & MoMs Restricted" />}
+            >
+              <MeetingsGovernance
+                trustId={activeTrustId || 'trust_sringeri'}
+                onBack={() => handleNavigate('dashboard')}
               />
             </RequirePermission>
           )}

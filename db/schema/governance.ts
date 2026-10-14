@@ -1,5 +1,5 @@
 import { pgTable, text, timestamp, boolean, integer, jsonb, index, uniqueIndex } from 'drizzle-orm/pg-core';
-import { trusts, users, designations } from './core';
+import { trusts, users, designations, committees } from './core';
 
 /**
  * Permission Definition - Granular system capability registered under a namespace.
@@ -155,3 +155,59 @@ export const policyVersions = pgTable('policy_version', {
 }, (table) => [
   uniqueIndex('unique_trust_policy_version').on(table.trustId, table.versionNumber),
 ]);
+
+/**
+ * Meeting - Formal Trust or Committee governance meeting schedule & records.
+ */
+export const meetings = pgTable('meeting', {
+  id: text('id').primaryKey(),
+  trustId: text('trust_id').references(() => trusts.id, { onDelete: 'cascade' }).notNull(),
+  title: text('title').notNull(),
+  scheduledAt: timestamp('scheduled_at', { withTimezone: true }).notNull(),
+  hostUserId: text('host_user_id').references(() => users.id).notNull(),
+  committeeId: text('committee_id').references(() => committees.id),
+  status: text('status').default('SCHEDULED').notNull(), // 'SCHEDULED' | 'COMPLETED' | 'CANCELLED'
+  agenda: text('agenda'),
+  location: text('location').default('Trust Board Room / Virtual'),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+}, (table) => [
+  index('meetings_trust_idx').on(table.trustId),
+  index('meetings_status_idx').on(table.status),
+  index('meetings_scheduled_at_idx').on(table.scheduledAt),
+  index('meetings_committee_idx').on(table.committeeId),
+]);
+
+/**
+ * Meeting Invitee - Association between a scheduled meeting and an invited user/trustee.
+ */
+export const meetingInvitees = pgTable('meeting_invitee', {
+  id: text('id').primaryKey(),
+  meetingId: text('meeting_id').references(() => meetings.id, { onDelete: 'cascade' }).notNull(),
+  userId: text('user_id').references(() => users.id, { onDelete: 'cascade' }).notNull(),
+  rsvpStatus: text('rsvp_status').default('PENDING').notNull(), // 'PENDING' | 'ACCEPTED' | 'DECLINED'
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+}, (table) => [
+  uniqueIndex('unique_meeting_invitee').on(table.meetingId, table.userId),
+  index('meeting_invitee_meeting_idx').on(table.meetingId),
+  index('meeting_invitee_user_idx').on(table.userId),
+]);
+
+/**
+ * Meeting Notes / Minutes of Meeting (MoM) - Published official record and resolutions of a meeting.
+ */
+export const meetingNotes = pgTable('meeting_note', {
+  id: text('id').primaryKey(),
+  meetingId: text('meeting_id').references(() => meetings.id, { onDelete: 'cascade' }).notNull(),
+  momText: text('mom_text').notNull(),
+  attachmentUrls: jsonb('attachment_urls'), // JSON array of attachment URLs or metadata
+  publishedAt: timestamp('published_at', { withTimezone: true }).defaultNow().notNull(),
+  publishedByUserId: text('published_by_user_id').references(() => users.id).notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+}, (table) => [
+  uniqueIndex('unique_meeting_note').on(table.meetingId),
+  index('meeting_notes_meeting_idx').on(table.meetingId),
+  index('meeting_notes_publisher_idx').on(table.publishedByUserId),
+]);
+

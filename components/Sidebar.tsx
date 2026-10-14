@@ -24,7 +24,8 @@ import {
   Plus,
   Users,
   Bell,
-  FolderTree
+  FolderTree,
+  CalendarClock
 } from 'lucide-react';
 
 import { useAuth, STAKEHOLDER_PERSONAS } from '../contexts/AuthContext';
@@ -296,7 +297,20 @@ export default function Sidebar({
                   <span className="truncate">{t('sidebar.committees', 'Committees')}</span>
                 </button>
 
-                {/* 6. Dynamic RBAC...(opt.) */}
+                {/* 6. Meetings & MoMs */}
+                <button
+                  type="button"
+                  onClick={() => handleNavClick('meetings')}
+                  className={`w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg font-sans text-[11px] transition-colors cursor-pointer text-left ${activeTab === 'meetings'
+                    ? 'font-bold text-primary bg-primary-container/15'
+                    : 'font-medium text-on-surface-variant hover:bg-primary-container/5 hover:text-primary'
+                    }`}
+                >
+                  <CalendarClock size={13} className="shrink-0 text-amber-700" />
+                  <span className="truncate">{t('sidebar.meetings', 'Meetings & MoMs')}</span>
+                </button>
+
+                {/* 7. Dynamic RBAC...(opt.) */}
                 <button
                   type="button"
                   onClick={() => handleNavClick('roles')}
