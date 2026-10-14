@@ -230,30 +230,20 @@ export default function MeetingsGovernance({
       )}
 
       {/* Apex Breadcrumb & Header Bar */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-surface-container-lowest p-6 rounded-3xl border border-amber-900/15 shadow-sm relative overflow-hidden">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-surface-container-lowest p-4 sm:p-6 rounded-3xl border border-amber-900/15 shadow-sm relative overflow-hidden">
         {/* Background Subtle Sacred Geometry Accent */}
         <div className="absolute right-0 top-0 bottom-0 w-80 bg-gradient-to-l from-amber-500/5 to-transparent pointer-events-none" />
 
         <div className="space-y-1 relative z-10">
-          <div className="flex items-center gap-2">
-            {onBack && (
-              <button
-                type="button"
-                onClick={onBack}
-                className="w-8 h-8 rounded-xl bg-surface-container hover:bg-surface-container-high border border-outline-variant/40 text-on-surface flex items-center justify-center transition-colors cursor-pointer mr-1"
-                title="Return to Dashboard"
-              >
-                <ArrowLeft size={16} />
-              </button>
-            )}
+          <div className="flex items-center gap-2 flex-wrap">
             <span className="text-[11px] font-mono uppercase tracking-widest text-amber-800 font-bold bg-amber-500/15 px-2.5 py-0.5 rounded-full border border-amber-600/30 flex items-center gap-1.5">
               <Building2 size={11} /> {trustName}
             </span>
             <span className="text-xs text-on-surface-variant font-sans">• Apex Governance</span>
           </div>
 
-          <h1 className="font-serif text-2xl font-bold text-amber-950 tracking-tight flex items-center gap-2.5">
-            <CalendarClock size={26} className="text-amber-800" />
+          <h1 className="font-serif text-xl sm:text-2xl font-bold text-amber-950 tracking-tight flex items-center gap-2.5 mt-1">
+            <CalendarClock size={24} className="text-amber-800 shrink-0" />
             <span>Meetings & Minutes of Meeting (MoM)</span>
           </h1>
 
@@ -263,11 +253,11 @@ export default function MeetingsGovernance({
         </div>
 
         {/* Primary Schedule Action */}
-        <div className="flex items-center gap-3 relative z-10">
+        <div className="flex items-center gap-3 relative z-10 w-full sm:w-auto">
           <button
             type="button"
             onClick={() => setScheduleModalOpen(true)}
-            className="px-5 py-2.5 bg-gradient-to-r from-amber-700 via-amber-800 to-amber-900 hover:from-amber-800 hover:to-amber-950 text-white rounded-xl text-xs font-bold shadow-md hover:shadow-lg transition-all cursor-pointer flex items-center gap-2"
+            className="w-full sm:w-auto justify-center px-5 py-2.5 bg-gradient-to-r from-amber-700 via-amber-800 to-amber-900 hover:from-amber-800 hover:to-amber-950 text-white rounded-xl text-xs font-bold shadow-md hover:shadow-lg transition-all cursor-pointer flex items-center gap-2"
           >
             <CalendarPlus size={16} />
             <span>Schedule New Meeting</span>
@@ -276,13 +266,13 @@ export default function MeetingsGovernance({
       </div>
 
       {/* Controls: Search, Committee Filter & Sliding Tabs */}
-      <div className="bg-surface-container-lowest p-4 rounded-3xl border border-outline-variant/30 shadow-xs flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
+      <div className="bg-surface-container-lowest p-3 sm:p-4 rounded-3xl border border-outline-variant/30 shadow-xs flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 sm:gap-4">
         {/* Framer Motion Sliding Tabs: "Upcoming Meetings" and "Past Meetings & MoMs" */}
-        <div className="flex items-center p-1.5 bg-surface-container-low border border-outline-variant/40 rounded-2xl relative self-start md:self-auto">
+        <div className="w-full md:w-auto grid grid-cols-2 p-1 bg-surface-container-low border border-outline-variant/40 rounded-2xl relative">
           <button
             type="button"
             onClick={() => setActiveTab('upcoming')}
-            className={`relative px-4 py-2 rounded-xl text-xs font-bold transition-colors cursor-pointer flex items-center gap-2 z-10 ${
+            className={`relative px-2 sm:px-4 py-2 rounded-xl text-xs font-bold transition-colors cursor-pointer flex items-center justify-center gap-1.5 sm:gap-2 z-10 ${
               activeTab === 'upcoming' ? 'text-amber-950' : 'text-on-surface-variant hover:text-on-surface'
             }`}
           >
@@ -293,9 +283,10 @@ export default function MeetingsGovernance({
                 transition={{ type: 'spring', stiffness: 450, damping: 35 }}
               />
             )}
-            <Clock size={14} className="relative z-10" />
-            <span className="relative z-10">Upcoming Meetings</span>
-            <span className="relative z-10 text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-amber-500/15 text-amber-900 font-bold ml-0.5">
+            <Clock size={14} className="relative z-10 shrink-0" />
+            <span className="relative z-10 hidden sm:inline">Upcoming Meetings</span>
+            <span className="relative z-10 sm:hidden">Upcoming</span>
+            <span className="relative z-10 text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-amber-500/15 text-amber-900 font-bold ml-0.5 shrink-0">
               {upcomingMeetings.length}
             </span>
           </button>
@@ -303,7 +294,7 @@ export default function MeetingsGovernance({
           <button
             type="button"
             onClick={() => setActiveTab('past')}
-            className={`relative px-4 py-2 rounded-xl text-xs font-bold transition-colors cursor-pointer flex items-center gap-2 z-10 ${
+            className={`relative px-2 sm:px-4 py-2 rounded-xl text-xs font-bold transition-colors cursor-pointer flex items-center justify-center gap-1.5 sm:gap-2 z-10 ${
               activeTab === 'past' ? 'text-amber-950' : 'text-on-surface-variant hover:text-on-surface'
             }`}
           >
@@ -314,18 +305,19 @@ export default function MeetingsGovernance({
                 transition={{ type: 'spring', stiffness: 450, damping: 35 }}
               />
             )}
-            <FileCheck size={14} className="relative z-10" />
-            <span className="relative z-10">Past Meetings & MoMs</span>
-            <span className="relative z-10 text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-amber-500/15 text-amber-900 font-bold ml-0.5">
+            <FileCheck size={14} className="relative z-10 shrink-0" />
+            <span className="relative z-10 hidden sm:inline">Past Meetings & MoMs</span>
+            <span className="relative z-10 sm:hidden">Past MoMs</span>
+            <span className="relative z-10 text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-amber-500/15 text-amber-900 font-bold ml-0.5 shrink-0">
               {pastMeetings.length}
             </span>
           </button>
         </div>
 
         {/* Search & Filter Bar */}
-        <div className="flex flex-wrap items-center gap-2.5">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 w-full md:w-auto">
           {/* Search Box */}
-          <div className="relative flex-1 sm:w-64">
+          <div className="relative w-full sm:w-64">
             <Search
               size={14}
               className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant"
@@ -335,12 +327,12 @@ export default function MeetingsGovernance({
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search meetings, topics, resolutions..."
-              className="w-full pl-9 pr-3 py-2 bg-surface-container-low border border-outline-variant/50 rounded-xl text-xs font-sans text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all"
+              className="w-full pl-9 pr-7 py-2 bg-surface-container-low border border-outline-variant/50 rounded-xl text-xs font-sans text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all"
             />
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery('')}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface p-0.5"
               >
                 <X size={12} />
               </button>
@@ -348,11 +340,11 @@ export default function MeetingsGovernance({
           </div>
 
           {/* Committee Filter */}
-          <div className="relative">
+          <div className="relative w-full sm:w-auto">
             <select
               value={selectedCommitteeFilter}
               onChange={(e) => setSelectedCommitteeFilter(e.target.value)}
-              className="px-3 py-2 bg-surface-container-low border border-outline-variant/50 rounded-xl text-xs font-sans font-medium text-on-surface focus:outline-none focus:border-primary cursor-pointer pr-8"
+              className="w-full sm:w-auto px-3 py-2 bg-surface-container-low border border-outline-variant/50 rounded-xl text-xs font-sans font-medium text-on-surface focus:outline-none focus:border-primary cursor-pointer pr-8"
             >
               <option value="ALL">All Committees</option>
               {MOCK_GOVERNANCE_COMMITTEES.map((c) => (
@@ -377,7 +369,7 @@ export default function MeetingsGovernance({
             className="space-y-4"
           >
             {filteredUpcoming.length === 0 ? (
-              <div className="bg-surface-container-lowest border border-dashed border-outline-variant/60 rounded-3xl p-12 text-center">
+              <div className="bg-surface-container-lowest border border-dashed border-outline-variant/60 rounded-3xl p-8 sm:p-12 text-center">
                 <CalendarClock size={36} className="mx-auto text-amber-800/60 mb-3" />
                 <h3 className="font-serif text-base font-bold text-on-surface">No Upcoming Meetings Found</h3>
                 <p className="text-xs text-on-surface-variant mt-1 max-w-md mx-auto">
@@ -401,28 +393,28 @@ export default function MeetingsGovernance({
                 return (
                   <div
                     key={meeting.id}
-                    className="bg-surface-container-lowest border border-amber-900/15 rounded-3xl p-5 shadow-xs hover:shadow-md transition-all space-y-4"
+                    className="bg-surface-container-lowest border border-amber-900/15 rounded-3xl p-4 sm:p-5 shadow-xs hover:shadow-md transition-all space-y-3 sm:space-y-4"
                   >
-                    <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
+                    <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-4">
                       {/* Left: Date Badge + Title & Meta */}
-                      <div className="flex items-start gap-4">
+                      <div className="flex items-start gap-3 sm:gap-4 flex-1 min-w-0">
                         {/* Sacred Gold Calendar Badge */}
-                        <div className="w-16 h-18 rounded-2xl bg-gradient-to-b from-amber-500/15 via-amber-600/10 to-amber-700/15 border border-amber-600/30 flex flex-col items-center justify-center p-2 text-center shrink-0 shadow-inner">
-                          <span className="text-[10px] font-mono uppercase tracking-wider text-amber-800 font-bold">
+                        <div className="w-14 sm:w-16 h-16 sm:h-18 rounded-2xl bg-gradient-to-b from-amber-500/15 via-amber-600/10 to-amber-700/15 border border-amber-600/30 flex flex-col items-center justify-center p-1.5 sm:p-2 text-center shrink-0 shadow-inner">
+                          <span className="text-[9px] sm:text-[10px] font-mono uppercase tracking-wider text-amber-800 font-bold leading-tight">
                             {day}
                           </span>
-                          <span className="font-serif text-xl font-bold text-amber-950 leading-none my-0.5">
+                          <span className="font-serif text-lg sm:text-xl font-bold text-amber-950 leading-none my-0.5">
                             {date.split(' ')[0]}
                           </span>
-                          <span className="text-[9px] font-mono text-amber-900/80 font-bold">
+                          <span className="text-[8px] sm:text-[9px] font-mono text-amber-900/80 font-bold">
                             {date.split(' ')[1]}
                           </span>
                         </div>
 
                         {/* Title and Metadata */}
-                        <div className="space-y-1.5 min-w-0">
-                          <div className="flex flex-wrap items-center gap-2">
-                            <span className="text-[10px] font-mono uppercase tracking-wider px-2.5 py-0.5 rounded-full font-bold bg-amber-500/15 text-amber-900 border border-amber-500/30 flex items-center gap-1">
+                        <div className="space-y-1.5 min-w-0 flex-1">
+                          <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                            <span className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-full font-bold bg-amber-500/15 text-amber-900 border border-amber-500/30 flex items-center gap-1">
                               <Layers size={10} /> {meeting.committeeName || 'Apex Board'}
                             </span>
 
@@ -437,25 +429,25 @@ export default function MeetingsGovernance({
                             )}
                           </div>
 
-                          <h3 className="font-serif text-base font-bold text-amber-950 tracking-tight leading-snug">
+                          <h3 className="font-serif text-sm sm:text-base font-bold text-amber-950 tracking-tight leading-snug">
                             {meeting.title}
                           </h3>
 
-                          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-on-surface-variant font-sans">
-                            <span className="flex items-center gap-1.5 text-on-surface">
-                              <Clock size={13} className="text-amber-700" />
+                          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-on-surface-variant font-sans">
+                            <span className="flex items-center gap-1 text-on-surface whitespace-nowrap">
+                              <Clock size={12} className="text-amber-700 shrink-0" />
                               <strong>{time}</strong> IST
                             </span>
-                            <span className="flex items-center gap-1.5">
-                              <MapPin size={13} className="text-amber-700" />
-                              <span className="truncate max-w-xs">{meeting.location}</span>
+                            <span className="flex items-center gap-1 min-w-0">
+                              <MapPin size={12} className="text-amber-700 shrink-0" />
+                              <span className="truncate max-w-[180px] sm:max-w-xs">{meeting.location}</span>
                             </span>
                           </div>
                         </div>
                       </div>
 
                       {/* Right: Action Buttons */}
-                      <div className="flex items-center gap-2 self-start lg:self-center">
+                      <div className="flex items-center gap-2 w-full sm:w-auto pt-1 sm:pt-0 shrink-0">
                         {/* Primary: Publish MoM Modal Trigger */}
                         <button
                           type="button"
@@ -463,7 +455,7 @@ export default function MeetingsGovernance({
                             setTargetMeetingForMoM(meeting);
                             setPublishModalOpen(true);
                           }}
-                          className="px-4 py-2 bg-gradient-to-r from-amber-700 to-amber-800 hover:from-amber-800 hover:to-amber-900 text-white rounded-xl text-xs font-bold shadow-xs hover:shadow transition-all cursor-pointer flex items-center gap-1.5"
+                          className="flex-1 sm:flex-initial px-4 py-2 bg-gradient-to-r from-amber-700 to-amber-800 hover:from-amber-800 hover:to-amber-900 text-white rounded-xl text-xs font-bold shadow-xs hover:shadow transition-all cursor-pointer flex items-center justify-center gap-1.5 whitespace-nowrap"
                           title="Record proceedings and publish official MoM"
                         >
                           <FileCheck size={14} />
@@ -474,7 +466,7 @@ export default function MeetingsGovernance({
                           <button
                             type="button"
                             onClick={() => handleCancelMeeting(meeting.id)}
-                            className="px-3 py-2 border border-outline-variant/60 hover:bg-error-container/20 text-on-surface-variant hover:text-error rounded-xl text-xs font-semibold transition-colors cursor-pointer"
+                            className="px-3.5 py-2 border border-outline-variant/60 hover:bg-error-container/20 text-on-surface-variant hover:text-error rounded-xl text-xs font-semibold transition-colors cursor-pointer whitespace-nowrap"
                             title="Cancel meeting"
                           >
                             Cancel
@@ -767,23 +759,28 @@ export default function MeetingsGovernance({
       </AnimatePresence>
 
       {/* Schedule Meeting Modal */}
-      <ScheduleMeetingModal
-        isOpen={scheduleModalOpen}
-        onClose={() => setScheduleModalOpen(false)}
-        onSchedule={handleScheduleMeeting}
-        trustId={trustId}
-      />
+      {scheduleModalOpen && (
+        <ScheduleMeetingModal
+          isOpen={scheduleModalOpen}
+          onClose={() => setScheduleModalOpen(false)}
+          onSchedule={handleScheduleMeeting}
+          trustId={trustId}
+        />
+      )}
 
-      {/* Publish MoM Modal */}
-      <PublishMoMModal
-        isOpen={publishModalOpen}
-        onClose={() => {
-          setPublishModalOpen(false);
-          setTargetMeetingForMoM(null);
-        }}
-        meeting={targetMeetingForMoM}
-        onPublishSuccess={handlePublishMoMSuccess}
-      />
+      {/* Publish MoM Modal - keyed per target meeting to guarantee zero state bleeding */}
+      {publishModalOpen && targetMeetingForMoM && (
+        <PublishMoMModal
+          key={targetMeetingForMoM.id}
+          isOpen={publishModalOpen}
+          onClose={() => {
+            setPublishModalOpen(false);
+            setTargetMeetingForMoM(null);
+          }}
+          meeting={targetMeetingForMoM}
+          onPublishSuccess={handlePublishMoMSuccess}
+        />
+      )}
     </div>
   );
 }

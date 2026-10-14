@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -51,6 +51,7 @@ export default function PublishMoMModal({
   const [fileError, setFileError] = useState<string | null>(null);
   const [isDraftingAI, setIsDraftingAI] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const {
     register,
@@ -63,10 +64,50 @@ export default function PublishMoMModal({
     resolver: zodResolver(publishMoMSchema),
     defaultValues: {
       meetingId: meeting?.id || '',
-      momText: '',
+      momText: meeting?.notes?.momText || '',
       attachment: null,
     },
   });
+
+  // Explicitly reset form, attachment, and file input whenever meeting changes or modal opens/closes
+  useEffect(() => {
+    if (isOpen && meeting) {
+      reset({
+        meetingId: meeting.id,
+        momText: meeting.notes?.momText || '',
+        attachment: null,
+      });
+      setSelectedFile(null);
+      setFileError(null);
+      setIsDraftingAI(false);
+      setIsSubmitting(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    } else if (!isOpen) {
+      setSelectedFile(null);
+      setFileError(null);
+      setIsDraftingAI(false);
+      setIsSubmitting(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  }, [isOpen, meeting?.id, meeting?.notes?.momText, reset]);
+
+  const handleClose = () => {
+    reset({
+      meetingId: '',
+      momText: '',
+      attachment: null,
+    });
+    setSelectedFile(null);
+    setFileError(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+    onClose();
+  };
 
   const momTextValue = watch('momText');
 
@@ -91,6 +132,9 @@ export default function PublishMoMModal({
         setFileError(`Selected file is ${formatBytes(file.size)}, which exceeds the strict ${MAX_ATTACHMENT_SIZE_LABEL} limit.`);
         setSelectedFile(null);
         setValue('attachment', null, { shouldValidate: true });
+        if (fileInputRef.current) {
+          fileInputRef.current.value = '';
+        }
         return;
       }
       setSelectedFile(file);
@@ -98,6 +142,9 @@ export default function PublishMoMModal({
     } else {
       setSelectedFile(null);
       setValue('attachment', null, { shouldValidate: true });
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
     }
   };
 
@@ -105,6 +152,9 @@ export default function PublishMoMModal({
     setSelectedFile(null);
     setFileError(null);
     setValue('attachment', null, { shouldValidate: true });
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   };
 
   // "Draft with AI" button handler designed to trigger @google/genai
@@ -209,6 +259,11 @@ The board conducted a comprehensive review of sanctum preparations, pilgrim amen
 
       onPublishSuccess(meeting.id, newNote);
       reset();
+      setSelectedFile(null);
+      setFileError(null);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
       onClose();
     } catch (err) {
       console.error('Failed to publish MoM', err);
@@ -221,7 +276,7 @@ The board conducted a comprehensive review of sanctum preparations, pilgrim amen
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto animate-[fadeIn_0.2s_ease-out]">
       <div
         className="absolute inset-0"
-        onClick={onClose}
+        onClick={handleClose}
         aria-hidden="true"
       />
 
@@ -249,7 +304,7 @@ The board conducted a comprehensive review of sanctum preparations, pilgrim amen
 
           <button
             type="button"
-            onClick={onClose}
+            onClick={handleClose}
             className="w-8 h-8 rounded-full bg-amber-900/60 hover:bg-amber-800/80 text-amber-200 flex items-center justify-center transition-colors cursor-pointer border border-amber-700/40"
           >
             <X size={16} />
@@ -280,7 +335,7 @@ The board conducted a comprehensive review of sanctum preparations, pilgrim amen
 
         {/* Form Body */}
         <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-5 max-h-[calc(85vh-150px)] overflow-y-auto">
-          <input type="hidden" {...register('meetingId')} value={meeting.id} />
+          <input type="hidden" {...register('meetingId')} />
 
           {/* Textarea Header with "Draft with AI" Button */}
           <div className="space-y-2">
@@ -353,8 +408,9 @@ The board conducted a comprehensive review of sanctum preparations, pilgrim amen
             {!selectedFile ? (
               <div className="relative border-2 border-dashed border-outline-variant/60 hover:border-amber-600/60 rounded-2xl p-5 text-center bg-surface-container-low transition-colors cursor-pointer group">
                 <input
+                  ref={fileInputRef}
                   type="file"
-                  id="mom-attachment-input"
+                  id={`mom-attachment-input-${meeting.id}`}
                   onChange={handleFileChange}
                   accept=".pdf,.docx,.xlsx,.png,.jpg,.jpeg"
                   className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
@@ -428,7 +484,7 @@ The board conducted a comprehensive review of sanctum preparations, pilgrim amen
           <div className="pt-3 border-t border-outline-variant/30 flex items-center justify-end gap-3">
             <button
               type="button"
-              onClick={onClose}
+              onClick={handleClose}
               disabled={isSubmitting}
               className="px-5 py-2.5 rounded-xl border border-outline-variant/60 text-xs font-bold text-on-surface-variant hover:bg-surface-container transition-colors cursor-pointer"
             >

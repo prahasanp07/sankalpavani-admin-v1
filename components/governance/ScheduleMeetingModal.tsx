@@ -307,11 +307,10 @@ export default function ScheduleMeetingModal({
               type="text"
               {...register('title')}
               placeholder="e.g. Q4 Executive Trust Board - Annual Budget & Brahmotsavam Review"
-              className={`w-full px-3.5 py-2.5 bg-surface-container-low border rounded-xl text-xs font-sans text-on-surface focus:outline-none focus:ring-2 transition-all ${
-                errors.title
+              className={`w-full px-3.5 py-2.5 bg-surface-container-low border rounded-xl text-xs font-sans text-on-surface focus:outline-none focus:ring-2 transition-all ${errors.title
                   ? 'border-error focus:ring-error/20'
                   : 'border-outline-variant/60 focus:border-primary focus:ring-primary/20'
-              }`}
+                }`}
             />
             {errors.title && (
               <p className="text-[11px] text-error font-medium flex items-center gap-1 mt-1">
@@ -331,11 +330,10 @@ export default function ScheduleMeetingModal({
               <input
                 type="datetime-local"
                 {...register('scheduledAt')}
-                className={`w-full px-3.5 py-2.5 bg-surface-container-low border rounded-xl text-xs font-sans text-on-surface focus:outline-none focus:ring-2 transition-all ${
-                  errors.scheduledAt
+                className={`w-full px-3.5 py-2.5 bg-surface-container-low border rounded-xl text-xs font-sans text-on-surface focus:outline-none focus:ring-2 transition-all ${errors.scheduledAt
                     ? 'border-error focus:ring-error/20'
                     : 'border-outline-variant/60 focus:border-primary focus:ring-primary/20'
-                }`}
+                  }`}
               />
               {errors.scheduledAt && (
                 <p className="text-[11px] text-error font-medium flex items-center gap-1 mt-1">
@@ -437,15 +435,14 @@ export default function ScheduleMeetingModal({
 
               {/* Right: Uniform Actions Toolbar (Equal Height h-8, Harmonious Alignment) */}
               <div className="flex items-center gap-2 shrink-0">
-                {/* External Guest Trigger Button */}
+                {/* External Guest Trigger Butt on */}
                 <button
                   type="button"
                   onClick={() => setIsAddingExternalGuest(!isAddingExternalGuest)}
-                  className={`h-8 px-3 text-[11px] font-bold rounded-xl border transition-all cursor-pointer inline-flex items-center gap-1.5 shadow-2xs whitespace-nowrap ${
-                    isAddingExternalGuest
+                  className={`h-8 px-3 text-[11px] font-bold rounded-xl border transition-all cursor-pointer inline-flex items-center gap-1.5 shadow-2xs whitespace-nowrap ${isAddingExternalGuest
                       ? 'bg-indigo-600 text-white border-indigo-700 shadow-xs'
                       : 'text-indigo-800 bg-indigo-50/90 hover:bg-indigo-100 border-indigo-200/90 hover:border-indigo-300'
-                  }`}
+                    }`}
                   title="Invite an outsider or external guest (e.g. Govt Officer, Auditor, Special Invitee)"
                 >
                   <UserPlus size={13} className="shrink-0" />
@@ -458,11 +455,10 @@ export default function ScheduleMeetingModal({
                     type="button"
                     onClick={selectAllInvitees}
                     disabled={isAllSelected}
-                    className={`h-7 px-2.5 text-[11px] font-bold rounded-lg transition-all whitespace-nowrap inline-flex items-center gap-1 ${
-                      isAllSelected
+                    className={`h-7 px-2.5 text-[11px] font-bold rounded-lg transition-all whitespace-nowrap inline-flex items-center gap-1 ${isAllSelected
                         ? 'text-on-surface-variant/40 cursor-not-allowed'
                         : 'text-amber-950 hover:bg-amber-500/15 active:bg-amber-500/25 cursor-pointer'
-                    }`}
+                      }`}
                     title="Select all available invitees"
                   >
                     <span>Select All</span>
@@ -474,11 +470,10 @@ export default function ScheduleMeetingModal({
                     type="button"
                     onClick={clearAllInvitees}
                     disabled={!hasSelected}
-                    className={`h-7 px-2.5 text-[11px] font-bold rounded-lg transition-all whitespace-nowrap inline-flex items-center gap-1 ${
-                      !hasSelected
+                    className={`h-7 px-2.5 text-[11px] font-bold rounded-lg transition-all whitespace-nowrap inline-flex items-center gap-1 ${!hasSelected
                         ? 'text-on-surface-variant/40 cursor-not-allowed'
                         : 'text-amber-950 hover:text-error hover:bg-error/10 active:bg-error/15 cursor-pointer'
-                    }`}
+                      }`}
                     title="Clear all selected invitees"
                   >
                     <span>Unselect All</span>
@@ -559,11 +554,10 @@ export default function ScheduleMeetingModal({
               <button
                 type="button"
                 onClick={() => setInviteeFilterTab('all')}
-                className={`h-7 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
-                  inviteeFilterTab === 'all'
+                className={`h-7 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${inviteeFilterTab === 'all'
                     ? 'bg-amber-900 text-amber-50 shadow-2xs'
                     : 'bg-surface-container-low text-on-surface-variant hover:bg-surface-container border border-outline-variant/40'
-                }`}
+                  }`}
               >
                 <span>All Invitees</span>
                 <span className="font-mono text-[11px] opacity-80">({membersList.length})</span>
@@ -573,11 +567,10 @@ export default function ScheduleMeetingModal({
                 <button
                   type="button"
                   onClick={() => setInviteeFilterTab('committee')}
-                  className={`h-7 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
-                    inviteeFilterTab === 'committee'
+                  className={`h-7 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${inviteeFilterTab === 'committee'
                       ? 'bg-amber-700 text-white shadow-2xs'
                       : 'text-amber-900 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-600/30'
-                  }`}
+                    }`}
                 >
                   <Crown size={12} className="shrink-0" />
                   <span>Committee</span>
@@ -589,11 +582,10 @@ export default function ScheduleMeetingModal({
                 <button
                   type="button"
                   onClick={() => setInviteeFilterTab('trustees')}
-                  className={`h-7 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
-                    inviteeFilterTab === 'trustees'
+                  className={`h-7 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${inviteeFilterTab === 'trustees'
                       ? 'bg-amber-900 text-amber-50 shadow-2xs'
                       : 'bg-surface-container-low text-on-surface-variant hover:bg-surface-container border border-outline-variant/40'
-                  }`}
+                    }`}
                 >
                   <span>Other Trustees</span>
                   <span className="font-mono text-[11px] opacity-80">({otherTrustees.length})</span>
@@ -604,11 +596,10 @@ export default function ScheduleMeetingModal({
                 <button
                   type="button"
                   onClick={() => setInviteeFilterTab('external')}
-                  className={`h-7 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
-                    inviteeFilterTab === 'external'
+                  className={`h-7 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${inviteeFilterTab === 'external'
                       ? 'bg-indigo-700 text-white shadow-2xs'
                       : 'text-indigo-800 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200'
-                  }`}
+                    }`}
                 >
                   <Globe size={12} className="shrink-0" />
                   <span>External Guests</span>
@@ -640,22 +631,20 @@ export default function ScheduleMeetingModal({
                       key={member.id}
                       type="button"
                       onClick={() => toggleInvitee(member.id)}
-                      className={`flex items-center gap-2.5 p-2 rounded-xl text-left transition-all border cursor-pointer ${
-                        isSelected
+                      className={`flex items-center gap-2.5 p-2 rounded-xl text-left transition-all border cursor-pointer ${isSelected
                           ? member.isExternal
                             ? 'bg-indigo-50/80 border-indigo-300 text-indigo-950 shadow-xs'
                             : 'bg-amber-500/10 border-amber-600/40 text-amber-950 shadow-xs'
                           : 'bg-surface-container-low border-outline-variant/30 text-on-surface hover:bg-surface-container'
-                      }`}
+                        }`}
                     >
                       <div
-                        className={`w-5 h-5 rounded-md flex items-center justify-center shrink-0 border transition-colors ${
-                          isSelected
+                        className={`w-5 h-5 rounded-md flex items-center justify-center shrink-0 border transition-colors ${isSelected
                             ? member.isExternal
                               ? 'bg-indigo-600 border-indigo-700 text-white'
                               : 'bg-amber-600 border-amber-700 text-white'
                             : 'border-outline-variant/60 bg-white'
-                        }`}
+                          }`}
                       >
                         {isSelected && <Check size={12} strokeWidth={3} />}
                       </div>
@@ -663,9 +652,8 @@ export default function ScheduleMeetingModal({
                       <img
                         src={member.avatarUrl || 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=120'}
                         alt={member.name}
-                        className={`w-7 h-7 rounded-full object-cover shrink-0 border ${
-                          member.isExternal ? 'border-indigo-400' : 'border-amber-600/30'
-                        }`}
+                        className={`w-7 h-7 rounded-full object-cover shrink-0 border ${member.isExternal ? 'border-indigo-400' : 'border-amber-600/30'
+                          }`}
                       />
 
                       <div className="min-w-0 flex-1">

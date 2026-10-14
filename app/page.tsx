@@ -338,7 +338,6 @@ function AdminPortalContent() {
             >
               <MeetingsGovernance
                 trustId={activeTrustId || 'trust_sringeri'}
-                onBack={() => handleNavigate('dashboard')}
               />
             </RequirePermission>
           )}

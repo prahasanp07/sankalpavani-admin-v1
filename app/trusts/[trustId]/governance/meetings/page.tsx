@@ -22,7 +22,6 @@ export default function MeetingsPage() {
         <MeetingsGovernance
           trustId={trustId}
           trustName={trustName}
-          onBack={() => router.push('/')}
         />
       </div>
     </div>
